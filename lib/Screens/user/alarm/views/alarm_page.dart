@@ -1,13 +1,11 @@
-
 import 'package:autism101/Constants.dart';
 import 'package:autism101/Screens/user/alarm/alarm_helper.dart';
 import 'package:autism101/main.dart';
 import 'package:autism101/model/alarm_info.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
-
 
 class AlarmPage extends StatefulWidget {
   @override
@@ -280,28 +278,28 @@ class _AlarmPageState extends State<AlarmPage> {
     );
   }
 
-  void scheduleAlarm(
-      DateTime scheduledNotificationDateTime, AlarmInfo alarmInfo) async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'alarm_notif',
-      'alarm_notif',
-      'Channel for Alarm notification',
-      icon: 'logo',
-      sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
-      largeIcon: DrawableResourceAndroidBitmap('logo'),
-    );
+  // void scheduleAlarm(
+  //     DateTime scheduledNotificationDateTime, AlarmInfo alarmInfo) async {
+  //   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+  //     'alarm_notif',
+  //     'alarm_notif',
+  //     'Channel for Alarm notification',
+  //     icon: 'logo',
+  //     sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
+  //     largeIcon: DrawableResourceAndroidBitmap('logo'),
+  //   );
 
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
-        sound: 'a_long_cold_sting.wav',
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true);
-    var platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+  //   var iOSPlatformChannelSpecifics = IOSNotificationDetails(
+  //       sound: 'a_long_cold_sting.wav',
+  //       presentAlert: true,
+  //       presentBadge: true,
+  //       presentSound: true);
+  //   var platformChannelSpecifics = NotificationDetails(
+  //       android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
 
-    await flutterLocalNotificationsPlugin.schedule(0, 'Office', alarmInfo.title,
-        scheduledNotificationDateTime, platformChannelSpecifics);
-  }
+  //   await flutterLocalNotificationsPlugin.schedule(0, 'Office', alarmInfo.title,
+  //       scheduledNotificationDateTime, platformChannelSpecifics);
+  // }
 
   void onSaveAlarm() {
     DateTime scheduleAlarmDateTime;
@@ -316,7 +314,7 @@ class _AlarmPageState extends State<AlarmPage> {
       title: 'alarm',
     );
     _alarmHelper!.insertAlarm(alarmInfo);
-    scheduleAlarm(scheduleAlarmDateTime, alarmInfo);
+    // scheduleAlarm(scheduleAlarmDateTime, alarmInfo);
     Navigator.pop(context);
     loadAlarms();
   }

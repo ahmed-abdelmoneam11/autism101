@@ -6,7 +6,7 @@ import 'package:autism101/Screens/user/home_screen.dart';
 import 'package:autism101/model/menu_info.dart';
 import 'package:autism101/utils/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'Screens/LoginForm.dart';
@@ -17,27 +17,27 @@ import 'Screens/school/SchoolAccount.dart';
 import 'model/agendas.dart';
 import 'model/posts.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  var initializationSettingsAndroid = AndroidInitializationSettings('logo');
-  var initializationSettingsIOS = IOSInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-      onDidReceiveLocalNotification:
-          (int id, String title, String body, String payload) async {});
-  var initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: ' + payload);
-    }
-  });
+  // var initializationSettingsAndroid = AndroidInitializationSettings('logo');
+  // var initializationSettingsIOS = IOSInitializationSettings(
+  //     requestAlertPermission: true,
+  //     requestBadgePermission: true,
+  //     requestSoundPermission: true,
+  //     onDidReceiveLocalNotification:
+  //         (int id, String title, String body, String payload) async {});
+  // var initializationSettings = InitializationSettings(
+  //     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+  // await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+  //     onSelectNotification: (String payload) async {
+  //   if (payload != null) {
+  //     debugPrint('notification payload: ' + payload);
+  //   }
+  // });
   await Firebase.initializeApp();
   runApp(
     MultiProvider(
