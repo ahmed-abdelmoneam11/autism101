@@ -21,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event.password,
         event.age,
         event.gender,
+        event.profilePicture,
       );
       if (data['code'] == 400) {
         yield SignUpForParentErrorState(
@@ -28,6 +29,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
       } else if (data['code'] == 200) {
         yield SignUpForParentSuccessState();
+      }
+    } else if (event is SignUpForSchoolButtonPressed) {
+      yield LodingState();
+      var data = await api.signUpForShool(
+        event.phone,
+        event.webSite,
+        event.address,
+        event.password,
+      );
+      if (data['code'] == 400) {
+        yield SignUpForSchoolErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield SignUpForSchoolSuccessState();
       }
     } else if (event is SignInButtonPressed) {
       yield LodingState();

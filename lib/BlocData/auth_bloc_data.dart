@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as Path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthApi {
@@ -17,9 +20,11 @@ class AuthApi {
     String password,
     String age,
     String gender,
+    File picture,
   ) async {
     try {
       var prefs = await SharedPreferences.getInstance();
+      //Creating User.
       var res = await http.post(
         Uri.parse(
           'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey',
@@ -39,15 +44,27 @@ class AuthApi {
         throw ("Invalid email");
       }
       prefs.setString('TOKEN', data['idToken']);
-      var user = await firestore.collection('users').add({
+      await auth.signInWithEmailAndPassword(email: email, password: password);
+
+      //Uploading Profile Picture.
+      String fileName = Path.basename(picture.path);
+      firebase_storage.Reference ref =
+          firebase_storage.FirebaseStorage.instance.ref().child(fileName);
+      firebase_storage.UploadTask uploadTask = ref.putFile(picture);
+      await uploadTask.whenComplete(() => null);
+      String uploadedImageUrl = await ref.getDownloadURL();
+      prefs.setString("IMAGE", uploadedImageUrl);
+
+      //Saving User's Data.
+      await firestore.collection('users').doc(email).set({
         "firstName": firstName,
         "lastName": lastName,
         "email": email,
         "phone": phone,
         "age": age,
         "gender": gender,
+        "ProfilePicture": uploadedImageUrl,
       }).onError((error, stackTrace) => throw ("Registration Failed"));
-      prefs.setString("USERID", user.id);
       return {
         "code": 200,
       };
@@ -55,9 +72,61 @@ class AuthApi {
       await auth.signInWithEmailAndPassword(email: email, password: password);
       await auth.currentUser!.delete();
       var prefs = await SharedPreferences.getInstance();
+      var imageUrl = prefs.getString("IMAGE");
+      if (imageUrl != null) {
+        firebase_storage.FirebaseStorage.instance.refFromURL(imageUrl).delete();
+      }
+      await firestore.collection('users').doc(email).delete();
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  signUpForShool(
+    String phone,
+    String webSite,
+    String address,
+    String password,
+  ) async {
+    try {
+      var prefs = await SharedPreferences.getInstance();
+      var res = await http.post(
+        Uri.parse(
+          'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey',
+        ),
+        body: {
+          "email": webSite,
+          "password": password,
+        },
+      );
+      Map<String, dynamic> data = json.decode(res.body);
+      if (data.containsKey("error") &&
+          data['error']['message'] == 'EMAIL_EXISTS') {
+        throw ("Email already exist");
+      }
+      if (data.containsKey("error") &&
+          data['error']['message'] == 'MISSING_EMAIL') {
+        throw ("Invalid email");
+      }
+      prefs.setString('TOKEN', data['idToken']);
+      var school = await firestore.collection('schools').add({
+        "phone": phone,
+        "website": webSite,
+        "address": address,
+      }).onError((error, stackTrace) => throw ("Registration Failed"));
+      prefs.setString("USERID", school.id);
+      return {
+        "code": 200,
+      };
+    } catch (e) {
+      await auth.signInWithEmailAndPassword(email: webSite, password: password);
+      await auth.currentUser!.delete();
+      var prefs = await SharedPreferences.getInstance();
       var userDocId = prefs.getString("USERID");
       if (userDocId != null) {
-        await firestore.collection('users').doc(userDocId).delete();
+        await firestore.collection('schools').doc(userDocId).delete();
       }
       return {
         "code": 400,

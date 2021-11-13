@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:equatable/equatable.dart';
 
 class AuthEvent extends Equatable {
@@ -15,6 +16,7 @@ class SignUpForParentButtonPressed extends AuthEvent {
   final String password;
   final String age;
   final String gender;
+  final File profilePicture;
 
   SignUpForParentButtonPressed({
     required this.firstName,
@@ -24,6 +26,21 @@ class SignUpForParentButtonPressed extends AuthEvent {
     required this.password,
     required this.age,
     required this.gender,
+    required this.profilePicture,
+  });
+}
+
+class SignUpForSchoolButtonPressed extends AuthEvent {
+  final String phone;
+  final String webSite;
+  final String address;
+  final String password;
+
+  SignUpForSchoolButtonPressed({
+    required this.phone,
+    required this.webSite,
+    required this.address,
+    required this.password,
   });
 }
 

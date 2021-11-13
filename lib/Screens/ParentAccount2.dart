@@ -1,7 +1,9 @@
 import 'dart:ui';
+import 'dart:io';
 import 'Layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/auth_bloc.dart';
@@ -30,6 +32,14 @@ class _ParentAccountState extends State<ParentAccount2> {
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _ageController = TextEditingController();
   late AuthBloc authBloc;
+  late File profilePicture;
+  bool hasProfilePicture = false;
+  List<String> profilePictureOptions = [
+    'Profile Picture',
+    'Take photo',
+    'Choose existing photo'
+  ];
+  String _selectedProfilePictureOption = "Profile Picture";
 
   @override
   void dispose() {
@@ -97,7 +107,7 @@ class _ParentAccountState extends State<ParentAccount2> {
                 //Create Account Label.
                 Container(
                   alignment: Alignment.center,
-                  padding: EdgeInsets.fromLTRB(0, 30, 0, 50),
+                  padding: EdgeInsets.fromLTRB(0, 30, 0, 10),
                   child: Text('Create an Account',
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 35)),
@@ -106,7 +116,11 @@ class _ParentAccountState extends State<ParentAccount2> {
                 Container(
                   alignment: Alignment.center,
                   width: 330,
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.only(
+                    left: 20,
+                    right: 20.0,
+                    top: 10.0,
+                  ),
                   child: TextField(
                     controller: _phoneController,
                     decoration: InputDecoration(
@@ -142,7 +156,9 @@ class _ParentAccountState extends State<ParentAccount2> {
                   alignment: Alignment.centerLeft,
                   child: Text('Gender ', style: TextStyle(fontSize: 25)),
                 ),
-                SizedBox(height: 20),
+                SizedBox(
+                  height: 10.0,
+                ),
                 //Gender Buttons.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -197,7 +213,99 @@ class _ParentAccountState extends State<ParentAccount2> {
                     ),
                   ],
                 ),
-                SizedBox(height: 60),
+                //Picture Label.
+                Container(
+                  padding: EdgeInsets.only(left: 50, top: 10),
+                  alignment: Alignment.centerLeft,
+                  child: Text('Picture ', style: TextStyle(fontSize: 25)),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                //Picture Options.
+                Container(
+                  width: 200.0,
+                  height: 40.0,
+                  padding: EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                  ),
+                  child: DropdownButton(
+                    icon: Icon(
+                      Icons.add_a_photo,
+                      color: Colors.black,
+                    ),
+                    iconSize: 25.0,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      height: 1.0,
+                    ),
+                    underline: Container(
+                      width: 0.0,
+                    ),
+                    isExpanded: true,
+                    hint: Text('Profile Picture'),
+                    value: _selectedProfilePictureOption,
+                    onChanged: (newValueOne) {
+                      setState(() {
+                        _selectedProfilePictureOption = newValueOne.toString();
+                      });
+                      checkForProfile();
+                    },
+                    items: profilePictureOptions.map((profileOption) {
+                      return DropdownMenuItem(
+                        child: Text(profileOption),
+                        value: profileOption,
+                      );
+                    }).toList(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                hasProfilePicture
+                    ? Stack(
+                        children: [
+                          Container(
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            width: 170.0,
+                            height: 170.0,
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              image: DecorationImage(
+                                image: FileImage(
+                                  profilePicture,
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 8.0,
+                            right: 8.0,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  hasProfilePicture = false;
+                                  _selectedProfilePictureOption =
+                                      "Profile Picture";
+                                });
+                              },
+                              child: Icon(
+                                Icons.remove_circle,
+                                size: 25.0,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                SizedBox(height: 20.0),
                 //Sign Up Button.
                 Container(
                   height: 50,
@@ -219,12 +327,38 @@ class _ParentAccountState extends State<ParentAccount2> {
                     ),
                   ),
                 ),
+                SizedBox(height: 10.0),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  checkForProfile() async {
+    if (_selectedProfilePictureOption == "Choose existing photo") {
+      chooseFileForProfil();
+    } else if (_selectedProfilePictureOption == "Take photo") {
+      takeImageForProfil();
+    }
+  }
+
+  Future chooseFileForProfil() async {
+    final pickedFile =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+    setState(() {
+      profilePicture = File(pickedFile!.path);
+      hasProfilePicture = true;
+    });
+  }
+
+  Future takeImageForProfil() async {
+    final pickedFile = await ImagePicker().getImage(source: ImageSource.camera);
+    setState(() {
+      profilePicture = File(pickedFile!.path);
+      hasProfilePicture = true;
+    });
   }
 
   void signUp() async {
@@ -250,6 +384,13 @@ class _ParentAccountState extends State<ParentAccount2> {
         message: "Please enter your age.",
         icons: Icons.warning,
       );
+    } else if (hasProfilePicture == false) {
+      Warning().errorMessage(
+        context,
+        title: "Profile picture can't be empty !",
+        message: "Please take or choose profile picture",
+        icons: Icons.warning,
+      );
     } else {
       authBloc.add(
         SignUpForParentButtonPressed(
@@ -260,6 +401,7 @@ class _ParentAccountState extends State<ParentAccount2> {
           password: widget.password,
           age: _ageController.text,
           gender: gender,
+          profilePicture: profilePicture,
         ),
       );
     }

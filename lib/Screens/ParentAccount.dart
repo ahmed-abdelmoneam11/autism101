@@ -5,7 +5,6 @@ import 'Layout.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:autism101/flush_bar.dart';
 import 'package:autism101/Screens/ParentAccount2.dart';
-import 'package:autism101/BlocData/auth_bloc_data.dart';
 
 class ParentAccount extends StatefulWidget {
   const ParentAccount({Key? key}) : super(key: key);
