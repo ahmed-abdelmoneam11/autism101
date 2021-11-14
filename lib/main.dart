@@ -1,17 +1,20 @@
-import 'package:autism101/Screens/admin/admin_home.dart';
+// import 'package:autism101/Screens/admin/admin_home.dart';
 import 'package:autism101/Screens/user/add_posts.dart';
-import 'package:autism101/Screens/user/alarm/enums.dart';
-import 'package:autism101/Screens/user/home_page.dart';
+// import 'package:autism101/Screens/user/alarm/enums.dart';
+// import 'package:autism101/Screens/user/home_page.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
-import 'package:autism101/model/menu_info.dart';
+// import 'package:autism101/model/menu_info.dart';
 import 'package:autism101/utils/theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/auth_bloc.dart';
 import 'package:autism101/BlocData/auth_bloc_data.dart';
 import 'package:autism101/BlocStates/auth_bloc_state.dart';
+import 'package:autism101/Blocs/profile_bloc.dart';
+import 'package:autism101/BlocData/profile_bloc_data.dart';
+import 'package:autism101/BlocStates/profile_bloc_state.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Screens/LoginForm.dart';
@@ -19,8 +22,8 @@ import 'Screens/ParentAccount.dart';
 import 'Screens/ParentAccount2.dart';
 import 'Screens/Register.dart';
 import 'Screens/school/SchoolAccount.dart';
-import 'model/agendas.dart';
-import 'model/posts.dart';
+// import 'model/agendas.dart';
+// import 'model/posts.dart';
 
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //     FlutterLocalNotificationsPlugin();
@@ -51,6 +54,12 @@ void main() async {
           create: (context) => AuthBloc(
             InitialState(),
             AuthApi(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => ProfileBloc(
+            ProfileInitialState(),
+            ProfileApi(),
           ),
         ),
       ],
@@ -103,6 +112,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: myThemeData,
       home: token != null ? HomeScreen() : Loginform(),
+      //
       // Admin_Home(),
       routes: {
         '/Register': (ctx) => Register(),
