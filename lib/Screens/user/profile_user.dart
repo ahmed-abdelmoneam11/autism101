@@ -34,6 +34,9 @@ class _MyHomePageState extends State<MyHomePage> {
   String email = '';
   String profilePictureUrl =
       'https://firebasestorage.googleapis.com/v0/b/autism101-4d85b.appspot.com/o/demoUserImage.jpg?alt=media&token=1bbf3bd7-017a-4299-becb-8228a29d796e';
+  var postsCount = 0;
+  var followingCount = 0;
+  var followersCount = 0;
 
   @override
   void initState() {
@@ -77,7 +80,22 @@ class _MyHomePageState extends State<MyHomePage> {
               lastName = state.lastName;
               email = state.email;
               profilePictureUrl = state.profilePictureUrl;
+              postsCount = state.postsCount;
+              followingCount = state.followingCount;
+              followersCount = state.followersCount;
             });
+          } else if (state is UpdateUserNameSuccessState ||
+              state is UpdateProfileWithEmailAndNameSuccessState ||
+              state is UpdateProfileWithEmailAndPictureSuccessState ||
+              state is UpdateUserNameAndPictureSuccessState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "Profile Updated Successfully",
+                ),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
           }
         },
         child: ListView(
@@ -97,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: EdgeInsets.all(5.0),
                 child: Column(
                   children: <Widget>[
-                    ///profile image
+                    //profile image
                     CircleAvatar(
                         radius: (52),
                         backgroundColor: Colors.white,
@@ -113,8 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     SizedBox(
                       height: 10.0,
                     ),
-
-                    ///user name
+                    //user name
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -137,8 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ],
                     ),
-
-                    ///user email
+                    //user email
                     Text(
                       email,
                       style: TextStyle(
@@ -146,12 +162,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Colors.black12,
                       ),
                     ),
-
                     SizedBox(
                       height: 10.0,
                     ),
-
-                    ///number of posts & followers & following
+                    //number of posts & followers & following
                     Card(
                       margin:
                           EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
@@ -167,9 +181,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Column(
                                 children: <Widget>[
                                   Text(
-                                    "5200",
+                                    '$postsCount',
                                     style: TextStyle(
-                                      fontSize: 15.0,
+                                      fontSize: 20.0,
                                       color: Colors.grey,
                                     ),
                                   ),
@@ -180,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     "Posts",
                                     style: TextStyle(
                                       color: Colors.grey,
-                                      fontSize: 15.0,
+                                      fontSize: 22.0,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   )
@@ -191,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Column(
                                 children: <Widget>[
                                   Text(
-                                    "28.5K",
+                                    '$followersCount',
                                     style: TextStyle(
                                       fontSize: 20.0,
                                       color: Colors.grey,
@@ -215,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Column(
                                 children: <Widget>[
                                   Text(
-                                    "1300",
+                                    '$followingCount',
                                     style: TextStyle(
                                       fontSize: 20.0,
                                       color: Colors.grey,
@@ -225,7 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     height: 5.0,
                                   ),
                                   Text(
-                                    "Follow",
+                                    "Following",
                                     style: TextStyle(
                                       color: Colors.grey,
                                       fontSize: 22.0,

@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/profile_bloc.dart';
 import 'package:autism101/BlocEvents/profile_bloc_events.dart';
 import 'package:autism101/BlocStates/profile_bloc_state.dart';
+import 'package:autism101/flush_bar.dart';
 
 class EditProfile extends StatefulWidget {
   final String firstName;
@@ -23,7 +25,8 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   List<String> options = ['Take photo', 'Choose existing photo'];
-  late File profilePicture;
+  File? profilePicture;
+  TextEditingController _password = TextEditingController();
   late TextEditingController _firstName;
   late TextEditingController _lastName;
   late TextEditingController _email;
@@ -37,6 +40,7 @@ class _EditProfileState extends State<EditProfile> {
     _firstName = TextEditingController(text: widget.firstName);
     _lastName = TextEditingController(text: widget.lastName);
     _email = TextEditingController(text: widget.email);
+    _password.clear();
     setState(() {
       profilePictureUrl = widget.profilePictureUrl;
     });
@@ -48,6 +52,7 @@ class _EditProfileState extends State<EditProfile> {
     _firstName.dispose();
     _lastName.dispose();
     _email.dispose();
+    _password.dispose();
     super.dispose();
   }
 
@@ -56,7 +61,64 @@ class _EditProfileState extends State<EditProfile> {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: BlocListener<ProfileBloc, ProfileState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is ProfileLodingState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: <Widget>[
+                    CircularProgressIndicator(
+                      color: Colors.lightBlue,
+                    ),
+                    Text("  Loading...")
+                  ],
+                ),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else if (state is UpdateUserNameErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.message,
+                ),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else if (state is UpdateProfileWithEmailAndNameErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.message,
+                ),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else if (state is UpdateProfileWithEmailAndPictureErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.message,
+                ),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else if (state is UpdateUserNameAndPictureErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.message,
+                ),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else if (state is UpdateUserNameSuccessState ||
+              state is UpdateProfileWithEmailAndNameSuccessState ||
+              state is UpdateProfileWithEmailAndPictureSuccessState ||
+              state is UpdateUserNameAndPictureSuccessState) {
+            Navigator.pop(context);
+          }
+        },
         child: Stack(
           children: [
             //Background Color.
@@ -122,7 +184,7 @@ class _EditProfileState extends State<EditProfile> {
                             borderRadius: BorderRadius.circular(50),
                             child: hasNewProfilePicture
                                 ? Image.file(
-                                    profilePicture,
+                                    profilePicture!,
                                     fit: BoxFit.fitWidth,
                                     height: 100.0,
                                     width: 100.0,
@@ -488,5 +550,308 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
-  void confirmEdits() async {}
+  void confirmEdits() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Warning().errorMessage(
+        context,
+        title: "No internet connection !",
+        message: "Please turn on wifi or mobile data",
+        icons: Icons.signal_wifi_off,
+      );
+    } else if (_email.text != widget.email) {
+      if (!_email.text.contains('@')) {
+        Warning().errorMessage(
+          context,
+          title: 'Invalid email !',
+          message: "Email must contain '@' ",
+          icons: Icons.warning,
+        );
+      } else if (hasNewProfilePicture) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: Colors.white,
+                elevation: 1.0,
+                title: Text(
+                  "Enter Password to Continue",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 21.0,
+                    height: 1.3,
+                  ),
+                ),
+                content: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30.0),
+                      child: Text(
+                        "Password",
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          color: Color(0xFFafaeae),
+                          fontWeight: FontWeight.w700,
+                          height: 1.0,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 5.0,
+                        left: 20.0,
+                        right: 20.0,
+                      ),
+                      child: Container(
+                        width: double.infinity,
+                        height: 35.0,
+                        padding: EdgeInsets.only(
+                          top: 5.0,
+                          bottom: 5.0,
+                          left: 10.0,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 2.0,
+                            color: Colors.lightBlue,
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(
+                              45.0,
+                            ),
+                          ),
+                        ),
+                        child: TextField(
+                          controller: _password,
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            height: 1.0,
+                          ),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                              borderRadius: BorderRadius.circular(45.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                              borderRadius: BorderRadius.circular(45.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                              borderRadius: BorderRadius.circular(45.0),
+                            ),
+                          ),
+                          cursorColor: Colors.lightBlue,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18.0,
+                        height: 1.3,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  TextButton(
+                    child: Text(
+                      'Ok',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18.0,
+                        height: 1.3,
+                      ),
+                    ),
+                    onPressed: () {
+                      if (_password.text.isEmpty) {
+                        Warning().errorMessage(
+                          context,
+                          title: "Password field can't be empty !",
+                          message: "Please enter your password.",
+                          icons: Icons.warning,
+                        );
+                      } else {
+                        profileBloc.add(
+                          UpdateProfileWithEmailAndPicture(
+                            firstName: _firstName.text,
+                            lastName: _lastName.text,
+                            email: _email.text,
+                            password: _password.text,
+                            picture: profilePicture!,
+                          ),
+                        );
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                ],
+              );
+            });
+      } else {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: Colors.white,
+                elevation: 1.0,
+                title: Text(
+                  "Enter Password to Continue",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 21.0,
+                    height: 1.3,
+                  ),
+                ),
+                content: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30.0),
+                      child: Text(
+                        "Password",
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          color: Color(0xFFafaeae),
+                          fontWeight: FontWeight.w700,
+                          height: 1.0,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 5.0,
+                        left: 20.0,
+                        right: 20.0,
+                      ),
+                      child: Container(
+                        width: double.infinity,
+                        height: 35.0,
+                        padding: EdgeInsets.only(
+                          top: 5.0,
+                          bottom: 5.0,
+                          left: 10.0,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 2.0,
+                            color: Colors.lightBlue,
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(
+                              45.0,
+                            ),
+                          ),
+                        ),
+                        child: TextField(
+                          controller: _password,
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            height: 1.0,
+                          ),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                              borderRadius: BorderRadius.circular(45.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                              borderRadius: BorderRadius.circular(45.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                              borderRadius: BorderRadius.circular(45.0),
+                            ),
+                          ),
+                          cursorColor: Colors.lightBlue,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18.0,
+                        height: 1.3,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  TextButton(
+                    child: Text(
+                      'Ok',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18.0,
+                        height: 1.3,
+                      ),
+                    ),
+                    onPressed: () {
+                      if (_password.text.isEmpty) {
+                        Warning().errorMessage(
+                          context,
+                          title: "Password field can't be empty !",
+                          message: "Please enter your password.",
+                          icons: Icons.warning,
+                        );
+                      } else {
+                        profileBloc.add(
+                          UpdateProfileWithEmailAndName(
+                            firstName: _firstName.text,
+                            lastName: _lastName.text,
+                            email: _email.text,
+                            password: _password.text,
+                          ),
+                        );
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                ],
+              );
+            });
+      }
+    } else if (hasNewProfilePicture) {
+      profileBloc.add(
+        UpdateUserNameAndPicture(
+          firstName: _firstName.text,
+          lastName: _lastName.text,
+          picture: profilePicture!,
+        ),
+      );
+    } else {
+      profileBloc.add(
+        UpdateUserName(
+          firstName: _firstName.text,
+          lastName: _lastName.text,
+        ),
+      );
+    }
+  }
 }

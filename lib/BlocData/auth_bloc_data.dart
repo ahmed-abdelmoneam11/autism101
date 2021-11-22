@@ -56,7 +56,7 @@ class AuthApi {
       prefs.setString("IMAGE", uploadedImageUrl);
 
       //Saving User's Data.
-      await firestore.collection('users').doc(email).set({
+      await firestore.collection('users').add({
         "firstName": firstName,
         "lastName": lastName,
         "email": email,
@@ -64,7 +64,12 @@ class AuthApi {
         "age": age,
         "gender": gender,
         "ProfilePicture": uploadedImageUrl,
-      }).onError((error, stackTrace) => throw ("Registration Failed"));
+        "postsCount": 0,
+        "followingCount": 0,
+        "followersCount": 0,
+      }).onError(
+        (error, stackTrace) => throw ("Registration Failed"),
+      );
       return {
         "code": 200,
       };

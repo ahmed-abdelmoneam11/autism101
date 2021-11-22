@@ -22,7 +22,63 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           lastName: data['lastName'],
           email: data['email'],
           profilePictureUrl: data['ProfilePicture'],
+          postsCount: data['postsCount'],
+          followingCount: data['followingCount'],
+          followersCount: data['followersCount'],
         );
+      }
+    } else if (event is UpdateUserName) {
+      yield ProfileLodingState();
+      var data = await api.updateProfileName(
+        event.firstName,
+        event.lastName,
+      );
+      if (data['code'] == 400) {
+        yield UpdateUserNameErrorState(message: data['message']);
+      } else if (data['code'] == 200) {
+        yield UpdateUserNameSuccessState(message: data['message']);
+      }
+    } else if (event is UpdateProfileWithEmailAndName) {
+      yield ProfileLodingState();
+      var data = await api.updateProfileNameAndEmail(
+        event.firstName,
+        event.lastName,
+        event.email,
+        event.password,
+      );
+      if (data['code'] == 400) {
+        yield UpdateProfileWithEmailAndNameErrorState(message: data['message']);
+      } else if (data['code'] == 200) {
+        yield UpdateProfileWithEmailAndNameSuccessState(
+            message: data['message']);
+      }
+    } else if (event is UpdateProfileWithEmailAndPicture) {
+      yield ProfileLodingState();
+      var data = await api.updateProfileEmailAndPicture(
+        event.firstName,
+        event.lastName,
+        event.email,
+        event.password,
+        event.picture,
+      );
+      if (data['code'] == 400) {
+        yield UpdateProfileWithEmailAndPictureErrorState(
+            message: data['message']);
+      } else if (data['code'] == 200) {
+        yield UpdateProfileWithEmailAndPictureSuccessState(
+            message: data['message']);
+      }
+    } else if (event is UpdateUserNameAndPicture) {
+      yield ProfileLodingState();
+      var data = await api.updateProfileNameAndPicture(
+        event.firstName,
+        event.lastName,
+        event.picture,
+      );
+      if (data['code'] == 400) {
+        yield UpdateUserNameAndPictureErrorState(message: data['message']);
+      } else if (data['code'] == 200) {
+        yield UpdateUserNameAndPictureSuccessState(message: data['message']);
       }
     }
   }
