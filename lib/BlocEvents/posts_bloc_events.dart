@@ -16,3 +16,5 @@ class AddPost extends PostsEvent {
     required this.postImage,
   });
 }
+
+class GetUserPosts extends PostsEvent {}

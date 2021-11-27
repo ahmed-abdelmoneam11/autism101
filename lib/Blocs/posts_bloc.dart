@@ -18,9 +18,23 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
         event.postImage,
       );
       if (data['code'] == 400) {
-        yield AddPostErrorState(message: data['message']);
+        yield AddPostErrorState(
+          message: data['message'],
+        );
       } else if (data['code'] == 200) {
         yield AddPostSuccessState();
+      }
+    } else if (event is GetUserPosts) {
+      yield PostsLodingState();
+      var data = await api.getUserPosts();
+      if (data['code'] == 400) {
+        yield GetUserPostsErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetUserPostsSuccessState(
+          posts: data['data'],
+        );
       }
     }
   }

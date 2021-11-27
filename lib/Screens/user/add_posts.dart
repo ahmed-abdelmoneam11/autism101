@@ -8,7 +8,7 @@ import 'package:autism101/Blocs/posts_bloc.dart';
 import 'package:autism101/BlocEvents/posts_bloc_events.dart';
 import 'package:autism101/BlocStates/posts_bloc_state.dart';
 import 'package:autism101/Constants.dart';
-import 'package:autism101/Screens/user/home_page.dart';
+import 'package:autism101/Screens/user/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -192,7 +192,7 @@ class _AddProductState extends State<AddProduct> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => HomePage(),
+                    builder: (context) => HomeScreen(),
                   ),
                 );
               }

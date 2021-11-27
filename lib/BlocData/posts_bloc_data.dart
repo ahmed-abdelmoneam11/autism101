@@ -46,6 +46,7 @@ class PostsApi {
         "userDocID": docId,
         "post": post,
         "postImageUrl": uploadedImageUrl,
+        "timeStamp": DateTime.now(),
       }).onError(
         (error, stackTrace) => throw ("Failed to add new post"),
       );
@@ -97,6 +98,44 @@ class PostsApi {
           "message": e.toString(),
         };
       }
+    }
+  }
+
+  getUserPosts() async {
+    try {
+      //Getting Current user doc id.
+      var userEmail = auth.currentUser!.email;
+      if (userEmail == null) {
+        throw "User Not Found";
+      }
+      var queryResult = await firestore
+          .collection('users')
+          .where('email', isEqualTo: userEmail)
+          .limit(1)
+          .get()
+          .onError(
+            (error, stackTrace) => throw "User not found",
+          );
+      var docId = queryResult.docs.first.id;
+
+      //Getting Current user posts.
+      var posts = firestore
+          .collection('posts')
+          .where('userDocID', isEqualTo: docId)
+          .orderBy(
+            'timeStamp',
+            descending: true,
+          )
+          .snapshots();
+      return {
+        "code": 200,
+        "data": posts,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
     }
   }
 }
