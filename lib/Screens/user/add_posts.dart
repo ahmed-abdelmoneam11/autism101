@@ -1,164 +1,392 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
 import 'dart:io';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:autism101/Blocs/profile_bloc.dart';
+import 'package:autism101/BlocEvents/profile_bloc_events.dart';
+import 'package:autism101/BlocStates/profile_bloc_state.dart';
+import 'package:autism101/Blocs/posts_bloc.dart';
+import 'package:autism101/BlocEvents/posts_bloc_events.dart';
+import 'package:autism101/BlocStates/posts_bloc_state.dart';
 import 'package:autism101/Constants.dart';
-import 'package:autism101/Screens/school/school_profile.dart';
 import 'package:autism101/Screens/user/home_page.dart';
-import 'package:autism101/Screens/user/home_screen.dart';
-import 'package:autism101/model/posts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:toast/toast.dart';
 
 class AddProduct extends StatefulWidget {
-  ///her is the dart code where take the data from post module and put it in profile user screen
-
   @override
   _AddProductState createState() => _AddProductState();
 }
 
 class _AddProductState extends State<AddProduct> {
-  var titleController = TextEditingController();
+  List<String> options = ['Take photo', 'Choose existing photo'];
+  late ProfileBloc profileBloc;
+  late PostsBloc postsBloc;
+  TextEditingController _postController = TextEditingController();
+  late File _image;
+  bool hasImage = false;
+  String firstName = '';
+  String lastName = '';
+  String profilePictureUrl =
+      'https://firebasestorage.googleapis.com/v0/b/autism101-4d85b.appspot.com/o/demoUserImage.jpg?alt=media&token=1bbf3bd7-017a-4299-becb-8228a29d796e';
 
-  Builder buildDialogItem(
-      BuildContext context, String text, IconData icon, ImageSource src) {
-    return Builder(
-      builder: (innerContext) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: BorderRadius.circular(15),
+  @override
+  void dispose() {
+    _postController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    postsBloc = BlocProvider.of<PostsBloc>(context);
+    profileBloc = BlocProvider.of<ProfileBloc>(context);
+    profileBloc.add(
+      GetProfileDataEvent(),
+    );
+    super.initState();
+  }
+
+  // Builder buildDialogItem(
+  //     BuildContext context, String text, IconData icon, ImageSource src) {
+  //   return Builder(
+  //     builder: (innerContext) => Container(
+  //       decoration: BoxDecoration(
+  //         color: Theme.of(context).primaryColor,
+  //         borderRadius: BorderRadius.circular(15),
+  //       ),
+  //       child: ListTile(
+  //         leading: Icon(icon, color: Colors.white),
+  //         title: Text(text),
+  //         onTap: () {
+  //           context.read<Products>().getImage(src);
+  //           Navigator.of(innerContext).pop();
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          RaisedButton(
+            textColor: Colors.black,
+            child: Text(
+              "Post",
+            ),
+            onPressed: addPost,
+            // () async {
+            //   if (titleController.text.isEmpty && _image == null) {
+            //     Toast.show("Please enter your post", context,
+            //         duration: Toast.LENGTH_LONG);
+            //   } else if (_image == null) {
+            //     Toast.show("Please select an image", context,
+            //         duration: Toast.LENGTH_LONG);
+            //   } else {
+            //       try {
+            //         value.add(
+            //           title: titleController.text,
+            //         );
+            //         await Navigator.pushReplacement(context,
+            //             MaterialPageRoute(builder: (_) => HomeScreen()));
+            //       } catch (e) {
+            //         Toast.show("Please enter a valid price", ctx,
+            //             duration: Toast.LENGTH_LONG);
+            //         print(e);
+            //       }
+            //   }
+            // },
+          ),
+        ],
+        shape: appBarShape,
+        title: Text(
+          'Create post',
+          style: TextStyle(
+            color: Colors.black,
+          ),
         ),
-        child: ListTile(
-          leading: Icon(icon, color: Colors.white),
-          title: Text(text),
-          onTap: () {
-            context.read<Products>().getImage(src);
-            Navigator.of(innerContext).pop();
-          },
+        leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+            onPressed: () => Navigator.pop(context)),
+      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     var ad = AlertDialog(
+      //       title: Text("Choose Picture from:"),
+      //       content: Container(
+      //         height: 150,
+      //         child: Column(
+      //           children: [
+      //             Divider(color: Colors.black),
+      //             buildDialogItem(context, "Camera", Icons.add_a_photo_outlined,
+      //                 ImageSource.camera),
+      //             SizedBox(height: 10),
+      //             buildDialogItem(context, "Gallery", Icons.image_outlined,
+      //                 ImageSource.gallery),
+      //           ],
+      //         ),
+      //       ),
+      //     );
+      //     showDialog(builder: (context) => ad, context: context);
+      //   },
+      //   child: Icon(
+      //     CupertinoIcons.photo_on_rectangle,
+      //     color: Colors.white,
+      //   ),
+      // ),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<ProfileBloc, ProfileState>(
+            listener: (context, state) {
+              if (state is GetProfileDataErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      state.error,
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (state is GetProfileDataSuccessState) {
+                setState(() {
+                  firstName = state.firstName;
+                  lastName = state.lastName;
+                  profilePictureUrl = state.profilePictureUrl;
+                });
+              }
+            },
+          ),
+          BlocListener<PostsBloc, PostsState>(
+            listener: (context, state) {
+              if (state is PostsLodingState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: <Widget>[
+                        CircularProgressIndicator(
+                          color: Colors.lightBlue,
+                        ),
+                        Text("  Loading...")
+                      ],
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (state is AddPostErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      state.message,
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (state is AddPostSuccessState) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(),
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+        child: Stack(
+          children: [
+            //Screen Body.
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    K_vSpace,
+                    //User Data.
+                    Row(
+                      children: <Widget>[
+                        ///image of the owner of the post//////////////////////
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: Image.network(
+                              profilePictureUrl,
+                              height: 50.0,
+                              width: 50.0,
+                              fit: BoxFit.cover,
+                            )),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          ('$firstName $lastName'),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                    //Post Text Field.
+                    TextField(
+                      maxLines: 5,
+                      style: TextStyle(
+                          fontSize: 23.0, fontWeight: FontWeight.w300),
+                      decoration: InputDecoration(
+                        hintText: "What's on your mind?",
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Colors.transparent,
+                        )),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Colors.transparent,
+                        )),
+                      ),
+                      controller: _postController,
+                    ),
+                    //Post Image.
+                    hasImage
+                        ? Stack(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(
+                                  10.0,
+                                ),
+                                width: 400.0,
+                                height: 350.0,
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: FileImage(_image),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 8.0,
+                                right: 8.0,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      hasImage = false;
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.remove_circle,
+                                    size: 35.0,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
+                  ],
+                ),
+              ),
+            ),
+            //Floating Pop Up.
+            Container(
+              padding: EdgeInsets.only(right: 10.0, bottom: 10.0),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Container(
+                  height: 80.0,
+                  width: 80.0,
+                  child: floatingPopup(),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    File? _image = Provider.of<Products>(context, listen: true).image;
-
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          Consumer<Products>(
-            builder: (ctx, value, _) => RaisedButton(
-              textColor: Colors.black,
-              child: Text("Post",),
-              onPressed: () async {
-                if (titleController.text.isEmpty && _image == null) {
-                  Toast.show("Please enter your post", ctx,
-                      duration: Toast.LENGTH_LONG);
-                }
-                else if (_image == null) {
-                  Toast.show("Please select an image", ctx,
-                      duration: Toast.LENGTH_LONG);
-                }
-                else {
-                  try {
-                    value.add(
-                      title: titleController.text,
-                    );
-                    await Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (_) => HomeScreen()));
-                  } catch (e) {
-                    Toast.show("Please enter a valid price", ctx,
-                        duration: Toast.LENGTH_LONG);
-                    print(e);
-                  }
-                }
-              },
-            ),
-          ),
-        ],
-        shape: appBarShape,
-        title: Text('Create post',style: TextStyle(color: Colors.black,),),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back,color: Colors.black,),
-            onPressed: () => Navigator.pop(context)),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          var ad = AlertDialog(
-            title: Text("Choose Picture from:"),
-            content: Container(
-              height: 150,
-              child: Column(
-                children: [
-                  Divider(color: Colors.black),
-                  buildDialogItem(context, "Camera",
-                      Icons.add_a_photo_outlined, ImageSource.camera),
-                  SizedBox(height: 10),
-                  buildDialogItem(context, "Gallery",
-                      Icons.image_outlined, ImageSource.gallery),
-                ],
-              ),
-            ),
-          );
-          showDialog(builder: (context) => ad, context: context);
-        },
-        child: Icon(
-          CupertinoIcons.photo_on_rectangle,
-          color: Colors.white,
-        ),
-      ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              K_vSpace,
-              Row(
-                children: <Widget>[
-                  ///image of the owner of the post//////////////////////
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.asset(
-                        'assets/images/ibrahim.png',
-                        height: 50.0,
-                        width: 50.0,
-                        fit: BoxFit.cover,
-                      )),
-                  SizedBox(width: 10,),
-                  Text(
-                    ('Ibrahim Shawki'),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400),
-                  ),
-                ],
-              ),
-              TextField(
-                maxLines: 10,
+  Widget floatingPopup() => PopupMenuButton(
+        itemBuilder: (context) {
+          return options.map((choice) {
+            return PopupMenuItem<String>(
+              value: choice,
+              child: Text(
+                choice,
                 style: TextStyle(
-                  fontSize: 23.0,
-                  fontWeight: FontWeight.w300
+                  fontWeight: FontWeight.w600,
+                  fontSize: 17.0,
+                  color: Colors.black,
+                  height: 1.0,
                 ),
-                decoration: InputDecoration(
-                     hintText: "What's on your mind?",
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      )),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      )),
-                ),
-                controller: titleController,
               ),
-            ],
+            );
+          }).toList();
+        },
+        onSelected: (e) => {
+          if (e == options[0])
+            {
+              takeImageForProfil(),
+            }
+          else if (e == options[1])
+            {
+              chooseFileForProfil(),
+            },
+        },
+        icon: Container(
+          height: double.infinity,
+          width: double.infinity,
+          decoration: ShapeDecoration(
+              color: Colors.blue,
+              shape: StadiumBorder(
+                side: BorderSide(color: Colors.white, width: 2),
+              )),
+          child: Icon(
+            CupertinoIcons.photo_on_rectangle,
+            color: Colors.white,
+            size: 30.0,
           ),
         ),
-      ),
-    );
+      );
+
+  Future chooseFileForProfil() async {
+    final pickedFile =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+    setState(() {
+      _image = File(pickedFile!.path);
+      hasImage = true;
+    });
+  }
+
+  Future takeImageForProfil() async {
+    final pickedFile = await ImagePicker().getImage(source: ImageSource.camera);
+    setState(() {
+      _image = File(pickedFile!.path);
+      hasImage = true;
+    });
+  }
+
+  Future addPost() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Toast.show("No internet connection !", context,
+          duration: Toast.LENGTH_LONG);
+    } else if (_postController.text.isEmpty) {
+      Toast.show("Please enter your post", context,
+          duration: Toast.LENGTH_LONG);
+    } else if (hasImage == false) {
+      Toast.show("Please select an image", context,
+          duration: Toast.LENGTH_LONG);
+    } else {
+      postsBloc.add(
+        AddPost(
+          post: _postController.text,
+          postImage: _image,
+        ),
+      );
+    }
   }
 }

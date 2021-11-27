@@ -12,6 +12,9 @@ import 'package:autism101/BlocStates/auth_bloc_state.dart';
 import 'package:autism101/Blocs/profile_bloc.dart';
 import 'package:autism101/BlocData/profile_bloc_data.dart';
 import 'package:autism101/BlocStates/profile_bloc_state.dart';
+import 'package:autism101/Blocs/posts_bloc.dart';
+import 'package:autism101/BlocData/posts_bloc_data.dart';
+import 'package:autism101/BlocStates/posts_bloc_state.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:provider/provider.dart';
@@ -60,6 +63,12 @@ void main() async {
           create: (context) => ProfileBloc(
             ProfileInitialState(),
             ProfileApi(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => PostsBloc(
+            PostsInitialState(),
+            PostsApi(),
           ),
         ),
       ],

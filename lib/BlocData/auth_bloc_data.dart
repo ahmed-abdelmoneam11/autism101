@@ -81,7 +81,13 @@ class AuthApi {
       if (imageUrl != null) {
         firebase_storage.FirebaseStorage.instance.refFromURL(imageUrl).delete();
       }
-      await firestore.collection('users').doc(email).delete();
+      var queryResult = await firestore
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+      var docId = queryResult.docs.first.id;
+      await firestore.collection('users').doc(docId).delete();
       return {
         "code": 400,
         "message": e.toString(),
@@ -116,23 +122,24 @@ class AuthApi {
         throw ("Invalid email");
       }
       prefs.setString('TOKEN', data['idToken']);
-      var school = await firestore.collection('schools').add({
+      await firestore.collection('schools').add({
         "phone": phone,
         "website": webSite,
         "address": address,
       }).onError((error, stackTrace) => throw ("Registration Failed"));
-      prefs.setString("USERID", school.id);
       return {
         "code": 200,
       };
     } catch (e) {
       await auth.signInWithEmailAndPassword(email: webSite, password: password);
       await auth.currentUser!.delete();
-      var prefs = await SharedPreferences.getInstance();
-      var userDocId = prefs.getString("USERID");
-      if (userDocId != null) {
-        await firestore.collection('schools').doc(userDocId).delete();
-      }
+      var queryResult = await firestore
+          .collection('schools')
+          .where('website', isEqualTo: webSite)
+          .limit(1)
+          .get();
+      var docId = queryResult.docs.first.id;
+      await firestore.collection('schools').doc(docId).delete();
       return {
         "code": 400,
         "message": e.toString(),
@@ -184,6 +191,5 @@ class AuthApi {
     auth.signOut();
     var prefs = await SharedPreferences.getInstance();
     prefs.remove('TOKEN');
-    prefs.remove('USERID');
   }
 }
