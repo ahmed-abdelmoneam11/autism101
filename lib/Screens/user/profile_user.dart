@@ -10,6 +10,8 @@ import 'package:autism101/Blocs/posts_bloc.dart';
 import 'package:autism101/BlocEvents/posts_bloc_events.dart';
 import 'package:autism101/BlocStates/posts_bloc_state.dart';
 import 'package:autism101/Screens/user/edit_profile_screen.dart';
+import 'package:autism101/Screens/user/edit_post_screen.dart';
+import 'package:autism101/Screens/user/home_screen.dart';
 // import 'package:provider/provider.dart';
 import 'add_posts.dart';
 
@@ -63,6 +65,25 @@ class _MyHomePageState extends State<MyHomePage> {
     // List<Product> prodList =
     //     Provider.of<Products>(context, listen: true).productsList;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.lightBlue,
+        elevation: 0.0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+            size: 30.0,
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+            );
+          },
+        ),
+      ),
       backgroundColor: Colors.lightBlue,
       body: MultiBlocListener(
         listeners: [
@@ -128,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
           shrinkWrap: true,
           children: <Widget>[
             SizedBox(
-              height: 100.0,
+              height: 70.0,
             ),
             Container(
               width: 350,
@@ -287,6 +308,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
+                          //Add Post Button.
                           ButtonTheme(
                               minWidth: 20.0,
                               height: 10.0,
@@ -304,6 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 color: Colors.blue,
                               )),
+                          //Edit Profile Button.
                           ButtonTheme(
                               minWidth: 20.0,
                               height: 10.0,
@@ -407,7 +430,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   child: RaisedButton(
                                                       color: Colors
                                                           .lightBlueAccent,
-                                                      onPressed: () {},
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    EditPost(
+                                                              post: postsList[
+                                                                      index]
+                                                                  ['post'],
+                                                              postImageUrl:
+                                                                  postsList[
+                                                                          index]
+                                                                      ['image'],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
                                                       shape:
                                                           new RoundedRectangleBorder(
                                                         borderRadius:
@@ -427,7 +467,25 @@ class _MyHomePageState extends State<MyHomePage> {
                                                             size: 18.0,
                                                             color: Colors.blue,
                                                           ),
-                                                          onPressed: null,
+                                                          onPressed: () {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        EditPost(
+                                                                  post: postsList[
+                                                                          index]
+                                                                      ['post'],
+                                                                  postImageUrl:
+                                                                      postsList[
+                                                                              index]
+                                                                          [
+                                                                          'image'],
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
                                                         ),
                                                       )
                                                       //  color: Colors.blue,

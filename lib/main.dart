@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'Screens/LoginForm.dart';
 import 'Screens/ParentAccount.dart';
 import 'Screens/ParentAccount2.dart';
@@ -30,7 +30,7 @@ import 'Screens/school/SchoolAccount.dart';
 
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //     FlutterLocalNotificationsPlugin();
-
+FirebaseAuth auth = FirebaseAuth.instance;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -100,27 +100,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var token;
-  void initializePreferences() async {
-    var prefs = await SharedPreferences.getInstance();
-    // prefs.remove("TOKEN");
-    setState(() {
-      token = prefs.getString("TOKEN");
-    });
-  }
-
-  @override
-  void initState() {
-    initializePreferences();
-    super.initState();
-  }
-
+  var user = auth.currentUser;
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: myThemeData,
-      home: token != null ? HomeScreen() : Loginform(),
+      home: user != null ? HomeScreen() : Loginform(),
       //
       // Admin_Home(),
       routes: {

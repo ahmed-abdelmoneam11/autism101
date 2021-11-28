@@ -36,6 +36,56 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
           posts: data['data'],
         );
       }
+    } else if (event is EditPostContentAndImage) {
+      yield PostsLodingState();
+      var data = await api.editPostContentAndImage(
+        event.oldPost,
+        event.newPost,
+        event.newImage,
+      );
+      if (data['code'] == 400) {
+        yield EditPostContentAndImageErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield EditPostContentAndImageSuccessState();
+      }
+    } else if (event is EditPostContent) {
+      yield PostsLodingState();
+      var data = await api.editPostContent(
+        event.oldPost,
+        event.newPost,
+      );
+      if (data['code'] == 400) {
+        yield EditPostContentErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield EditPostContentSuccessState();
+      }
+    } else if (event is EditPostImage) {
+      yield PostsLodingState();
+      var data = await api.editPostImage(
+        event.oldPost,
+        event.newImage,
+      );
+      if (data['code'] == 400) {
+        yield EditPostImageErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield EditPostImageSuccessState();
+      }
+    } else if (event is DeletePost) {
+      yield PostsLodingState();
+      var data = await api.deletePost(event.post);
+      if (data['code'] == 400) {
+        yield DeletePostErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield DeletePostSuccessState();
+      }
     }
   }
 }

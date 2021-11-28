@@ -32,3 +32,33 @@ class GetUserPostsErrorState extends PostsState {
     required this.message,
   });
 }
+
+class DeletePostSuccessState extends PostsState {}
+
+class DeletePostErrorState extends PostsState {
+  final String message;
+  DeletePostErrorState({
+    required this.message,
+  });
+}
+
+class EditPostContentAndImageSuccessState extends PostsState {}
+
+class EditPostContentAndImageErrorState extends PostsState {
+  final String message;
+  EditPostContentAndImageErrorState({required this.message});
+}
+
+class EditPostContentSuccessState extends PostsState {}
+
+class EditPostContentErrorState extends PostsState {
+  final String message;
+  EditPostContentErrorState({required this.message});
+}
+
+class EditPostImageSuccessState extends PostsState {}
+
+class EditPostImageErrorState extends PostsState {
+  final String message;
+  EditPostImageErrorState({required this.message});
+}

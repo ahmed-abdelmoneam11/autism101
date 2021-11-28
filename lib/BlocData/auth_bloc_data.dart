@@ -43,7 +43,6 @@ class AuthApi {
           data['error']['message'] == 'MISSING_EMAIL') {
         throw ("Invalid email");
       }
-      prefs.setString('TOKEN', data['idToken']);
       await auth.signInWithEmailAndPassword(email: email, password: password);
 
       //Uploading Profile Picture.
@@ -102,7 +101,6 @@ class AuthApi {
     String password,
   ) async {
     try {
-      var prefs = await SharedPreferences.getInstance();
       var res = await http.post(
         Uri.parse(
           'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey',
@@ -121,7 +119,11 @@ class AuthApi {
           data['error']['message'] == 'MISSING_EMAIL') {
         throw ("Invalid email");
       }
-      prefs.setString('TOKEN', data['idToken']);
+      await auth.signInWithEmailAndPassword(
+        email: webSite,
+        password: password,
+      );
+
       await firestore.collection('schools').add({
         "phone": phone,
         "website": webSite,
@@ -151,7 +153,6 @@ class AuthApi {
     String email,
     String password,
   ) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
       var res = await http.post(
         Uri.parse(
@@ -175,7 +176,6 @@ class AuthApi {
           data['error']['message'] == 'USER_DISABLED') {
         throw ("User not found");
       }
-      prefs.setString('TOKEN', data['idToken']);
       return {
         "code": 200,
       };
@@ -189,7 +189,5 @@ class AuthApi {
 
   signOut() async {
     auth.signOut();
-    var prefs = await SharedPreferences.getInstance();
-    prefs.remove('TOKEN');
   }
 }

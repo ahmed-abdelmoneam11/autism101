@@ -15,22 +15,28 @@ import 'package:autism101/BlocStates/posts_bloc_state.dart';
 import 'package:autism101/Constants.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
 
-class AddProduct extends StatefulWidget {
+class EditPost extends StatefulWidget {
+  final String post;
+  final String postImageUrl;
+  EditPost({
+    required this.post,
+    required this.postImageUrl,
+  });
   @override
-  _AddProductState createState() => _AddProductState();
+  _EditPostState createState() => _EditPostState();
 }
 
-class _AddProductState extends State<AddProduct> {
-  List<String> options = ['Take photo', 'Choose existing photo'];
+class _EditPostState extends State<EditPost> {
   late ProfileBloc profileBloc;
   late PostsBloc postsBloc;
-  TextEditingController _postController = TextEditingController();
-  late File _image;
-  bool hasImage = false;
+  late TextEditingController _postController;
+  late File? newImage;
+  List<String> options = ['Take photo', 'Choose existing photo'];
   String firstName = '';
   String lastName = '';
   String profilePictureUrl =
       'https://firebasestorage.googleapis.com/v0/b/autism101-4d85b.appspot.com/o/demoUserImage.jpg?alt=media&token=1bbf3bd7-017a-4299-becb-8228a29d796e';
+  bool hasNewImage = false;
 
   @override
   void dispose() {
@@ -45,61 +51,32 @@ class _AddProductState extends State<AddProduct> {
     profileBloc.add(
       GetProfileDataEvent(),
     );
+    _postController = TextEditingController(text: widget.post);
     super.initState();
   }
-
-  // Builder buildDialogItem(
-  //     BuildContext context, String text, IconData icon, ImageSource src) {
-  //   return Builder(
-  //     builder: (innerContext) => Container(
-  //       decoration: BoxDecoration(
-  //         color: Theme.of(context).primaryColor,
-  //         borderRadius: BorderRadius.circular(15),
-  //       ),
-  //       child: ListTile(
-  //         leading: Icon(icon, color: Colors.white),
-  //         title: Text(text),
-  //         onTap: () {
-  //           context.read<Products>().getImage(src);
-  //           Navigator.of(innerContext).pop();
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          RaisedButton(
-            textColor: Colors.black,
-            child: Text(
-              "Post",
+          ElevatedButton(
+            onPressed: _postController.text != widget.post || hasNewImage
+                ? editPost
+                : null,
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                _postController.text != widget.post || hasNewImage
+                    ? Colors.lightBlue
+                    : Colors.grey,
+              ),
             ),
-            onPressed: addPost,
-            // () async {
-            //   if (titleController.text.isEmpty && _image == null) {
-            //     Toast.show("Please enter your post", context,
-            //         duration: Toast.LENGTH_LONG);
-            //   } else if (_image == null) {
-            //     Toast.show("Please select an image", context,
-            //         duration: Toast.LENGTH_LONG);
-            //   } else {
-            //       try {
-            //         value.add(
-            //           title: titleController.text,
-            //         );
-            //         await Navigator.pushReplacement(context,
-            //             MaterialPageRoute(builder: (_) => HomeScreen()));
-            //       } catch (e) {
-            //         Toast.show("Please enter a valid price", ctx,
-            //             duration: Toast.LENGTH_LONG);
-            //         print(e);
-            //       }
-            //   }
-            // },
+            child: Text(
+              "Save",
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
           ),
         ],
         shape: appBarShape,
@@ -110,37 +87,13 @@ class _AddProductState extends State<AddProduct> {
           ),
         ),
         leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-            ),
-            onPressed: () => Navigator.pop(context)),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     var ad = AlertDialog(
-      //       title: Text("Choose Picture from:"),
-      //       content: Container(
-      //         height: 150,
-      //         child: Column(
-      //           children: [
-      //             Divider(color: Colors.black),
-      //             buildDialogItem(context, "Camera", Icons.add_a_photo_outlined,
-      //                 ImageSource.camera),
-      //             SizedBox(height: 10),
-      //             buildDialogItem(context, "Gallery", Icons.image_outlined,
-      //                 ImageSource.gallery),
-      //           ],
-      //         ),
-      //       ),
-      //     );
-      //     showDialog(builder: (context) => ad, context: context);
-      //   },
-      //   child: Icon(
-      //     CupertinoIcons.photo_on_rectangle,
-      //     color: Colors.white,
-      //   ),
-      // ),
       body: MultiBlocListener(
         listeners: [
           BlocListener<ProfileBloc, ProfileState>(
@@ -179,7 +132,7 @@ class _AddProductState extends State<AddProduct> {
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
-              } else if (state is AddPostErrorState) {
+              } else if (state is DeletePostErrorState) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
@@ -188,7 +141,37 @@ class _AddProductState extends State<AddProduct> {
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
-              } else if (state is AddPostSuccessState) {
+              } else if (state is EditPostContentAndImageErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      state.message,
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (state is EditPostContentErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      state.message,
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (state is EditPostImageErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      state.message,
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (state is DeletePostSuccessState ||
+                  state is EditPostContentAndImageSuccessState ||
+                  state is EditPostContentSuccessState ||
+                  state is EditPostImageSuccessState) {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -253,30 +236,39 @@ class _AddProductState extends State<AddProduct> {
                       controller: _postController,
                     ),
                     //Post Image.
-                    hasImage
-                        ? Stack(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(
-                                  10.0,
-                                ),
-                                width: 400.0,
-                                height: 350.0,
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: FileImage(_image),
+                    Stack(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(
+                            10.0,
+                          ),
+                          width: 400.0,
+                          height: 350.0,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          decoration: BoxDecoration(
+                            image: hasNewImage
+                                ? DecorationImage(
+                                    image: FileImage(
+                                      newImage!,
+                                    ),
+                                    fit: BoxFit.cover,
+                                  )
+                                : DecorationImage(
+                                    image: NetworkImage(
+                                      widget.postImageUrl,
+                                    ),
                                     fit: BoxFit.cover,
                                   ),
-                                ),
-                              ),
-                              Positioned(
+                          ),
+                        ),
+                        hasNewImage
+                            ? Positioned(
                                 top: 8.0,
                                 right: 8.0,
                                 child: GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      hasImage = false;
+                                      hasNewImage = false;
                                     });
                                   },
                                   child: Icon(
@@ -285,17 +277,17 @@ class _AddProductState extends State<AddProduct> {
                                     color: Colors.red,
                                   ),
                                 ),
-                              ),
-                            ],
-                          )
-                        : Container(),
+                              )
+                            : Container(),
+                      ],
+                    ),
                   ],
                 ),
               ),
             ),
             //Floating Pop Up.
             Container(
-              padding: EdgeInsets.only(right: 10.0, bottom: 10.0),
+              padding: EdgeInsets.only(right: 5.0, bottom: 5.0),
               child: Align(
                 alignment: Alignment.bottomRight,
                 child: Container(
@@ -308,6 +300,16 @@ class _AddProductState extends State<AddProduct> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: deletePost,
+        child: Icon(
+          Icons.delete,
+          color: Colors.white,
+          size: 30.0,
+        ),
+        backgroundColor: Colors.red,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
     );
   }
 
@@ -358,36 +360,114 @@ class _AddProductState extends State<AddProduct> {
     final pickedFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
     setState(() {
-      _image = File(pickedFile!.path);
-      hasImage = true;
+      newImage = File(pickedFile!.path);
+      hasNewImage = true;
     });
   }
 
   Future takeImageForProfil() async {
     final pickedFile = await ImagePicker().getImage(source: ImageSource.camera);
     setState(() {
-      _image = File(pickedFile!.path);
-      hasImage = true;
+      newImage = File(pickedFile!.path);
+      hasNewImage = true;
     });
   }
 
-  Future addPost() async {
+  Future deletePost() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       Toast.show("No internet connection !", context,
           duration: Toast.LENGTH_LONG);
-    } else if (_postController.text.isEmpty) {
-      Toast.show("Please enter your post", context,
-          duration: Toast.LENGTH_LONG);
-    } else if (hasImage == false) {
-      Toast.show("Please select an image", context,
-          duration: Toast.LENGTH_LONG);
     } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            elevation: 1.0,
+            title: Text(
+              "Delete Post",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 21.0,
+                height: 1.3,
+              ),
+            ),
+            content: Text(
+              "Are you sure? deleting post will remove this post permanently from your posts",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w400,
+                fontSize: 18.0,
+                height: 1.3,
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0,
+                    height: 1.3,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text(
+                  'Ok',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0,
+                    height: 1.3,
+                  ),
+                ),
+                onPressed: () {
+                  postsBloc.add(
+                    DeletePost(
+                      post: widget.post,
+                    ),
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  Future editPost() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Toast.show("No internet connection !", context,
+          duration: Toast.LENGTH_LONG);
+    } else if (_postController.text != widget.post && hasNewImage) {
       postsBloc.add(
-        AddPost(
-          post: _postController.text,
-          postImage: _image,
+        EditPostContentAndImage(
+          oldPost: widget.post,
+          newPost: _postController.text,
+          newImage: newImage!,
         ),
+      );
+    } else if (_postController.text != widget.post && hasNewImage == false) {
+      postsBloc.add(
+        EditPostContent(
+          oldPost: widget.post,
+          newPost: _postController.text,
+        ),
+      );
+    } else if (_postController.text == widget.post && hasNewImage) {
+      postsBloc.add(
+        EditPostImage(oldPost: widget.post, newImage: newImage!),
       );
     }
   }
