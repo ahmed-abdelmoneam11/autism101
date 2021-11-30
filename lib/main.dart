@@ -1,8 +1,9 @@
 // import 'package:autism101/Screens/admin/admin_home.dart';
-import 'package:autism101/Screens/user/add_posts.dart';
+// import 'package:autism101/Screens/user/add_posts.dart';
 // import 'package:autism101/Screens/user/alarm/enums.dart';
 // import 'package:autism101/Screens/user/home_page.dart';
-import 'package:autism101/Screens/user/home_screen.dart';
+// import 'package:autism101/Screens/user/home_screen.dart';
+import 'package:autism101/Screens/splash_screen.dart';
 // import 'package:autism101/model/menu_info.dart';
 import 'package:autism101/utils/theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,18 +20,18 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'Screens/LoginForm.dart';
-import 'Screens/ParentAccount.dart';
-import 'Screens/ParentAccount2.dart';
-import 'Screens/Register.dart';
-import 'Screens/school/SchoolAccount.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'Screens/LoginForm.dart';
+// import 'Screens/ParentAccount.dart';
+// import 'Screens/ParentAccount2.dart';
+// import 'Screens/Register.dart';
+// import 'Screens/school/SchoolAccount.dart';
 // import 'model/agendas.dart';
 // import 'model/posts.dart';
 
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //     FlutterLocalNotificationsPlugin();
-FirebaseAuth auth = FirebaseAuth.instance;
+// FirebaseAuth auth = FirebaseAuth.instance;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -100,23 +101,24 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var user = auth.currentUser;
+  // var user = auth.currentUser;
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: myThemeData,
-      home: user != null ? HomeScreen() : Loginform(),
+      home: Splash(),
+      //user != null ? HomeScreen() : Loginform(),
       //
       // Admin_Home(),
-      routes: {
-        '/Register': (ctx) => Register(),
-        '/SchoolAccount': (ctx) => SchoolAccount(),
-        '/loginform': (ctx) => Loginform(),
-        '/ParentAccount': (ctx) => ParentAccount(),
-        '/parentAccount2': (ctx) => ParentAccount2(),
-        '/AddPost': (ctx) => AddProduct(),
-      },
+      // routes: {
+      //   '/Register': (ctx) => Register(),
+      //   '/SchoolAccount': (ctx) => SchoolAccount(),
+      //   '/loginform': (ctx) => Loginform(),
+      //   '/ParentAccount': (ctx) => ParentAccount(),
+      //   '/parentAccount2': (ctx) => ParentAccount2(),
+      //   '/AddPost': (ctx) => AddProduct(),
+      // },
     );
   }
 }
