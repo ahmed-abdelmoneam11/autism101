@@ -10,6 +10,13 @@ class ProfileStartEvent extends ProfileEvent {}
 
 class GetProfileDataEvent extends ProfileEvent {}
 
+class GetOtherUsersProfileDataEvent extends ProfileEvent {
+  final userDocId;
+  GetOtherUsersProfileDataEvent({
+    required this.userDocId,
+  });
+}
+
 class UpdateUserName extends ProfileEvent {
   final String firstName;
   final String lastName;

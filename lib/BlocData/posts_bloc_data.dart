@@ -145,6 +145,54 @@ class PostsApi {
     }
   }
 
+  getOtherUsersPosts(String userDocId) async {
+    try {
+      //Getting Current user posts.
+      var posts = firestore
+          .collection('posts')
+          .where('userDocID', isEqualTo: userDocId)
+          .orderBy(
+            'timeStamp',
+            descending: true,
+          )
+          .snapshots();
+      return {
+        "code": 200,
+        "data": posts,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  getTimeLinePosts() async {
+    try {
+      //Getting Posts.
+      var posts = firestore
+          .collection('posts')
+          .orderBy(
+            'timeStamp',
+            descending: true,
+          )
+          .snapshots();
+      if (await posts.isEmpty) {
+        throw "No Posts Available";
+      }
+      return {
+        "code": 200,
+        "data": posts,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
   deletePost(String post) async {
     try {
       //Find The Post to be deleted.

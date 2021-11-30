@@ -35,6 +35,32 @@ class GetProfileDataErrorState extends ProfileState {
   GetProfileDataErrorState({required this.error});
 }
 
+class GetOtherUsersProfileDataSuccessState extends ProfileState {
+  final String firstName;
+  final String lastName;
+  final String profilePictureUrl;
+  final int postsCount;
+  final int followingCount;
+  final int followersCount;
+
+  GetOtherUsersProfileDataSuccessState({
+    required this.firstName,
+    required this.lastName,
+    required this.profilePictureUrl,
+    required this.postsCount,
+    required this.followingCount,
+    required this.followersCount,
+  });
+}
+
+class GetOtherUsersProfileDataErrorState extends ProfileState {
+  final String message;
+
+  GetOtherUsersProfileDataErrorState({
+    required this.message,
+  });
+}
+
 class UpdateUserNameSuccessState extends ProfileState {
   final String message;
   UpdateUserNameSuccessState({

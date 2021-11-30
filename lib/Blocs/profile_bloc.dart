@@ -15,12 +15,31 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       yield ProfileLodingState();
       var data = await api.getProfileData();
       if (data['code'] == 400) {
-        yield GetProfileDataErrorState(error: data['message']);
+        yield GetProfileDataErrorState(
+          error: data['message'],
+        );
       } else if (data['code'] == 200) {
         yield GetProfileDataSuccessState(
           firstName: data['firstName'],
           lastName: data['lastName'],
           email: data['email'],
+          profilePictureUrl: data['ProfilePicture'],
+          postsCount: data['postsCount'],
+          followingCount: data['followingCount'],
+          followersCount: data['followersCount'],
+        );
+      }
+    } else if (event is GetOtherUsersProfileDataEvent) {
+      yield ProfileLodingState();
+      var data = await api.getOtherUsersProfileData(event.userDocId);
+      if (data['code'] == 400) {
+        yield GetOtherUsersProfileDataErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetOtherUsersProfileDataSuccessState(
+          firstName: data['firstName'],
+          lastName: data['lastName'],
           profilePictureUrl: data['ProfilePicture'],
           postsCount: data['postsCount'],
           followingCount: data['followingCount'],

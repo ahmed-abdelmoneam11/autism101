@@ -33,6 +33,34 @@ class GetUserPostsErrorState extends PostsState {
   });
 }
 
+class GetOtherUsersPostsSuccessState extends PostsState {
+  final Stream<QuerySnapshot> posts;
+  GetOtherUsersPostsSuccessState({
+    required this.posts,
+  });
+}
+
+class GetOtherUsersPostsErrorState extends PostsState {
+  final String message;
+  GetOtherUsersPostsErrorState({
+    required this.message,
+  });
+}
+
+class GetTimeLinePostsSuccessState extends PostsState {
+  final Stream<QuerySnapshot> posts;
+  GetTimeLinePostsSuccessState({
+    required this.posts,
+  });
+}
+
+class GetTimeLinePostsErrorState extends PostsState {
+  final String message;
+  GetTimeLinePostsErrorState({
+    required this.message,
+  });
+}
+
 class DeletePostSuccessState extends PostsState {}
 
 class DeletePostErrorState extends PostsState {

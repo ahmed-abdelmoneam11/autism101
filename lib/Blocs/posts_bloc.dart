@@ -36,6 +36,32 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
           posts: data['data'],
         );
       }
+    } else if (event is GetOtherUsersPosts) {
+      yield PostsLodingState();
+      var data = await api.getOtherUsersPosts(
+        event.userDocId,
+      );
+      if (data['code'] == 400) {
+        yield GetOtherUsersPostsErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetOtherUsersPostsSuccessState(
+          posts: data['data'],
+        );
+      }
+    } else if (event is GetTimeLinePosts) {
+      yield PostsLodingState();
+      var data = await api.getTimeLinePosts();
+      if (data['code'] == 400) {
+        yield GetTimeLinePostsErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetTimeLinePostsSuccessState(
+          posts: data['data'],
+        );
+      }
     } else if (event is EditPostContentAndImage) {
       yield PostsLodingState();
       var data = await api.editPostContentAndImage(

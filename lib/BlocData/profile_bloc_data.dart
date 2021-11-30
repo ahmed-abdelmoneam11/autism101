@@ -42,6 +42,29 @@ class ProfileApi {
     }
   }
 
+  getOtherUsersProfileData(String userDocId) async {
+    try {
+      var data =
+          await firestore.collection('users').doc(userDocId).get().onError(
+                (error, stackTrace) => throw "User Not Found",
+              );
+      return {
+        "code": 200,
+        "firstName": data['firstName'],
+        "lastName": data['lastName'],
+        "ProfilePicture": data['ProfilePicture'],
+        "postsCount": data['postsCount'],
+        "followingCount": data['followingCount'],
+        "followersCount": data['followersCount'],
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
   updateProfileName(
     String firstName,
     String lastName,

@@ -19,6 +19,15 @@ class AddPost extends PostsEvent {
 
 class GetUserPosts extends PostsEvent {}
 
+class GetOtherUsersPosts extends PostsEvent {
+  final userDocId;
+  GetOtherUsersPosts({
+    required this.userDocId,
+  });
+}
+
+class GetTimeLinePosts extends PostsEvent {}
+
 class DeletePost extends PostsEvent {
   final String post;
   DeletePost({
