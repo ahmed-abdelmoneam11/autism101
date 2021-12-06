@@ -99,6 +99,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       } else if (data['code'] == 200) {
         yield UpdateUserNameAndPictureSuccessState(message: data['message']);
       }
+    } else if (event is SearchUsers) {
+      yield ProfileLodingState();
+      var data = await api.searchUser(
+        event.query,
+      );
+      if (data['code'] == 400) {
+        yield SearchUsersErrorState(message: data['message']);
+      } else if (data['code'] == 200) {
+        yield SearchUsersSuccessState(users: data['data']);
+      }
     }
   }
 }

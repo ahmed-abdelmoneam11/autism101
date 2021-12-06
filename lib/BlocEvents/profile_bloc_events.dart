@@ -17,6 +17,13 @@ class GetOtherUsersProfileDataEvent extends ProfileEvent {
   });
 }
 
+class SearchUsers extends ProfileEvent {
+  final String query;
+  SearchUsers({
+    required this.query,
+  });
+}
+
 class UpdateUserName extends ProfileEvent {
   final String firstName;
   final String lastName;

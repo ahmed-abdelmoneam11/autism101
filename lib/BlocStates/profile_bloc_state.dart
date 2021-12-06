@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class ProfileState extends Equatable {
@@ -57,6 +58,21 @@ class GetOtherUsersProfileDataErrorState extends ProfileState {
   final String message;
 
   GetOtherUsersProfileDataErrorState({
+    required this.message,
+  });
+}
+
+class SearchUsersSuccessState extends ProfileState {
+  final Stream<QuerySnapshot> users;
+  SearchUsersSuccessState({
+    required this.users,
+  });
+}
+
+class SearchUsersErrorState extends ProfileState {
+  final String message;
+
+  SearchUsersErrorState({
     required this.message,
   });
 }

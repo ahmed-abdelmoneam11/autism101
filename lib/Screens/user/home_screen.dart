@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/posts_bloc.dart';
 import 'package:autism101/BlocStates/posts_bloc_state.dart';
+import 'package:autism101/Screens/user/search_screen.dart';
 import 'home_page.dart';
 import 'menu.dart';
 import 'notification.dart';
@@ -65,26 +66,34 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             actions: [
               IconButton(
+                // onPressed: () {
+                //   scaffoldKey.currentState!.showBottomSheet(
+                //     (context) => BackdropFilter(
+                //       filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                //       child: Container(
+                //         height: double.infinity,
+                //         color: Colors.transparent,
+                //         child: TextField(
+                //           decoration: InputDecoration(
+                //             enabledBorder: InputBorder.none,
+                //             focusedBorder: InputBorder.none,
+                //             hintText: "Search",
+                //             prefixIcon: Icon(
+                //               CupertinoIcons.search,
+                //               color: Colors.grey,
+                //               size: 25.0,
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   );
+                // },
                 onPressed: () {
-                  scaffoldKey.currentState!.showBottomSheet(
-                    (context) => BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                      child: Container(
-                        height: double.infinity,
-                        color: Colors.transparent,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            hintText: "Search",
-                            prefixIcon: Icon(
-                              CupertinoIcons.search,
-                              color: Colors.grey,
-                              size: 25.0,
-                            ),
-                          ),
-                        ),
-                      ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Search(),
                     ),
                   );
                 },

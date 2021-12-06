@@ -353,10 +353,11 @@ class _HomePageState extends State<HomePage> {
                                                     child: Text(
                                                       ('${postsList[index]['userName']}'),
                                                       style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w400),
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
                                                     ),
                                                   ),
                                                   Expanded(

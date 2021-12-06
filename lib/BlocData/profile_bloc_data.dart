@@ -65,6 +65,30 @@ class ProfileApi {
     }
   }
 
+  searchUser(String query) async {
+    try {
+      var queryResult = firestore
+          .collection('users')
+          .where('firstName', isEqualTo: query)
+          .snapshots();
+      if (await queryResult.isEmpty) {
+        return {
+          "code": 200,
+          "data": "No Users Matched This Name!",
+        };
+      }
+      return {
+        "code": 200,
+        "data": queryResult,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
   updateProfileName(
     String firstName,
     String lastName,

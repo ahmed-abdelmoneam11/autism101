@@ -9,6 +9,7 @@ import 'package:autism101/BlocEvents/auth_bloc_events.dart';
 import 'package:autism101/BlocStates/auth_bloc_state.dart';
 import 'package:autism101/flush_bar.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
+import 'package:autism101/Screens/Register.dart';
 
 class Loginform extends StatefulWidget {
   const Loginform({Key? key}) : super(key: key);
@@ -185,7 +186,12 @@ class _LoginformState extends State<Loginform> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/Register');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Register(),
+                            ),
+                          );
                         },
                         child: Text(
                           'Create',

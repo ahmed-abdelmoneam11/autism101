@@ -1,8 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:ui';
-
 import 'LayoutForm.dart';
+import 'package:autism101/Screens/ParentAccount.dart';
+import 'package:autism101/Screens/school/SchoolAccount.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -41,7 +42,12 @@ class _RegisterState extends State<Register> {
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 InkWell(
                   onTap: () {
-                    Navigator.pushNamed(context, "/SchoolAccount");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SchoolAccount(),
+                      ),
+                    );
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 35 / 100,
@@ -77,7 +83,12 @@ class _RegisterState extends State<Register> {
                 Row(children: [
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, "/ParentAccount");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ParentAccount(),
+                        ),
+                      );
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width * 35 / 100,
