@@ -32,6 +32,7 @@ import 'package:firebase_core/firebase_core.dart';
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //     FlutterLocalNotificationsPlugin();
 // FirebaseAuth auth = FirebaseAuth.instance;
+//test m
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
