@@ -379,14 +379,17 @@ class _AddProductState extends State<AddProduct> {
     } else if (_postController.text.isEmpty) {
       Toast.show("Please enter your post", context,
           duration: Toast.LENGTH_LONG);
-    } else if (hasImage == false) {
-      Toast.show("Please select an image", context,
-          duration: Toast.LENGTH_LONG);
+    } else if (hasImage == true) {
+      postsBloc.add(
+        AddPostWithImage(
+          post: _postController.text,
+          postImage: _image,
+        ),
+      );
     } else {
       postsBloc.add(
         AddPost(
           post: _postController.text,
-          postImage: _image,
         ),
       );
     }

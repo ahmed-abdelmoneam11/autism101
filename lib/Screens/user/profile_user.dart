@@ -369,14 +369,23 @@ class _MyHomePageState extends State<MyHomePage> {
                         for (var post in postsData) {
                           final postContent = post.get('post');
                           final postImageUrl = post.get('postImageUrl');
-                          postsList.add(
-                            {
-                              "post": postContent,
-                              "image": postImageUrl,
-                            },
-                          );
+                          final postImageFlag = post.get('postHasImage');
+                          postImageFlag
+                              ? postsList.add(
+                                  {
+                                    "post": postContent,
+                                    "image": postImageUrl,
+                                    "postImageFlag": postImageFlag,
+                                  },
+                                )
+                              : postsList.add(
+                                  {
+                                    "post": postContent,
+                                    "postImageFlag": postImageFlag,
+                                  },
+                                );
                         }
-                        return postsList.isNotEmpty
+                        return snapshot.hasData
                             ? Container(
                                 height: 450.0,
                                 width: double.infinity,
@@ -444,6 +453,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                                   postsList[
                                                                           index]
                                                                       ['image'],
+                                                              imageFlag: postsList[
+                                                                      index][
+                                                                  'postImageFlag'],
                                                             ),
                                                           ),
                                                         );
@@ -482,6 +494,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                                                               index]
                                                                           [
                                                                           'image'],
+                                                                  imageFlag: postsList[
+                                                                          index]
+                                                                      [
+                                                                      'postImageFlag'],
                                                                 ),
                                                               ),
                                                             );
@@ -508,12 +524,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                               ),
                                             ),
                                             //image of the post
-                                            ClipRRect(
-                                              child: Image.network(
-                                                postsList[index]['image'],
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
+                                            postsList[index]['postImageFlag']
+                                                ? ClipRRect(
+                                                    child: Image.network(
+                                                      postsList[index]['image'],
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  )
+                                                : Container(),
                                             //like & save & show comment button
                                             Row(
                                                 mainAxisAlignment:

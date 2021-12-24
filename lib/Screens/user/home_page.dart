@@ -284,15 +284,27 @@ class _HomePageState extends State<HomePage> {
                       final userLastName = post.get('userLastName');
                       final userPictureUrl = post.get('userPictureUrl');
                       final userDocId = post.get('userDocID');
-                      postsList.add(
-                        {
-                          "post": postContent,
-                          "postImage": postImageUrl,
-                          "userName": '$userFirstName $userLastName',
-                          "userPicture": userPictureUrl,
-                          "userDocId": userDocId,
-                        },
-                      );
+                      final postImageFlag = post.get('postHasImage');
+                      postImageFlag
+                          ? postsList.add(
+                              {
+                                "post": postContent,
+                                "postImage": postImageUrl,
+                                "userName": '$userFirstName $userLastName',
+                                "userPicture": userPictureUrl,
+                                "userDocId": userDocId,
+                                "postImageFlag": postImageFlag,
+                              },
+                            )
+                          : postsList.add(
+                              {
+                                "post": postContent,
+                                "userName": '$userFirstName $userLastName',
+                                "userPicture": userPictureUrl,
+                                "userDocId": userDocId,
+                                "postImageFlag": postImageFlag,
+                              },
+                            );
                     }
                     return snapshot.hasData
                         ? Container(
@@ -407,30 +419,34 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                               ),
                                               //the image of the post
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white30,
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topRight:
-                                                        Radius.circular(40.0),
-                                                    bottomLeft:
-                                                        Radius.circular(40.0),
-                                                    //  Radius.circular(10)
-                                                  ),
-                                                ),
-                                                child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                    child: Image.network(
-                                                      postsList[index]
-                                                          ['postImage'],
-                                                      height: 400.0,
-                                                      width: 330.0,
-                                                      fit: BoxFit.cover,
-                                                    )),
-                                              ),
+                                              postsList[index]['postImageFlag']
+                                                  ? Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white30,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  40.0),
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  40.0),
+                                                          //  Radius.circular(10)
+                                                        ),
+                                                      ),
+                                                      child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20),
+                                                          child: Image.network(
+                                                            postsList[index]
+                                                                ['postImage'],
+                                                            height: 400.0,
+                                                            width: 330.0,
+                                                            fit: BoxFit.cover,
+                                                          )),
+                                                    )
+                                                  : Container(),
                                               //the button where you can like & save & see comments
                                               K_vSpace,
                                               Row(

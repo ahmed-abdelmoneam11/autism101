@@ -15,7 +15,6 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
       yield PostsLodingState();
       var data = await api.addPost(
         event.post,
-        event.postImage,
       );
       if (data['code'] == 400) {
         yield AddPostErrorState(
@@ -23,6 +22,19 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
         );
       } else if (data['code'] == 200) {
         yield AddPostSuccessState();
+      }
+    } else if (event is AddPostWithImage) {
+      yield PostsLodingState();
+      var data = await api.addPostWithImage(
+        event.post,
+        event.postImage,
+      );
+      if (data['code'] == 400) {
+        yield AddPostWithImageErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield AddPostWithImageSuccessState();
       }
     } else if (event is GetUserPosts) {
       yield PostsLodingState();

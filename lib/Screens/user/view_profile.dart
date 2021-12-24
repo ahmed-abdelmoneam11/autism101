@@ -258,12 +258,21 @@ class _ProfileViewState extends State<ProfileView> {
                     for (var post in postsData) {
                       final postContent = post.get('post');
                       final postImageUrl = post.get('postImageUrl');
-                      postsList.add(
-                        {
-                          "post": postContent,
-                          "postImage": postImageUrl,
-                        },
-                      );
+                      final postImageFlag = post.get('postHasImage');
+                      postImageFlag
+                          ? postsList.add(
+                              {
+                                "post": postContent,
+                                "image": postImageUrl,
+                                "postImageFlag": postImageFlag,
+                              },
+                            )
+                          : postsList.add(
+                              {
+                                "post": postContent,
+                                "postImageFlag": postImageFlag,
+                              },
+                            );
                     }
                     return snapshot.hasData
                         ? Container(
@@ -345,31 +354,36 @@ class _ProfileViewState extends State<ProfileView> {
                                                 ),
                                               ),
                                               //the image of the post
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white30,
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topRight: Radius.circular(
-                                                      40.0,
-                                                    ),
-                                                    bottomLeft: Radius.circular(
-                                                      40.0,
-                                                    ),
-                                                  ),
-                                                ),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                  child: Image.network(
-                                                    postsList[index]
-                                                        ['postImage'],
-                                                    height: 400.0,
-                                                    width: 330.0,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
+                                              postsList[index]['postImageFlag']
+                                                  ? Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white30,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          topRight:
+                                                              Radius.circular(
+                                                            40.0,
+                                                          ),
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                            40.0,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                        child: Image.network(
+                                                          postsList[index]
+                                                              ['postImage'],
+                                                          height: 400.0,
+                                                          width: 330.0,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Container(),
                                               //the button where you can like & save & see comments
                                               K_vSpace,
                                               //Comment TextField

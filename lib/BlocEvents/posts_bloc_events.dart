@@ -10,8 +10,15 @@ class PostsStartEvent extends PostsEvent {}
 
 class AddPost extends PostsEvent {
   final String post;
-  final File postImage;
   AddPost({
+    required this.post,
+  });
+}
+
+class AddPostWithImage extends PostsEvent {
+  final String post;
+  final File postImage;
+  AddPostWithImage({
     required this.post,
     required this.postImage,
   });

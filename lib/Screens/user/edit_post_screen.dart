@@ -17,10 +17,12 @@ import 'package:autism101/Screens/user/home_screen.dart';
 
 class EditPost extends StatefulWidget {
   final String post;
-  final String postImageUrl;
+  final bool imageFlag;
+  final postImageUrl;
   EditPost({
     required this.post,
-    required this.postImageUrl,
+    required this.imageFlag,
+    this.postImageUrl,
   });
   @override
   _EditPostState createState() => _EditPostState();
@@ -236,51 +238,53 @@ class _EditPostState extends State<EditPost> {
                       controller: _postController,
                     ),
                     //Post Image.
-                    Stack(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(
-                            10.0,
-                          ),
-                          width: 400.0,
-                          height: 350.0,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          decoration: BoxDecoration(
-                            image: hasNewImage
-                                ? DecorationImage(
-                                    image: FileImage(
-                                      newImage!,
-                                    ),
-                                    fit: BoxFit.cover,
-                                  )
-                                : DecorationImage(
-                                    image: NetworkImage(
-                                      widget.postImageUrl,
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
-                        ),
-                        hasNewImage
-                            ? Positioned(
-                                top: 8.0,
-                                right: 8.0,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      hasNewImage = false;
-                                    });
-                                  },
-                                  child: Icon(
-                                    Icons.remove_circle,
-                                    size: 35.0,
-                                    color: Colors.red,
-                                  ),
+                    widget.imageFlag
+                        ? Stack(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(
+                                  10.0,
                                 ),
-                              )
-                            : Container(),
-                      ],
-                    ),
+                                width: 400.0,
+                                height: 350.0,
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                decoration: BoxDecoration(
+                                  image: hasNewImage
+                                      ? DecorationImage(
+                                          image: FileImage(
+                                            newImage!,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : DecorationImage(
+                                          image: NetworkImage(
+                                            widget.postImageUrl,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                              ),
+                              hasNewImage
+                                  ? Positioned(
+                                      top: 8.0,
+                                      right: 8.0,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            hasNewImage = false;
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.remove_circle,
+                                          size: 35.0,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
+                          )
+                        : Container(),
                   ],
                 ),
               ),

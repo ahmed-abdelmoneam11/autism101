@@ -19,6 +19,15 @@ class AddPostErrorState extends PostsState {
   });
 }
 
+class AddPostWithImageSuccessState extends PostsState {}
+
+class AddPostWithImageErrorState extends PostsState {
+  final String message;
+  AddPostWithImageErrorState({
+    required this.message,
+  });
+}
+
 class GetUserPostsSuccessState extends PostsState {
   final Stream<QuerySnapshot> posts;
   GetUserPostsSuccessState({
