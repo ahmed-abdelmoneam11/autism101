@@ -60,7 +60,7 @@ class _MyDrawerState extends State<MyDrawer> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MyProfile()),
+                  MaterialPageRoute(builder: (context) => MyHomePage()),
                 );
               },
               child: UserAccountsDrawerHeader(

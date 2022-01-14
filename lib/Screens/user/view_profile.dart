@@ -1,5 +1,6 @@
 import 'package:autism101/Constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:autism101/BlocStates/profile_bloc_state.dart';
 import 'package:autism101/Blocs/posts_bloc.dart';
 import 'package:autism101/BlocEvents/posts_bloc_events.dart';
 import 'package:autism101/BlocStates/posts_bloc_state.dart';
+import 'package:like_button/like_button.dart';
 
 class ProfileView extends StatefulWidget {
   final userDocId;
@@ -18,6 +20,7 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  FirebaseAuth auth = FirebaseAuth.instance;
   //view another user profile not much different of user profile
   late ProfileBloc profileBloc;
   late PostsBloc postsBloc;
@@ -26,6 +29,8 @@ class _ProfileViewState extends State<ProfileView> {
   String profilePictureUrl =
       'https://firebasestorage.googleapis.com/v0/b/autism101-4d85b.appspot.com/o/demoUserImage.jpg?alt=media&token=1bbf3bd7-017a-4299-becb-8228a29d796e';
   List postsList = [];
+  List userLikes = [];
+  List userFavourites = [];
   var postsCount = 0;
   var followingCount = 0;
   var followersCount = 0;
@@ -161,14 +166,26 @@ class _ProfileViewState extends State<ProfileView> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              //User Name.
-                              Text(
-                                ('$firstName $lastName'),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  //User Name.
+                                  Text(
+                                    ('$firstName $lastName'),
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 23,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {},
+                                    child: Text(
+                                      "Follow",
+                                    ),
+                                  ),
+                                ],
                               ),
                               K_vSpace,
                               //Posts, Following and Followers Count.
@@ -259,6 +276,8 @@ class _ProfileViewState extends State<ProfileView> {
                       final postContent = post.get('post');
                       final postImageUrl = post.get('postImageUrl');
                       final postImageFlag = post.get('postHasImage');
+                      final List postLikes = post.get('postLikes');
+                      final List favourites = post.get('usersWhoFavourite');
                       postImageFlag
                           ? postsList.add(
                               {
@@ -273,6 +292,12 @@ class _ProfileViewState extends State<ProfileView> {
                                 "postImageFlag": postImageFlag,
                               },
                             );
+                      postLikes.contains(auth.currentUser!.uid)
+                          ? userLikes.add(true)
+                          : userLikes.add(false);
+                      favourites.contains(auth.currentUser!.uid)
+                          ? userFavourites.add(true)
+                          : userFavourites.add(false);
                     }
                     return snapshot.hasData
                         ? Container(
@@ -326,12 +351,60 @@ class _ProfileViewState extends State<ProfileView> {
                                                   Expanded(
                                                     child: Container(),
                                                   ),
-                                                  TextButton(
-                                                    onPressed: () {},
-                                                    child: Text(
-                                                      'Follow',
+                                                  //Book Mark Button.
+                                                  LikeButton(
+                                                    isLiked:
+                                                        userFavourites[index],
+                                                    onTap:
+                                                        (bool isLiked) async {
+                                                      if (isLiked) {
+                                                        postsBloc.add(
+                                                          UnFavouritePost(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                          ),
+                                                        );
+                                                        setState(() {
+                                                          userFavourites[
+                                                              index] = false;
+                                                        });
+                                                      } else {
+                                                        postsBloc.add(
+                                                          FavouritePost(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                          ),
+                                                        );
+                                                        setState(() {
+                                                          userFavourites[
+                                                              index] = true;
+                                                        });
+                                                      }
+                                                      return isLiked;
+                                                    },
+                                                    bubblesColor: BubblesColor(
+                                                      dotPrimaryColor:
+                                                          Color(0xff33b5e5),
+                                                      dotSecondaryColor:
+                                                          Color(0xff0099cc),
                                                     ),
-                                                  )
+                                                    likeBuilder:
+                                                        (bool isLiked) {
+                                                      return Icon(
+                                                        isLiked
+                                                            ? CupertinoIcons
+                                                                .bookmark_fill
+                                                            : CupertinoIcons
+                                                                .bookmark,
+                                                        color: isLiked
+                                                            ? Colors.blue
+                                                            : Colors.grey,
+                                                        size: 25.0,
+                                                      );
+                                                    },
+                                                  ),
                                                 ],
                                               ),
                                               K_vSpace,
@@ -376,7 +449,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 .circular(20),
                                                         child: Image.network(
                                                           postsList[index]
-                                                              ['postImage'],
+                                                              ['image'],
                                                           height: 400.0,
                                                           width: 330.0,
                                                           fit: BoxFit.cover,
@@ -391,6 +464,38 @@ class _ProfileViewState extends State<ProfileView> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
                                                 children: <Widget>[
+                                                  LikeButton(
+                                                    isLiked: userLikes[index],
+                                                    onTap:
+                                                        (bool isLiked) async {
+                                                      if (isLiked) {
+                                                        postsBloc.add(
+                                                          UnLikePost(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                          ),
+                                                        );
+                                                        setState(() {
+                                                          userLikes[index] =
+                                                              false;
+                                                        });
+                                                      } else {
+                                                        postsBloc.add(
+                                                          LikePost(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                          ),
+                                                        );
+                                                        setState(() {
+                                                          userLikes[index] =
+                                                              true;
+                                                        });
+                                                      }
+                                                      return isLiked;
+                                                    },
+                                                  ),
                                                   Expanded(
                                                     child: TextField(
                                                       decoration:

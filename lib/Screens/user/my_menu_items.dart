@@ -3,6 +3,7 @@ import 'package:autism101/Screens/user/event.dart';
 import 'package:autism101/Screens/user/people_youMayKnow.dart';
 import 'package:autism101/Screens/user/progress.dart';
 import 'package:autism101/Screens/user/school_category.dart';
+import 'favorite_list_screen.dart.dart';
 import 'package:autism101/Screens/LoginForm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,95 +62,130 @@ class _MyMenuItemsState extends State<MyMenuItems> {
       child: Column(
         ///Scroll Bar where user can enter Event and Favorite Lise and so on
         children: <Widget>[
+          //Events
           ListTile(
             title: Text('Events'),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Events()),
+                MaterialPageRoute(
+                  builder: (context) => Events(),
+                ),
               );
             },
             leading: const Icon(Icons.event),
           ),
+          //Progress
           ListTile(
             title: Text('Progress'),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Progress()),
+                MaterialPageRoute(
+                  builder: (context) => Progress(),
+                ),
               );
             },
             leading: const Icon(Icons.self_improvement),
           ),
+          //Favorite List
           ListTile(
             title: Text('Favorite List '),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FavoriteList(),
+                ),
+              );
+            },
             leading: const Icon(Icons.favorite_border),
           ),
+          //Alarm Schedule
           ListTile(
             title: Text('Alarm Schedule '),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage()),
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
               );
             },
             leading: const Icon(Icons.alarm),
           ),
+          //Movies
           ListTile(
             title: Text('Movies'),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Movies()),
+                MaterialPageRoute(
+                  builder: (context) => Movies(),
+                ),
               );
             },
             leading: const Icon(Icons.movie),
           ),
+          //Behavioral Agenda
           ListTile(
             title: Text('Behavioral Agenda'),
             leading: const Icon(Icons.insert_drive_file_outlined),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyAgendaPage()),
+                MaterialPageRoute(
+                  builder: (context) => MyAgendaPage(),
+                ),
               );
             },
           ),
+          //People you may know
           ListTile(
             title: Text('People you may know'),
             leading: const Icon(Icons.people),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PeopleYouMayKnow()),
+                MaterialPageRoute(
+                  builder: (context) => PeopleYouMayKnow(),
+                ),
               );
             },
           ),
+          //Contact with School
           ListTile(
             title: Text('Contact with School'),
             leading: const Icon(Icons.home_work_outlined),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => School_Category()),
+                MaterialPageRoute(
+                  builder: (context) => School_Category(),
+                ),
               );
             },
           ),
+          //Inspiring people
           ListTile(
             title: Text('Inspiring people'),
             leading: const Icon(Icons.emoji_people_sharp),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Inspiring()),
+                MaterialPageRoute(
+                  builder: (context) => Inspiring(),
+                ),
               );
             },
           ),
+          //Logout
           ListTile(
             title: Text('Logout'),
             leading: Transform.rotate(
-                angle: 15.7, child: const Icon(Icons.login_rounded)),
+              angle: 15.7,
+              child: const Icon(Icons.login_rounded),
+            ),
             onTap: signOut,
           ),
         ],

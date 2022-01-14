@@ -35,6 +35,8 @@ class GetOtherUsersPosts extends PostsEvent {
 
 class GetTimeLinePosts extends PostsEvent {}
 
+class GetFavouritePosts extends PostsEvent {}
+
 class DeletePost extends PostsEvent {
   final String post;
   DeletePost({
@@ -68,5 +70,33 @@ class EditPostImage extends PostsEvent {
   EditPostImage({
     required this.oldPost,
     required this.newImage,
+  });
+}
+
+class LikePost extends PostsEvent {
+  final String post;
+  LikePost({
+    required this.post,
+  });
+}
+
+class UnLikePost extends PostsEvent {
+  final String post;
+  UnLikePost({
+    required this.post,
+  });
+}
+
+class FavouritePost extends PostsEvent {
+  final String post;
+  FavouritePost({
+    required this.post,
+  });
+}
+
+class UnFavouritePost extends PostsEvent {
+  final String post;
+  UnFavouritePost({
+    required this.post,
   });
 }

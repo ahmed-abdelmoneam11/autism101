@@ -10,15 +10,17 @@ class PostsApi {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   addPost(String post) async {
+    var prefs = await SharedPreferences.getInstance();
     try {
       //Getting Current user data.
-      var userEmail = auth.currentUser!.email;
-      if (userEmail == null) {
+      // var userEmail = auth.currentUser!.email;
+      var token = prefs.getString("TOKEN");
+      if (token == null) {
         throw "User Not Found";
       }
       var queryResult = await firestore
           .collection('users')
-          .where('email', isEqualTo: userEmail)
+          .where('userID', isEqualTo: token)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;
@@ -31,6 +33,7 @@ class PostsApi {
       //Adding new post.
       await firestore.collection('posts').add({
         "userDocID": docId,
+        "userToken": token,
         "post": post,
         "postImageUrl": "",
         "timeStamp": DateTime.now(),
@@ -38,6 +41,8 @@ class PostsApi {
         "userLastName": userLastName,
         "userPictureUrl": userPictureUrl,
         "postHasImage": false,
+        "usersWhoFavourite": [],
+        "postLikes": [],
       }).onError(
         (error, stackTrace) => throw ("Failed to add new post"),
       );
@@ -63,17 +68,20 @@ class PostsApi {
     String post,
     File postImage,
   ) async {
+    var prefs = await SharedPreferences.getInstance();
     try {
-      var prefs = await SharedPreferences.getInstance();
-
       //Getting Current user data.
-      var userEmail = auth.currentUser!.email;
-      if (userEmail == null) {
+      var token = prefs.getString("TOKEN");
+      if (token == null) {
         throw "User Not Found";
       }
+      // var userEmail = auth.currentUser!.email;
+      // if (userEmail == null) {
+      //   throw "User Not Found";
+      // }
       var queryResult = await firestore
           .collection('users')
-          .where('email', isEqualTo: userEmail)
+          .where('userID', isEqualTo: token)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;
@@ -97,6 +105,7 @@ class PostsApi {
       //Adding new post.
       await firestore.collection('posts').add({
         "userDocID": docId,
+        "userToken": token,
         "post": post,
         "postImageUrl": uploadedImageUrl,
         "timeStamp": DateTime.now(),
@@ -104,6 +113,8 @@ class PostsApi {
         "userLastName": userLastName,
         "userPictureUrl": userPictureUrl,
         "postHasImage": true,
+        "usersWhoFavourite": [],
+        "postLikes": [],
       }).onError(
         (error, stackTrace) => throw ("Failed to add new post"),
       );
@@ -140,15 +151,20 @@ class PostsApi {
   }
 
   getUserPosts() async {
+    var prefs = await SharedPreferences.getInstance();
     try {
       //Getting Current user doc id.
-      var userEmail = auth.currentUser!.email;
-      if (userEmail == null) {
+      var token = prefs.getString("TOKEN");
+      if (token == null) {
         throw "User Not Found";
       }
+      // var userEmail = auth.currentUser!.email;
+      // if (userEmail == null) {
+      //   throw "User Not Found";
+      // }
       var queryResult = await firestore
           .collection('users')
-          .where('email', isEqualTo: userEmail)
+          .where('userID', isEqualTo: token)
           .limit(1)
           .get()
           .onError(
@@ -225,6 +241,217 @@ class PostsApi {
     }
   }
 
+  // getFavouritePosts() async {
+  //   List favouritePosts = [];
+  //   List favouritePostsLikes = [];
+  //   List favourites = [];
+  //   try {
+  //     var userID = auth.currentUser!.uid;
+  //     //Getting Current user posts.
+  //     var userQueryResult = await firestore
+  //         .collection('users')
+  //         .where('userID', isEqualTo: userID)
+  //         .limit(1)
+  //         .get();
+  //     var userDocId = userQueryResult.docs.first.id;
+  //     var userData = await firestore.collection('users').doc(userDocId).get();
+  //     List userFavourites = userData['favourites'];
+  //     for (int i = 0; i < userFavourites.length; i++) {
+  //       var postData =
+  //           await firestore.collection('posts').doc(userFavourites[i]).get();
+  //       postData['postHasImage']
+  //           ? favouritePosts.add({
+  //               "post": postData['post'],
+  //               "postImage": postData['postImageUrl'],
+  //               "userName":
+  //                   "${postData['userFirstName']} ${postData['userLastName']}",
+  //               "userPicture": postData['userPictureUrl'],
+  //               "userDocId": postData['userDocID'],
+  //               "userID": postData['userID'],
+  //               "postImageFlag": postData['postHasImage'],
+  //             })
+  //           : favouritePosts.add({
+  //               "post": postData['post'],
+  //               "userName":
+  //                   "${postData['userFirstName']} ${postData['userLastName']}",
+  //               "userPicture": postData['userPictureUrl'],
+  //               "userDocId": postData['userDocID'],
+  //               "userID": postData['userID'],
+  //               "postImageFlag": postData['postHasImage'],
+  //             });
+  //       favouritePostsLikes.addAll(postData['postLikes']);
+  //       favourites.addAll(postData['usersWhoFavourite']);
+  //     }
+  //     return {
+  //       "code": 200,
+  //       "data": favouritePosts,
+  //       "likes": favouritePostsLikes,
+  //       "favourites": favourites,
+  //     };
+  //   } on Exception catch (e) {
+  //     return {
+  //       "code": 400,
+  //       "message": e.toString(),
+  //     };
+  //   }
+  // }
+
+  likePost(String post) async {
+    var prefs = await SharedPreferences.getInstance();
+    try {
+      //Find The Post to be deleted.
+      var postQueryResult = await firestore
+          .collection('posts')
+          .where('post', isEqualTo: post)
+          .limit(1)
+          .get()
+          .onError(
+            (error, stackTrace) => throw "Post not found",
+          );
+      var postDocId = postQueryResult.docs.first.id;
+      var postsData = await firestore.collection('posts').doc(postDocId).get();
+      List likes = postsData['postLikes'];
+      var token = prefs.getString("TOKEN");
+      likes.add(token);
+      await firestore
+          .collection('posts')
+          .doc(postDocId)
+          .update({"postLikes": likes}).onError(
+        (error, stackTrace) => throw "Failed to like post",
+      );
+    } on Exception catch (e) {
+      //Return State Code & Error Message.
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  unLikePost(String post) async {
+    var prefs = await SharedPreferences.getInstance();
+    try {
+      //Find The Post to be deleted.
+      var postQueryResult = await firestore
+          .collection('posts')
+          .where('post', isEqualTo: post)
+          .limit(1)
+          .get()
+          .onError(
+            (error, stackTrace) => throw "Post not found",
+          );
+      var postDocId = postQueryResult.docs.first.id;
+      var postsData = await firestore.collection('posts').doc(postDocId).get();
+      List likes = postsData['postLikes'];
+      var token = prefs.getString("TOKEN");
+      likes.remove(token);
+      await firestore
+          .collection('posts')
+          .doc(postDocId)
+          .update({"postLikes": likes}).onError(
+        (error, stackTrace) => throw "Failed to unlike post",
+      );
+    } on Exception catch (e) {
+      //Return State Code & Error Message.
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  favouritePost(String post) async {
+    var prefs = await SharedPreferences.getInstance();
+    try {
+      var token = prefs.getString("TOKEN");
+      var queryResult = await firestore
+          .collection('users')
+          .where('userID', isEqualTo: token)
+          .limit(1)
+          .get();
+      var docId = queryResult.docs.first.id;
+      var userData = await firestore.collection('users').doc(docId).get();
+      List favouritePosts = userData['favourites'];
+      var postQueryResult = await firestore
+          .collection('posts')
+          .where('post', isEqualTo: post)
+          .limit(1)
+          .get()
+          .onError(
+            (error, stackTrace) => throw "Post not found",
+          );
+      var postDocId = postQueryResult.docs.first.id;
+      var postsData = await firestore.collection('posts').doc(postDocId).get();
+      List usersWhoFavourite = postsData['usersWhoFavourite'];
+      favouritePosts.add(postDocId);
+      usersWhoFavourite.add(token);
+      await firestore
+          .collection('users')
+          .doc(docId)
+          .update({"favourites": favouritePosts}).onError(
+        (error, stackTrace) => throw "Failed to favourite post",
+      );
+      await firestore
+          .collection('posts')
+          .doc(postDocId)
+          .update({"usersWhoFavourite": usersWhoFavourite}).onError(
+        (error, stackTrace) => throw "Failed to favourite post",
+      );
+    } on Exception catch (e) {
+      //Return State Code & Error Message.
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  unFavouritePost(String post) async {
+    var prefs = await SharedPreferences.getInstance();
+    try {
+      var token = prefs.getString("TOKEN");
+      var queryResult = await firestore
+          .collection('users')
+          .where('userID', isEqualTo: token)
+          .limit(1)
+          .get();
+      var docId = queryResult.docs.first.id;
+      var userData = await firestore.collection('users').doc(docId).get();
+      List favouritePosts = userData['favourites'];
+      var postQueryResult = await firestore
+          .collection('posts')
+          .where('post', isEqualTo: post)
+          .limit(1)
+          .get()
+          .onError(
+            (error, stackTrace) => throw "Post not found",
+          );
+      var postDocId = postQueryResult.docs.first.id;
+      var postsData = await firestore.collection('posts').doc(postDocId).get();
+      List usersWhoFavourite = postsData['usersWhoFavourite'];
+      favouritePosts.remove(postDocId);
+      usersWhoFavourite.remove(token);
+      await firestore
+          .collection('users')
+          .doc(docId)
+          .update({"favourites": favouritePosts}).onError(
+        (error, stackTrace) => throw "Failed to save post to favourites",
+      );
+      await firestore
+          .collection('posts')
+          .doc(postDocId)
+          .update({"usersWhoFavourite": usersWhoFavourite}).onError(
+        (error, stackTrace) => throw "Failed to favourite post",
+      );
+    } on Exception catch (e) {
+      //Return State Code & Error Message.
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
   deletePost(String post) async {
     try {
       //Find The Post to be deleted.
@@ -238,7 +465,6 @@ class PostsApi {
           );
       var postDocId = postQueryResult.docs.first.id;
       var postsData = await firestore.collection('posts').doc(postDocId).get();
-      var postImageUrl = postsData['postImageUrl'];
 
       //Get User Doc ID & Posts count.
       var userDocId = postsData['userDocID'];
@@ -249,12 +475,14 @@ class PostsApi {
       await firestore.collection('posts').doc(postDocId).delete().onError(
             (error, stackTrace) => throw "Error Deleting Post",
           );
-      await firebase_storage.FirebaseStorage.instance
-          .refFromURL(postImageUrl)
-          .delete()
-          .onError(
-            (error, stackTrace) => throw "Error Deleting Post Image",
-          );
+      if (postsData['postHasImage']) {
+        await firebase_storage.FirebaseStorage.instance
+            .refFromURL(postsData['postImageUrl'])
+            .delete()
+            .onError(
+              (error, stackTrace) => throw "Error Deleting Post Image",
+            );
+      }
 
       //Update posts count in user doc.
       await firestore

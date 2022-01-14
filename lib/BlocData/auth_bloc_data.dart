@@ -43,6 +43,7 @@ class AuthApi {
           data['error']['message'] == 'MISSING_EMAIL') {
         throw ("Invalid email");
       }
+      prefs.setString('TOKEN', data['idToken']);
       await auth.signInWithEmailAndPassword(email: email, password: password);
 
       //Uploading Profile Picture.
@@ -66,6 +67,9 @@ class AuthApi {
         "postsCount": 0,
         "followingCount": 0,
         "followersCount": 0,
+        "userID": data['idToken'],
+        // "userID": auth.currentUser!.uid,
+        "favourites": [],
       }).onError(
         (error, stackTrace) => throw ("Registration Failed"),
       );
@@ -153,6 +157,7 @@ class AuthApi {
     String email,
     String password,
   ) async {
+    var prefs = await SharedPreferences.getInstance();
     try {
       var res = await http.post(
         Uri.parse(
@@ -176,6 +181,7 @@ class AuthApi {
           data['error']['message'] == 'USER_DISABLED') {
         throw ("User not found");
       }
+      prefs.setString('TOKEN', data['idToken']);
       return {
         "code": 200,
       };
@@ -188,6 +194,8 @@ class AuthApi {
   }
 
   signOut() async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.remove('TOKEN');
     auth.signOut();
   }
 }

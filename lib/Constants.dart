@@ -20,6 +20,35 @@ dynamic appBarShape = RoundedRectangleBorder(
     borderRadius: BorderRadius.only(
         bottomLeft: Radius.circular(15.0), bottomRight: Radius.circular(15.0)));
 
+const String MainFontFamily = "Segoe UI";
+
+const TextStyle MostImportatnTopicsTitleStyle = TextStyle(
+  //fontFamily: MainFontFamily,
+  fontWeight: FontWeight.bold,
+  color: Colors.black,
+  fontSize: 21.0,
+);
+
+const TextStyle MostImportatnTopicsHeaderStyle = TextStyle(
+  //fontFamily: MainFontFamily,
+  fontWeight: FontWeight.bold,
+  color: Colors.black,
+  fontSize: 19.0,
+);
+
+const TextStyle MostImportatnTopicsHeaderSubStyle = TextStyle(
+  //fontFamily: MainFontFamily,
+  fontWeight: FontWeight.w700,
+  color: Colors.black,
+  fontSize: 18.0,
+);
+
+const TextStyle MostImportatnTopicsContentStyle = TextStyle(
+  fontFamily: MainFontFamily,
+  fontWeight: FontWeight.w500,
+  color: Colors.black,
+  fontSize: 18.0,
+);
 
 class CustomColors {
   static Color primaryTextColor = Colors.white;
@@ -56,4 +85,3 @@ class GradientTemplate {
     GradientColors(GradientColors.fire),
   ];
 }
-

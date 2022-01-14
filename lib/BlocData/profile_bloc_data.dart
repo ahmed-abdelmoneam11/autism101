@@ -10,15 +10,20 @@ class ProfileApi {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   getProfileData() async {
+    var prefs = await SharedPreferences.getInstance();
     try {
-      var userEmail = auth.currentUser!.email;
-      if (userEmail == null) {
+      // var userEmail = auth.currentUser!.email;
+      // if (userEmail == null) {
+      //   throw "User Not Found";
+      // }
+      //Getting Current user doc id.
+      var token = prefs.getString("TOKEN");
+      if (token == null) {
         throw "User Not Found";
       }
-
       var queryResult = await firestore
           .collection('users')
-          .where('email', isEqualTo: userEmail)
+          .where('userID', isEqualTo: token)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;
@@ -93,15 +98,20 @@ class ProfileApi {
     String firstName,
     String lastName,
   ) async {
+    var prefs = await SharedPreferences.getInstance();
     try {
-      var userEmail = auth.currentUser!.email;
-      if (userEmail == null) {
+      // var userEmail = auth.currentUser!.email;
+      // if (userEmail == null) {
+      //   throw "User Not Found";
+      // }
+      var token = prefs.getString("TOKEN");
+      if (token == null) {
         throw "User Not Found";
       }
 
       var queryResult = await firestore
           .collection('users')
-          .where('email', isEqualTo: userEmail)
+          .where('userID', isEqualTo: token)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;
@@ -127,23 +137,29 @@ class ProfileApi {
     String email,
     String password,
   ) async {
+    var prefs = await SharedPreferences.getInstance();
     try {
-      var userEmail = auth.currentUser!.email;
-      if (userEmail == null) {
+      // var userEmail = auth.currentUser!.email;
+      // if (userEmail == null) {
+      //   throw "User Not Found";
+      // }
+      var token = prefs.getString("TOKEN");
+      if (token == null) {
         throw "User Not Found";
       }
-      await auth
-          .signInWithEmailAndPassword(email: userEmail, password: password)
-          .onError(
-            (error, stackTrace) => throw "Email or Password is incorrect",
-          );
-
       var queryResult = await firestore
           .collection('users')
-          .where('email', isEqualTo: userEmail)
+          .where('userID', isEqualTo: token)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;
+      var data = await firestore.collection('users').doc(docId).get();
+      var oldUserEmail = data['email'];
+      await auth
+          .signInWithEmailAndPassword(email: oldUserEmail, password: password)
+          .onError(
+            (error, stackTrace) => throw "Email or Password is incorrect",
+          );
       await firestore.collection('users').doc(docId).update({
         "firstName": firstName,
         "lastName": lastName,
@@ -151,7 +167,6 @@ class ProfileApi {
       }).onError(
         (error, stackTrace) => throw ("Update Failed"),
       );
-
       auth.currentUser!.updateEmail(email).onError(
             (error, stackTrace) => throw ("Update Email Failed"),
           );
@@ -175,28 +190,28 @@ class ProfileApi {
     String password,
     File picture,
   ) async {
+    var prefs = await SharedPreferences.getInstance();
     try {
-      var prefs = await SharedPreferences.getInstance();
-      var userEmail = auth.currentUser!.email;
-      if (userEmail == null) {
+      var token = prefs.getString("TOKEN");
+      if (token == null) {
         throw "User Not Found";
       }
+      var queryResult = await firestore
+          .collection('users')
+          .where('userID', isEqualTo: token)
+          .limit(1)
+          .get();
+      var docId = queryResult.docs.first.id;
+      var data = await firestore.collection('users').doc(docId).get();
+      var oldUserEmail = data['email'];
       await auth
-          .signInWithEmailAndPassword(email: userEmail, password: password)
+          .signInWithEmailAndPassword(email: oldUserEmail, password: password)
           .onError(
             (error, stackTrace) => throw "Email or Password is incorrect",
           );
 
-      var queryResult = await firestore
-          .collection('users')
-          .where('email', isEqualTo: userEmail)
-          .limit(1)
-          .get();
-      var docId = queryResult.docs.first.id;
-
       //Deleting Old Image.
-      var userData = await firestore.collection('users').doc(docId).get();
-      var oldPictureUrl = userData['ProfilePicture'];
+      var oldPictureUrl = data['ProfilePicture'];
       firebase_storage.FirebaseStorage.instance
           .refFromURL(oldPictureUrl)
           .delete();
@@ -249,14 +264,17 @@ class ProfileApi {
   ) async {
     try {
       var prefs = await SharedPreferences.getInstance();
-      var userEmail = auth.currentUser!.email;
-      if (userEmail == null) {
+      // var userEmail = auth.currentUser!.email;
+      // if (userEmail == null) {
+      //   throw "User Not Found";
+      // }
+      var token = prefs.getString("TOKEN");
+      if (token == null) {
         throw "User Not Found";
       }
-
       var queryResult = await firestore
           .collection('users')
-          .where('email', isEqualTo: userEmail)
+          .where('userID', isEqualTo: token)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;

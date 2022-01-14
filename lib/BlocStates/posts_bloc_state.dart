@@ -70,6 +70,24 @@ class GetTimeLinePostsErrorState extends PostsState {
   });
 }
 
+class GetFavouritePostsSuccessState extends PostsState {
+  final List posts;
+  final List likes;
+  final List favourites;
+  GetFavouritePostsSuccessState({
+    required this.posts,
+    required this.likes,
+    required this.favourites,
+  });
+}
+
+class GetFavouritePostsErrorState extends PostsState {
+  final String message;
+  GetFavouritePostsErrorState({
+    required this.message,
+  });
+}
+
 class DeletePostSuccessState extends PostsState {}
 
 class DeletePostErrorState extends PostsState {

@@ -1,5 +1,8 @@
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
@@ -9,7 +12,13 @@ import 'package:autism101/BlocEvents/posts_bloc_events.dart';
 import 'package:autism101/BlocStates/posts_bloc_state.dart';
 import 'package:autism101/Constants.dart';
 import 'package:autism101/Screens/user/view_profile.dart';
+import 'package:autism101/Screens/user/profile_user.dart';
 import 'package:autism101/Screens/user/add_posts.dart';
+import 'package:autism101/Screens/most_Important_topics/areas_affected_screen.dart';
+import 'package:autism101/Screens/most_Important_topics/chalenges_screen.dart';
+import 'package:autism101/Screens/most_Important_topics/causes_screen.dart';
+import 'package:autism101/Screens/most_Important_topics/what_autism_screen.dart';
+import 'package:autism101/Screens/most_Important_topics/types_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,17 +27,33 @@ class HomePage extends StatefulWidget {
 
 double? deviceHeight;
 double? deviceWidth;
+FirebaseAuth auth = FirebaseAuth.instance;
 
 class _HomePageState extends State<HomePage> {
+  TextEditingController _commentController = TextEditingController();
   late PostsBloc postsBloc;
+  var token;
   //her where the posts of the people you follow will be in
   List imageList = [
-    'assets/images/s1.png',
-    'assets/images/s2.png',
-    'assets/images/s3.png',
+    'assets/images/whatisautism.jpg',
+    'assets/images/typesofautism.jpg',
+    'assets/images/Areasarethatmaybeaffectedbyautism2.jpg',
+    'assets/images/AutismChalengesandstrengths.jpg',
+    'assets/images/causes.jpg',
+    'assets/images/FREQUENTLYASKEDQUESTIONS.jpg',
+    'assets/images/HowAutismIsTreated.jpg',
+    'assets/images/TheCommonMisconceptionsOfAutism.jpg',
   ];
   List postsList = [];
+  List userLikes = [];
+  List userFavourites = [];
   var posts;
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -36,6 +61,12 @@ class _HomePageState extends State<HomePage> {
     postsBloc.add(
       GetTimeLinePosts(),
     );
+    Timer(Duration(seconds: 2), () async {
+      var prefs = await SharedPreferences.getInstance();
+      setState(() {
+        token = prefs.getString("TOKEN");
+      });
+    });
     super.initState();
   }
 
@@ -101,7 +132,46 @@ class _HomePageState extends State<HomePage> {
                   items: imageList.map((imageUrl) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/SchoolAccount');
+                        if (imageUrl ==
+                            'assets/images/Areasarethatmaybeaffectedbyautism2.jpg') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Areas(),
+                            ),
+                          );
+                        } else if (imageUrl ==
+                            'assets/images/AutismChalengesandstrengths.jpg') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Chalenges(),
+                            ),
+                          );
+                        } else if (imageUrl == 'assets/images/causes.jpg') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Causes(),
+                            ),
+                          );
+                        } else if (imageUrl ==
+                            'assets/images/whatisautism.jpg') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WhatIsAutism(),
+                            ),
+                          );
+                        } else if (imageUrl ==
+                            'assets/images/typesofautism.jpg') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Types(),
+                            ),
+                          );
+                        }
                       },
                       child: Container(
                         width: double.infinity,
@@ -124,43 +194,54 @@ class _HomePageState extends State<HomePage> {
                   width: 400,
                   child: Row(
                     children: [
+                      //Medical.
                       Expanded(
                         child: GestureDetector(
                           onTap: () {},
                           child: Container(
                             decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    blurRadius: 2, // soften the shadow
-                                    spreadRadius: 0.1, //extend the shadow
-                                  )
-                                ],
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                      'assets/images/s2.png',
-                                    ),
-                                    fit: BoxFit.cover)),
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 2, // soften the shadow
+                                  spreadRadius: 0.1, //extend the shadow
+                                ),
+                              ],
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  'assets/images/medical.jfif',
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                             child: Container(
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Colors.black,
-                                        Colors.transparent
-                                      ],
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                      stops: [0.1, 0.9])),
+                                borderRadius: BorderRadius.circular(10),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.black,
+                                    Colors.transparent,
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  stops: [0.1, 0.9],
+                                ),
+                              ),
                               child: Column(
                                 children: <Widget>[
-                                  Expanded(child: Container()),
-                                  Text('Medical',
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.white)),
+                                  Expanded(
+                                    child: Container(),
+                                  ),
+                                  Text(
+                                    'Medical',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                   SizedBox(
                                     height: 10,
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
@@ -168,46 +249,56 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       SizedBox(
-                        //Use of SizedBox
                         width: 10,
                       ),
+                      //Educational.
                       Expanded(
                         child: GestureDetector(
                           onTap: () {},
                           child: Container(
                             decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    blurRadius: 2, // soften the shadow
-                                    spreadRadius: 0.1, //extend the shadow
-                                  )
-                                ],
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                      'assets/images/s2.png',
-                                    ),
-                                    fit: BoxFit.cover)),
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 2, // soften the shadow
+                                  spreadRadius: 0.1, //extend the shadow
+                                ),
+                              ],
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  'assets/images/educational.png',
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                             child: Container(
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Colors.black,
-                                        Colors.transparent
-                                      ],
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                      stops: [0.1, 0.9])),
+                                borderRadius: BorderRadius.circular(10),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.black,
+                                    Colors.transparent,
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  stops: [0.1, 0.9],
+                                ),
+                              ),
                               child: Column(
                                 children: <Widget>[
-                                  Expanded(child: Container()),
-                                  Text('Educational',
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.white)),
+                                  Expanded(
+                                    child: Container(),
+                                  ),
+                                  Text(
+                                    'Educational',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                   SizedBox(
                                     height: 10,
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
@@ -215,46 +306,56 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       SizedBox(
-                        //Use of SizedBox
                         width: 10,
                       ),
+                      //Behavioural.
                       Expanded(
                         child: GestureDetector(
                           onTap: () {},
                           child: Container(
                             decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    blurRadius: 2, // soften the shadow
-                                    spreadRadius: 0.1, //extend the shadow
-                                  )
-                                ],
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                      'assets/images/s2.png',
-                                    ),
-                                    fit: BoxFit.cover)),
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 2, // soften the shadow
+                                  spreadRadius: 0.1, //extend the shadow
+                                ),
+                              ],
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  'assets/images/behavioural.jfif',
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                             child: Container(
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Colors.black,
-                                        Colors.transparent
-                                      ],
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                      stops: [0.1, 0.9])),
+                                borderRadius: BorderRadius.circular(10),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.black,
+                                    Colors.transparent,
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  stops: [0.1, 0.9],
+                                ),
+                              ),
                               child: Column(
                                 children: <Widget>[
-                                  Expanded(child: Container()),
-                                  Text('Behavioural',
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.white)),
+                                  Expanded(
+                                    child: Container(),
+                                  ),
+                                  Text(
+                                    'Behavioural',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                   SizedBox(
                                     height: 10,
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
@@ -284,7 +385,10 @@ class _HomePageState extends State<HomePage> {
                       final userLastName = post.get('userLastName');
                       final userPictureUrl = post.get('userPictureUrl');
                       final userDocId = post.get('userDocID');
+                      final userID = post.get('userToken');
                       final postImageFlag = post.get('postHasImage');
+                      final List postLikes = post.get('postLikes');
+                      final List favourites = post.get('usersWhoFavourite');
                       postImageFlag
                           ? postsList.add(
                               {
@@ -293,6 +397,7 @@ class _HomePageState extends State<HomePage> {
                                 "userName": '$userFirstName $userLastName',
                                 "userPicture": userPictureUrl,
                                 "userDocId": userDocId,
+                                "userID": userID,
                                 "postImageFlag": postImageFlag,
                               },
                             )
@@ -302,9 +407,16 @@ class _HomePageState extends State<HomePage> {
                                 "userName": '$userFirstName $userLastName',
                                 "userPicture": userPictureUrl,
                                 "userDocId": userDocId,
+                                "userID": userID,
                                 "postImageFlag": postImageFlag,
                               },
                             );
+                      postLikes.contains(token)
+                          ? userLikes.add(true)
+                          : userLikes.add(false);
+                      favourites.contains(token)
+                          ? userFavourites.add(true)
+                          : userFavourites.add(false);
                     }
                     return snapshot.hasData
                         ? Container(
@@ -350,17 +462,30 @@ class _HomePageState extends State<HomePage> {
                                                   //the name of the user
                                                   TextButton(
                                                     onPressed: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ProfileView(
-                                                            userDocId: postsList[
-                                                                    index]
-                                                                ['userDocId'],
-                                                          ),
-                                                        ),
-                                                      );
+                                                      postsList[index]
+                                                                  ['userID'] ==
+                                                              token
+                                                          ? Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        MyHomePage(),
+                                                              ),
+                                                            )
+                                                          : Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        ProfileView(
+                                                                  userDocId: postsList[
+                                                                          index]
+                                                                      [
+                                                                      'userDocId'],
+                                                                ),
+                                                              ),
+                                                            );
                                                     },
                                                     child: Text(
                                                       ('${postsList[index]['userName']}'),
@@ -375,8 +500,39 @@ class _HomePageState extends State<HomePage> {
                                                   Expanded(
                                                     child: Container(),
                                                   ),
-                                                  //Like Button.
+                                                  //Book Mark Button.
                                                   LikeButton(
+                                                    isLiked:
+                                                        userFavourites[index],
+                                                    onTap:
+                                                        (bool isLiked) async {
+                                                      if (isLiked) {
+                                                        postsBloc.add(
+                                                          UnFavouritePost(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                          ),
+                                                        );
+                                                        setState(() {
+                                                          userFavourites[
+                                                              index] = false;
+                                                        });
+                                                      } else {
+                                                        postsBloc.add(
+                                                          FavouritePost(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                          ),
+                                                        );
+                                                        setState(() {
+                                                          userFavourites[
+                                                              index] = true;
+                                                        });
+                                                      }
+                                                      return isLiked;
+                                                    },
                                                     bubblesColor: BubblesColor(
                                                       dotPrimaryColor:
                                                           Color(0xff33b5e5),
@@ -397,7 +553,7 @@ class _HomePageState extends State<HomePage> {
                                                         size: 25.0,
                                                       );
                                                     },
-                                                  )
+                                                  ),
                                                 ],
                                               ),
                                               //The text of the post
@@ -449,29 +605,72 @@ class _HomePageState extends State<HomePage> {
                                                   : Container(),
                                               //the button where you can like & save & see comments
                                               K_vSpace,
+                                              //Like Button & Comment Field
                                               Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    LikeButton(),
-                                                    Expanded(
-                                                      child: TextField(
-                                                        decoration:
-                                                            InputDecoration(
-                                                          enabledBorder:
-                                                              InputBorder.none,
-                                                          focusedBorder:
-                                                              InputBorder.none,
-                                                          hintText: "Comment",
-                                                          prefixIcon: Icon(
-                                                            Icons.comment,
-                                                            color: Colors.grey,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: <Widget>[
+                                                  LikeButton(
+                                                    isLiked: userLikes[index],
+                                                    onTap:
+                                                        (bool isLiked) async {
+                                                      if (isLiked) {
+                                                        postsBloc.add(
+                                                          UnLikePost(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                          ),
+                                                        );
+                                                        setState(() {
+                                                          userLikes[index] =
+                                                              false;
+                                                        });
+                                                      } else {
+                                                        postsBloc.add(
+                                                          LikePost(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                          ),
+                                                        );
+                                                        setState(() {
+                                                          userLikes[index] =
+                                                              true;
+                                                        });
+                                                      }
+                                                      return isLiked;
+                                                    },
+                                                  ),
+                                                  Expanded(
+                                                    child: TextField(
+                                                      controller:
+                                                          _commentController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        enabledBorder:
+                                                            InputBorder.none,
+                                                        focusedBorder:
+                                                            InputBorder.none,
+                                                        hintText: "Comment",
+                                                        prefixIcon: Icon(
+                                                          Icons.comment,
+                                                          color: Colors.grey,
+                                                          size: 25.0,
+                                                        ),
+                                                        suffixIcon: IconButton(
+                                                          onPressed: () {},
+                                                          icon: Icon(
+                                                            Icons.send,
+                                                            color: Colors.blue,
                                                             size: 25.0,
                                                           ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ]),
+                                                  ),
+                                                ],
+                                              ),
                                             ],
                                           ),
                                         ],

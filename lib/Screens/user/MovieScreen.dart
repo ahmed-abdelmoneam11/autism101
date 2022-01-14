@@ -1,16 +1,16 @@
 import 'package:autism101/Constants.dart';
 import 'package:autism101/Screens/user/home_page.dart';
 import 'package:autism101/model/Movie.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MovieScreen extends StatelessWidget {
   final Movie movie;
-  const MovieScreen({Key? key,required this.movie}) : super(key: key);
+  const MovieScreen({Key? key, required this.movie}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
@@ -18,17 +18,17 @@ class MovieScreen extends StatelessWidget {
           title: Text(
             movie.name,
             style: TextStyle(
-              color: Colors.white,
-              fontSize: 20.0,
-              fontWeight: FontWeight.w300
-            ),
+                color: Colors.white,
+                fontSize: 20.0,
+                fontWeight: FontWeight.w300),
           ),
           leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-              onPressed: () => Navigator.pop(context)),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(15.0),
@@ -48,16 +48,14 @@ class MovieScreen extends StatelessWidget {
               Container(
                 height: deviceHeight,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.black,Colors.transparent],
-                    stops: [0.3,0.9],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter
-                  )
-                ),
+                    gradient: LinearGradient(
+                        colors: [Colors.black, Colors.transparent],
+                        stops: [0.3, 0.9],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter)),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 15.0,top: deviceHeight! * 0.7),
+                padding: EdgeInsets.only(left: 15.0, top: deviceHeight! * 0.7),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -66,19 +64,24 @@ class MovieScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Watch the movie',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 25.0),
                         ),
                         RawMaterialButton(
-                            onPressed: (){
-
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Icon(CupertinoIcons.play_fill,color: Colors.white,size: 30,),
-                        ),
+                          onPressed: () async {
+                            if (await canLaunch(movie.url)) {
+                              await launch(movie.url);
+                            } else {
+                              throw 'Could not launch $movie.url';
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Icon(
+                              CupertinoIcons.play_fill,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
                           shape: CircleBorder(),
                           fillColor: Colors.blue,
                         ),
@@ -90,29 +93,31 @@ class MovieScreen extends StatelessWidget {
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 35.0,
-                          fontWeight: FontWeight.w300
-                      ),
+                          fontWeight: FontWeight.w300),
                     ),
-
                     K_vSpace,
                     Text(
                       movie.brief,
                       style: TextStyle(
                           color: Colors.grey,
                           fontSize: 20.0,
-                          fontWeight: FontWeight.w300
-                      ),
+                          fontWeight: FontWeight.w300),
                     ),
                     K_vSpace,
-                    SizedBox(width: deviceWidth! * 0.5,child: Container(color: Colors.grey,height: 0.3,),),
+                    SizedBox(
+                      width: deviceWidth! * 0.5,
+                      child: Container(
+                        color: Colors.grey,
+                        height: 0.3,
+                      ),
+                    ),
                     K_vSpace,
                     Text(
                       'Age rate',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 35.0,
-                          fontWeight: FontWeight.w300
-                      ),
+                          fontWeight: FontWeight.w300),
                     ),
                     K_vSpace,
                     Text(
@@ -120,19 +125,23 @@ class MovieScreen extends StatelessWidget {
                       style: TextStyle(
                           color: Colors.grey,
                           fontSize: 25.0,
-                          fontWeight: FontWeight.w300
-                      ),
+                          fontWeight: FontWeight.w300),
                     ),
                     K_vSpace,
-                    SizedBox(width: deviceWidth! * 0.5,child: Container(color: Colors.grey,height: 0.3,),),
+                    SizedBox(
+                      width: deviceWidth! * 0.5,
+                      child: Container(
+                        color: Colors.grey,
+                        height: 0.3,
+                      ),
+                    ),
                     K_vSpace,
                     Text(
                       'Actors',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 35.0,
-                          fontWeight: FontWeight.w300
-                      ),
+                          fontWeight: FontWeight.w300),
                     ),
                     K_vSpace,
                     Text(
@@ -140,8 +149,7 @@ class MovieScreen extends StatelessWidget {
                       style: TextStyle(
                           color: Colors.grey,
                           fontSize: 25.0,
-                          fontWeight: FontWeight.w300
-                      ),
+                          fontWeight: FontWeight.w300),
                     ),
                     K_vSpace
                   ],

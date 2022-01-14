@@ -1,7 +1,11 @@
 // ignore_for_file: must_be_immutable, deprecated_member_use
 // import 'package:autism101/model/posts.dart';
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:like_button/like_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/profile_bloc.dart';
 import 'package:autism101/BlocEvents/profile_bloc_events.dart';
@@ -14,19 +18,6 @@ import 'package:autism101/Screens/user/edit_post_screen.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
 // import 'package:provider/provider.dart';
 import 'add_posts.dart';
-
-class MyProfile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-          primaryColor: Colors.orange,
-          canvasColor: Color.fromRGBO(255, 238, 219, 1)),
-      debugShowCheckedModeBanner: false,
-      home: MyHomePage(),
-    );
-  }
-}
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -42,10 +33,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String profilePictureUrl =
       'https://firebasestorage.googleapis.com/v0/b/autism101-4d85b.appspot.com/o/demoUserImage.jpg?alt=media&token=1bbf3bd7-017a-4299-becb-8228a29d796e';
   List postsList = [];
+  List userLikes = [];
+  List userFavourites = [];
   var postsCount = 0;
   var followingCount = 0;
   var followersCount = 0;
   var posts;
+  var token;
 
   @override
   void initState() {
@@ -57,6 +51,12 @@ class _MyHomePageState extends State<MyHomePage> {
     postsBloc.add(
       GetUserPosts(),
     );
+    Timer(Duration(seconds: 1), () async {
+      var prefs = await SharedPreferences.getInstance();
+      setState(() {
+        token = prefs.getString("TOKEN");
+      });
+    });
     super.initState();
   }
 
@@ -75,12 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
             size: 30.0,
           ),
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(),
-              ),
-            );
+            Navigator.pop(context);
           },
         ),
       ),
@@ -370,6 +365,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           final postContent = post.get('post');
                           final postImageUrl = post.get('postImageUrl');
                           final postImageFlag = post.get('postHasImage');
+                          final List postLikes = post.get('postLikes');
+                          final List favourites = post.get('usersWhoFavourite');
                           postImageFlag
                               ? postsList.add(
                                   {
@@ -384,6 +381,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                     "postImageFlag": postImageFlag,
                                   },
                                 );
+                          postLikes.contains(token)
+                              ? userLikes.add(true)
+                              : userLikes.add(false);
+                          favourites.contains(token)
+                              ? userFavourites.add(true)
+                              : userFavourites.add(false);
                         }
                         return snapshot.hasData
                             ? Container(
@@ -406,6 +409,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                         child: Column(
                                           children: [
+                                            SizedBox(
+                                              height: 10.0,
+                                            ),
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceAround,
@@ -477,7 +483,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                           icon: new Icon(
                                                             Icons.edit,
                                                             size: 18.0,
-                                                            color: Colors.blue,
+                                                            color: Colors.black,
                                                           ),
                                                           onPressed: () {
                                                             Navigator.push(
@@ -534,30 +540,96 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 : Container(),
                                             //like & save & show comment button
                                             Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children: <Widget>[
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Icons.favorite,
-                                                      color: Colors.red,
-                                                    ),
-                                                    onPressed: () {},
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: <Widget>[
+                                                //Like Button.
+                                                LikeButton(
+                                                  isLiked: userLikes[index],
+                                                  onTap: (bool isLiked) async {
+                                                    if (isLiked) {
+                                                      postsBloc.add(
+                                                        UnLikePost(
+                                                          post: postsList[index]
+                                                              ['post'],
+                                                        ),
+                                                      );
+                                                      setState(() {
+                                                        userLikes[index] =
+                                                            false;
+                                                      });
+                                                    } else {
+                                                      postsBloc.add(
+                                                        LikePost(
+                                                          post: postsList[index]
+                                                              ['post'],
+                                                        ),
+                                                      );
+                                                      setState(() {
+                                                        userLikes[index] = true;
+                                                      });
+                                                    }
+                                                    return isLiked;
+                                                  },
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(
+                                                    Icons.comment,
                                                   ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Icons.comment,
-                                                    ),
-                                                    onPressed: () {},
+                                                  onPressed: () {},
+                                                ),
+                                                //Save Button.
+                                                LikeButton(
+                                                  isLiked:
+                                                      userFavourites[index],
+                                                  onTap: (bool isLiked) async {
+                                                    if (isLiked) {
+                                                      postsBloc.add(
+                                                        UnFavouritePost(
+                                                          post: postsList[index]
+                                                              ['post'],
+                                                        ),
+                                                      );
+                                                      setState(() {
+                                                        userFavourites[index] =
+                                                            false;
+                                                      });
+                                                    } else {
+                                                      postsBloc.add(
+                                                        FavouritePost(
+                                                          post: postsList[index]
+                                                              ['post'],
+                                                        ),
+                                                      );
+                                                      setState(() {
+                                                        userFavourites[index] =
+                                                            true;
+                                                      });
+                                                    }
+                                                    return isLiked;
+                                                  },
+                                                  bubblesColor: BubblesColor(
+                                                    dotPrimaryColor:
+                                                        Color(0xff33b5e5),
+                                                    dotSecondaryColor:
+                                                        Color(0xff0099cc),
                                                   ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Icons.label_important,
-                                                    ),
-                                                    onPressed: () {},
-                                                  ),
-                                                ]),
+                                                  likeBuilder: (bool isLiked) {
+                                                    return Icon(
+                                                      isLiked
+                                                          ? CupertinoIcons
+                                                              .bookmark_fill
+                                                          : CupertinoIcons
+                                                              .bookmark,
+                                                      color: isLiked
+                                                          ? Color(0xffFFC900)
+                                                          : Colors.black,
+                                                      size: 25.0,
+                                                    );
+                                                  },
+                                                ),
+                                              ],
+                                            ),
                                             //write comment field
                                             SizedBox(
                                               width: 300,
