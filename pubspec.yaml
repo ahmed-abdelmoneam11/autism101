@@ -87,10 +87,11 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Segoe UI
+    - family: Futura
       fonts:
-        - asset: assets/fonts/Segoe UI.ttf
-        - asset: assets/fonts/Segoe UI Bold.ttf
+        - asset: assets/fonts/FuturaCyrillicBold.ttf
+        - asset: assets/fonts/FuturaCyrillicExtraBold.ttf
+        - asset: assets/fonts/FuturaCyrillicHeavy.ttf
           weight: 900
   #   - family: Trajan Pro
   #     fonts:

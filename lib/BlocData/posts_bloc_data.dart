@@ -241,60 +241,65 @@ class PostsApi {
     }
   }
 
-  // getFavouritePosts() async {
-  //   List favouritePosts = [];
-  //   List favouritePostsLikes = [];
-  //   List favourites = [];
-  //   try {
-  //     var userID = auth.currentUser!.uid;
-  //     //Getting Current user posts.
-  //     var userQueryResult = await firestore
-  //         .collection('users')
-  //         .where('userID', isEqualTo: userID)
-  //         .limit(1)
-  //         .get();
-  //     var userDocId = userQueryResult.docs.first.id;
-  //     var userData = await firestore.collection('users').doc(userDocId).get();
-  //     List userFavourites = userData['favourites'];
-  //     for (int i = 0; i < userFavourites.length; i++) {
-  //       var postData =
-  //           await firestore.collection('posts').doc(userFavourites[i]).get();
-  //       postData['postHasImage']
-  //           ? favouritePosts.add({
-  //               "post": postData['post'],
-  //               "postImage": postData['postImageUrl'],
-  //               "userName":
-  //                   "${postData['userFirstName']} ${postData['userLastName']}",
-  //               "userPicture": postData['userPictureUrl'],
-  //               "userDocId": postData['userDocID'],
-  //               "userID": postData['userID'],
-  //               "postImageFlag": postData['postHasImage'],
-  //             })
-  //           : favouritePosts.add({
-  //               "post": postData['post'],
-  //               "userName":
-  //                   "${postData['userFirstName']} ${postData['userLastName']}",
-  //               "userPicture": postData['userPictureUrl'],
-  //               "userDocId": postData['userDocID'],
-  //               "userID": postData['userID'],
-  //               "postImageFlag": postData['postHasImage'],
-  //             });
-  //       favouritePostsLikes.addAll(postData['postLikes']);
-  //       favourites.addAll(postData['usersWhoFavourite']);
-  //     }
-  //     return {
-  //       "code": 200,
-  //       "data": favouritePosts,
-  //       "likes": favouritePostsLikes,
-  //       "favourites": favourites,
-  //     };
-  //   } on Exception catch (e) {
-  //     return {
-  //       "code": 400,
-  //       "message": e.toString(),
-  //     };
-  //   }
-  // }
+  getFavouritePosts() async {
+    var prefs = await SharedPreferences.getInstance();
+    List favouritePosts = [];
+    List favouritePostsLikes = [];
+    List favourites = [];
+    try {
+      //Getting Current user doc id.
+      var token = prefs.getString("TOKEN");
+      if (token == null) {
+        throw "User Not Found";
+      }
+      //Getting Current user posts.
+      var userQueryResult = await firestore
+          .collection('users')
+          .where('userID', isEqualTo: token)
+          .limit(1)
+          .get();
+      var userDocId = userQueryResult.docs.first.id;
+      var userData = await firestore.collection('users').doc(userDocId).get();
+      List userFavourites = userData['favourites'];
+      for (int i = 0; i < userFavourites.length; i++) {
+        var postData =
+            await firestore.collection('posts').doc(userFavourites[i]).get();
+        postData['postHasImage']
+            ? favouritePosts.add({
+                "post": postData['post'],
+                "postImage": postData['postImageUrl'],
+                "userName":
+                    "${postData['userFirstName']} ${postData['userLastName']}",
+                "userPicture": postData['userPictureUrl'],
+                "userDocId": postData['userDocID'],
+                "userID": postData['userToken'],
+                "postImageFlag": postData['postHasImage'],
+              })
+            : favouritePosts.add({
+                "post": postData['post'],
+                "userName":
+                    "${postData['userFirstName']} ${postData['userLastName']}",
+                "userPicture": postData['userPictureUrl'],
+                "userDocId": postData['userDocID'],
+                "userID": postData['userToken'],
+                "postImageFlag": postData['postHasImage'],
+              });
+        favouritePostsLikes.addAll(postData['postLikes']);
+        favourites.addAll(postData['usersWhoFavourite']);
+      }
+      return {
+        "code": 200,
+        "data": favouritePosts,
+        "likes": favouritePostsLikes,
+        "favourites": favourites,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
 
   likePost(String post) async {
     var prefs = await SharedPreferences.getInstance();

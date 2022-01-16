@@ -429,7 +429,7 @@ class _HomePageState extends State<HomePage> {
                               itemBuilder: (context, index) => Column(
                                 children: [
                                   Container(
-                                    width: 350,
+                                    width: 380,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       boxShadow: shadow,

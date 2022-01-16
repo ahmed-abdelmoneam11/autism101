@@ -1,11 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
 import 'package:autism101/Screens/LoginForm.dart';
-
-// FirebaseAuth auth = FirebaseAuth.instance;
 
 class Splash extends StatefulWidget {
   @override
@@ -13,7 +10,6 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  // var user = auth.currentUser!.email;
   var token;
   @override
   void initState() {
@@ -38,51 +34,47 @@ class _SplashState extends State<Splash> {
         );
       }
     });
-    // Timer(
-    //   Duration(seconds: 4),
-    //   () => Navigator.pushReplacement(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => user != null ? HomeScreen() : Loginform(),
-    //     ),
-    //   ),
-    // );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          color: Colors.blueGrey,
-        ),
-        Center(
-          child: Container(
-            padding: EdgeInsets.all(
-              8.0,
-            ),
-            width: 200.0,
-            height: 200.0,
-            child: Image(
-              image: AssetImage("assets/images/autismlogo.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Positioned(
-          top: 250.0,
-          left: 100.0,
-          child: Text(
-            "Autism 101",
-            style: TextStyle(
-              fontSize: 25.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+    return Scaffold(
+      backgroundColor: Colors.blueGrey,
+      body: Stack(
+        children: [
+          //Logo.
+          Positioned(
+            left: 135.0,
+            top: 230.0,
+            child: Container(
+              width: 150.0,
+              height: 150.0,
+              child: Image(
+                image: AssetImage("assets/images/autismlogo.png"),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-      ],
+          //App Name.
+          Positioned(
+            top: 450.0,
+            left: 110.0,
+            child: Container(
+              child: Text(
+                "Autism 101",
+                style: TextStyle(
+                  fontFamily: "Futura",
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

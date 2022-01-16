@@ -74,23 +74,21 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
           posts: data['data'],
         );
       }
-    }
-    // else if (event is GetFavouritePosts) {
-    //   yield PostsLodingState();
-    //   var data = await api.getFavouritePosts();
-    //   if (data['code'] == 400) {
-    //     yield GetFavouritePostsErrorState(
-    //       message: data['message'],
-    //     );
-    //   } else if (data['code'] == 200) {
-    //     yield GetFavouritePostsSuccessState(
-    //       posts: data['data'],
-    //       likes: data['likes'],
-    //       favourites: data['favourites'],
-    //     );
-    //   }
-    // }
-    else if (event is EditPostContentAndImage) {
+    } else if (event is GetFavouritePosts) {
+      yield PostsLodingState();
+      var data = await api.getFavouritePosts();
+      if (data['code'] == 400) {
+        yield GetFavouritePostsErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetFavouritePostsSuccessState(
+          posts: data['data'],
+          likes: data['likes'],
+          favourites: data['favourites'],
+        );
+      }
+    } else if (event is EditPostContentAndImage) {
       yield PostsLodingState();
       var data = await api.editPostContentAndImage(
         event.oldPost,
