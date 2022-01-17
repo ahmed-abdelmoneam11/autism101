@@ -1,6 +1,14 @@
-import 'package:autism101/Constants.dart';
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:autism101/Blocs/events_bloc.dart';
+import 'package:autism101/BlocEvents/events_bloc_events.dart';
+import 'package:autism101/BlocStates/events_bloc_state.dart';
+import 'package:autism101/Constants.dart';
+import 'package:autism101/Screens/user/event_details_screen.dart';
 
 class Events extends StatefulWidget {
   @override
@@ -8,7 +16,27 @@ class Events extends StatefulWidget {
 }
 
 class _EventsState extends State<Events> {
-  ///event Screen
+  String errorMessage = '';
+  bool isError = false;
+  List eventsList = [];
+  List joins = [];
+  List interests = [];
+  late EventsBloc eventsBloc;
+  var events;
+  var token;
+
+  @override
+  void initState() {
+    eventsBloc = BlocProvider.of<EventsBloc>(context);
+    eventsBloc.add(GetEvents());
+    Timer(Duration(seconds: 1), () async {
+      var prefs = await SharedPreferences.getInstance();
+      setState(() {
+        token = prefs.getString("TOKEN");
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,114 +44,256 @@ class _EventsState extends State<Events> {
       appBar: AppBar(
         shape: appBarShape,
         backgroundColor: Colors.white,
-        title: Text('Available Events',style: TextStyle(color: Colors.black),),
+        title: Text(
+          'Available Events',
+          style: TextStyle(
+            fontFamily: "Futura",
+            color: Colors.black,
+            fontSize: 20.0,
+          ),
+        ),
         leading: IconButton(
-            onPressed: (){
-              Navigator.pop(context);
-            }, icon: Icon(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
             Icons.arrow_back,
-            color: Colors.black
-        )),
+            color: Colors.black,
+          ),
+        ),
       ),
       backgroundColor: Colors.white,
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: shadow,
-                borderRadius: BorderRadius.all(Radius.circular(20.0)),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(15.0),
-                child: Column(
-                  children: <Widget>[
-                    Column(
-                      children: [
-                        ///the inf of the owner of the post
-                        Row(
-                          children: <Widget>[
-                            ///image of the owner of the post//////////////////////
-                            ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: Image.asset(
-                                  'assets/images/ibrahim.png',
-                                  height: 50.0,
-                                  width: 50.0,
-                                  fit: BoxFit.cover,
-                                )),
-                            ///the name of the user //////////////////
-                            TextButton(
-                              //    onPressed: (null),
-                              onPressed: () {
-
-                              },
-                              child: Text(
-                                ('Ibrahim Shawki'),
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w400),
+      body: BlocListener<EventsBloc, EventsState>(
+        listener: (context, state) {
+          if (state is GetEventsSuccessState) {
+            setState(() {
+              events = state.events;
+            });
+          } else if (state is GetEventsErrorState) {
+            setState(() {
+              isError = true;
+              errorMessage = state.message;
+            });
+          }
+        },
+        child: isError
+            ? Center(
+                child: Text(
+                  errorMessage,
+                  style: TextStyle(
+                    fontFamily: "Futura",
+                    color: Colors.black,
+                    fontSize: 25.0,
+                  ),
+                ),
+              )
+            : StreamBuilder<QuerySnapshot>(
+                stream: events,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.lightBlue,
+                        strokeWidth: 5.0,
+                      ),
+                    );
+                  }
+                  final eventsData = snapshot.data!.docs;
+                  for (var event in eventsData) {
+                    final eventName = event.get('Name');
+                    final eventImageUrl = event.get('ImageUrl');
+                    final eventLink = event.get('Facebook Link');
+                    final eventBio = event.get('Bio');
+                    final List joinsList = event.get('joinedUsers');
+                    final List interestsList = event.get('InterestedUsers');
+                    eventsList.add(
+                      {
+                        "Event Name": eventName,
+                        "Event Image": eventImageUrl,
+                        "Event Link": eventLink,
+                        "Event Bio": eventBio,
+                      },
+                    );
+                    joinsList.contains(token)
+                        ? joins.add(true)
+                        : joins.add(false);
+                    interestsList.contains(token)
+                        ? interests.add(true)
+                        : interests.add(false);
+                  }
+                  return snapshot.hasData
+                      ? ListView.builder(
+                          itemCount: snapshot.data!.size,
+                          itemBuilder: (context, index) => Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: shadow,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20.0),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(15.0),
+                                child: Column(
+                                  children: [
+                                    //Event Name.
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        //Event Name.
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EventDetails(
+                                                  eventName: eventsList[index]
+                                                      ['Event Name'],
+                                                  eventImage: eventsList[index]
+                                                      ['Event Image'],
+                                                  eventLink: eventsList[index]
+                                                      ['Event Link'],
+                                                  eventBio: eventsList[index]
+                                                      ['Event Bio'],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            ('${eventsList[index]['Event Name']}'),
+                                            style: TextStyle(
+                                              fontFamily: "Futura",
+                                              color: Colors.black,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    K_vSpace,
+                                    //Event Image.
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white30,
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(40.0),
+                                          bottomLeft: Radius.circular(40.0),
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Image.network(
+                                          '${eventsList[index]['Event Image']}',
+                                          height: 400.0,
+                                          width: 330.0,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    K_vSpace,
+                                    //Interested & Join Buttons.
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: <Widget>[
+                                        //Interested Button.
+                                        TextButton(
+                                          onPressed: () {
+                                            if (interests[index]) {
+                                              eventsBloc.add(
+                                                UnInterestEvent(
+                                                  eventName: eventsList[index]
+                                                      ['Event Name'],
+                                                ),
+                                              );
+                                              setState(() {
+                                                interests[index] = false;
+                                              });
+                                            } else {
+                                              eventsBloc.add(
+                                                InterestEvent(
+                                                  eventName: eventsList[index]
+                                                      ['Event Name'],
+                                                ),
+                                              );
+                                              setState(() {
+                                                interests[index] = true;
+                                              });
+                                            }
+                                          },
+                                          child: Text(
+                                            'Interested',
+                                            style: interests[index]
+                                                ? TextStyle(
+                                                    fontFamily: "Futura",
+                                                    color: Colors.black,
+                                                    fontSize: 16.0,
+                                                  )
+                                                : TextStyle(
+                                                    fontFamily: "Futura",
+                                                    fontSize: 16.0,
+                                                  ),
+                                          ),
+                                        ),
+                                        Container(
+                                          color: Colors.grey,
+                                          width: 0.5,
+                                          height: 50,
+                                        ),
+                                        //Join Button.
+                                        TextButton(
+                                          onPressed: () {
+                                            if (joins[index]) {
+                                              eventsBloc.add(
+                                                UnJoinEvent(
+                                                  eventName: eventsList[index]
+                                                      ['Event Name'],
+                                                ),
+                                              );
+                                              setState(() {
+                                                joins[index] = false;
+                                              });
+                                            } else {
+                                              eventsBloc.add(
+                                                JoinEvent(
+                                                  eventName: eventsList[index]
+                                                      ['Event Name'],
+                                                ),
+                                              );
+                                              setState(() {
+                                                joins[index] = true;
+                                              });
+                                            }
+                                          },
+                                          child: Text(
+                                            joins[index] ? 'Joined' : 'Join',
+                                            style: joins[index]
+                                                ? TextStyle(
+                                                    fontFamily: "Futura",
+                                                    color: Colors.black,
+                                                    fontSize: 16.0,
+                                                  )
+                                                : TextStyle(
+                                                    fontFamily: "Futura",
+                                                    fontSize: 16.0,
+                                                  ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            Expanded(child: Container()),
-                          ],
-                        ),
-                        K_vSpace,
-                        ///the image of the post
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white30,
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(40.0),
-                                bottomLeft: Radius.circular(40.0),
-                                //  Radius.circular(10)
-                              )),
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Image.asset(
-                                'assets/images/ibrahim.png',
-                                height: 400.0,
-                                width: 330.0,
-                                fit: BoxFit.cover,
-                              )),
-                        ),
-
-                        ///the button where you can like & save & see comments
-
-                        K_vSpace,
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              TextButton(
-                                  onPressed: (){
-
-                              },
-                                  child: Text('Interested',style: TextStyle(fontSize: 16.0),)
-                              ),
-                              Container(
-                                color: Colors.grey,
-                                width: 0.5,
-                                height: 50,
-                              ),
-                              TextButton(
-                                  onPressed: (){
-
-                                  },
-                                  child: Text('Join',style: TextStyle(fontSize: 16.0),)
-                              ),
-                        ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                          ),
+                        )
+                      : Container();
+                },
               ),
-            ),
-          ),
-        ],
       ),
     );
   }

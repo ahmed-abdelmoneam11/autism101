@@ -20,24 +20,24 @@ dynamic appBarShape = RoundedRectangleBorder(
     borderRadius: BorderRadius.only(
         bottomLeft: Radius.circular(15.0), bottomRight: Radius.circular(15.0)));
 
-const String MainFontFamily = "Segoe UI";
+const String MainFontFamily = "Futura";
 
 const TextStyle MostImportatnTopicsTitleStyle = TextStyle(
-  //fontFamily: MainFontFamily,
+  fontFamily: MainFontFamily,
   fontWeight: FontWeight.bold,
   color: Colors.black,
   fontSize: 21.0,
 );
 
 const TextStyle MostImportatnTopicsHeaderStyle = TextStyle(
-  //fontFamily: MainFontFamily,
+  fontFamily: MainFontFamily,
   fontWeight: FontWeight.bold,
   color: Colors.black,
   fontSize: 19.0,
 );
 
 const TextStyle MostImportatnTopicsHeaderSubStyle = TextStyle(
-  //fontFamily: MainFontFamily,
+  fontFamily: MainFontFamily,
   fontWeight: FontWeight.w700,
   color: Colors.black,
   fontSize: 18.0,
@@ -45,8 +45,15 @@ const TextStyle MostImportatnTopicsHeaderSubStyle = TextStyle(
 
 const TextStyle MostImportatnTopicsContentStyle = TextStyle(
   fontFamily: MainFontFamily,
-  fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w400,
   color: Colors.black,
+  fontSize: 18.0,
+);
+
+const TextStyle LinkStyle = TextStyle(
+  fontFamily: MainFontFamily,
+  fontWeight: FontWeight.w400,
+  color: Colors.blue,
   fontSize: 18.0,
 );
 

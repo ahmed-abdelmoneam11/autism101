@@ -45,12 +45,13 @@ class _FavoriteListState extends State<FavoriteList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        shape: appBarShape,
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.white,
-            size: 30.0,
+            color: Colors.black,
+            size: 25.0,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -58,8 +59,7 @@ class _FavoriteListState extends State<FavoriteList> {
           "Favorite List",
           style: TextStyle(
             fontFamily: "Futura",
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 25.0,
           ),
         ),
