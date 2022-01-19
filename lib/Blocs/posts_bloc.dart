@@ -84,8 +84,6 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
       } else if (data['code'] == 200) {
         yield GetFavouritePostsSuccessState(
           posts: data['data'],
-          likes: data['likes'],
-          favourites: data['favourites'],
         );
       }
     } else if (event is EditPostContentAndImage) {

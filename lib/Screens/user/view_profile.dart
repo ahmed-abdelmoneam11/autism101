@@ -268,6 +268,7 @@ class _ProfileViewState extends State<ProfileView> {
                       return Center(
                         child: CircularProgressIndicator(
                           backgroundColor: Colors.lightBlue,
+                          strokeWidth: 5.0,
                         ),
                       );
                     }
@@ -276,8 +277,8 @@ class _ProfileViewState extends State<ProfileView> {
                       final postContent = post.get('post');
                       final postImageUrl = post.get('postImageUrl');
                       final postImageFlag = post.get('postHasImage');
-                      final List postLikes = post.get('postLikes');
-                      final List favourites = post.get('usersWhoFavourite');
+                      final List postLikes = post.get('postLikesUID');
+                      final List favourites = post.get('usersWhoFavouriteUID');
                       postImageFlag
                           ? postsList.add(
                               {

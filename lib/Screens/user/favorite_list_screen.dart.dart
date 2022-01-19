@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/posts_bloc.dart';
@@ -17,13 +19,13 @@ class FavoriteList extends StatefulWidget {
 }
 
 class _FavoriteListState extends State<FavoriteList> {
+  FirebaseAuth auth = FirebaseAuth.instance;
   late PostsBloc postsBloc;
-  List posts = [];
-  List likes = [];
-  List favourites = [];
+  List postsList = [];
   List userLikes = [];
-  List userFavorites = [];
+  List userFavourites = [];
   bool isLoading = false;
+  var posts;
   var token;
 
   @override
@@ -32,12 +34,6 @@ class _FavoriteListState extends State<FavoriteList> {
     postsBloc.add(
       GetFavouritePosts(),
     );
-    Timer(Duration(seconds: 1), () async {
-      var prefs = await SharedPreferences.getInstance();
-      setState(() {
-        token = prefs.getString("TOKEN");
-      });
-    });
     super.initState();
   }
 
@@ -67,36 +63,72 @@ class _FavoriteListState extends State<FavoriteList> {
       ),
       body: BlocListener<PostsBloc, PostsState>(
         listener: (context, state) {
-          if (state is PostsLodingState) {
-            setState(() {
-              isLoading = true;
-            });
-          } else if (state is GetFavouritePostsSuccessState) {
+          if (state is GetFavouritePostsSuccessState) {
             setState(() {
               posts = state.posts;
-              likes = state.likes;
-              favourites = state.favourites;
-              isLoading = false;
             });
-            gettingUserLikes();
-            gettingUserFavorites();
           } else if (state is GetFavouritePostsErrorState) {
             setState(() {
               isLoading = false;
             });
           }
         },
-        child: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.lightBlue,
-                  strokeWidth: 5.0,
-                ),
-              )
-            : ListView.builder(
-                itemCount: posts.length,
-                itemBuilder: (context, index) => posts.isNotEmpty
-                    ? Column(
+        child: StreamBuilder<QuerySnapshot>(
+            stream: posts,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.lightBlue,
+                    strokeWidth: 5.0,
+                  ),
+                );
+              }
+              final postsData = snapshot.data!.docs;
+              for (var post in postsData) {
+                final postContent = post.get('post');
+                final postImageUrl = post.get('postImageUrl');
+                final userFirstName = post.get('userFirstName');
+                final userLastName = post.get('userLastName');
+                final userPictureUrl = post.get('userPictureUrl');
+                final userDocId = post.get('userDocID');
+                final userID = post.get('userToken');
+                final postImageFlag = post.get('postHasImage');
+                final List postLikes = post.get('postLikes');
+                final List favourites = post.get('usersWhoFavourite');
+                postImageFlag
+                    ? postsList.add(
+                        {
+                          "post": postContent,
+                          "postImage": postImageUrl,
+                          "userName": '$userFirstName $userLastName',
+                          "userPicture": userPictureUrl,
+                          "userDocId": userDocId,
+                          "userID": userID,
+                          "postImageFlag": postImageFlag,
+                        },
+                      )
+                    : postsList.add(
+                        {
+                          "post": postContent,
+                          "userName": '$userFirstName $userLastName',
+                          "userPicture": userPictureUrl,
+                          "userDocId": userDocId,
+                          "userID": userID,
+                          "postImageFlag": postImageFlag,
+                        },
+                      );
+                postLikes.contains(auth.currentUser!.uid)
+                    ? userLikes.add(true)
+                    : userLikes.add(false);
+                favourites.contains(auth.currentUser!.uid)
+                    ? userFavourites.add(true)
+                    : userFavourites.add(false);
+              }
+              return snapshot.hasData
+                  ? ListView.builder(
+                      itemCount: snapshot.data!.size,
+                      itemBuilder: (context, index) => Column(
                         children: [
                           SizedBox(
                             height: 15.0,
@@ -121,7 +153,7 @@ class _FavoriteListState extends State<FavoriteList> {
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(50),
                                         child: Image.network(
-                                          posts[index]['userPicture'],
+                                          postsList[index]['userPicture'],
                                           height: 50.0,
                                           width: 50.0,
                                           fit: BoxFit.cover,
@@ -150,7 +182,7 @@ class _FavoriteListState extends State<FavoriteList> {
                                           //       );
                                         },
                                         child: Text(
-                                          ('${posts[index]['userName']}'),
+                                          ('${postsList[index]['userName']}'),
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
@@ -163,25 +195,25 @@ class _FavoriteListState extends State<FavoriteList> {
                                       ),
                                       //Book Mark Button.
                                       LikeButton(
-                                        isLiked: userFavorites[index],
+                                        isLiked: userFavourites[index],
                                         onTap: (bool isLiked) async {
                                           if (isLiked) {
                                             postsBloc.add(
                                               UnFavouritePost(
-                                                post: posts[index]['post'],
+                                                post: postsList[index]['post'],
                                               ),
                                             );
                                             setState(() {
-                                              userFavorites[index] = false;
+                                              userFavourites[index] = false;
                                             });
                                           } else {
                                             postsBloc.add(
                                               FavouritePost(
-                                                post: posts[index]['post'],
+                                                post: postsList[index]['post'],
                                               ),
                                             );
                                             setState(() {
-                                              userFavorites[index] = true;
+                                              userFavourites[index] = true;
                                             });
                                           }
                                           return isLiked;
@@ -214,7 +246,7 @@ class _FavoriteListState extends State<FavoriteList> {
                                           MainAxisAlignment.start,
                                       children: [
                                         Text(
-                                          '${posts[index]['post']}',
+                                          '${postsList[index]['post']}',
                                           style: TextStyle(
                                             fontSize: 20,
                                           ),
@@ -223,7 +255,7 @@ class _FavoriteListState extends State<FavoriteList> {
                                     ),
                                   ),
                                   //the image of the post
-                                  posts[index]['postImageFlag']
+                                  postsList[index]['postImageFlag']
                                       ? Container(
                                           decoration: BoxDecoration(
                                             color: Colors.white30,
@@ -237,7 +269,7 @@ class _FavoriteListState extends State<FavoriteList> {
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                               child: Image.network(
-                                                posts[index]['postImage'],
+                                                postsList[index]['postImage'],
                                                 height: 400.0,
                                                 width: 330.0,
                                                 fit: BoxFit.cover,
@@ -256,7 +288,7 @@ class _FavoriteListState extends State<FavoriteList> {
                                           if (isLiked) {
                                             postsBloc.add(
                                               UnLikePost(
-                                                post: posts[index]['post'],
+                                                post: postsList[index]['post'],
                                               ),
                                             );
                                             setState(() {
@@ -265,7 +297,7 @@ class _FavoriteListState extends State<FavoriteList> {
                                           } else {
                                             postsBloc.add(
                                               LikePost(
-                                                post: posts[index]['post'],
+                                                post: postsList[index]['post'],
                                               ),
                                             );
                                             setState(() {
@@ -306,67 +338,61 @@ class _FavoriteListState extends State<FavoriteList> {
                             ),
                           ),
                         ],
-                      )
-                    : Center(
-                        child: Text(
-                          "No Posts Available !",
-                          style: TextStyle(
-                            fontFamily: "Futura",
-                            fontSize: 25.0,
-                            color: Colors.black,
-                          ),
-                        ),
                       ),
-              ),
+                    )
+                  : Center(
+                      child: Text("No Posts"),
+                    );
+            }),
       ),
     );
   }
 
-  void gettingUserLikes() {
-    Future.delayed(
-      Duration(seconds: 2),
-    );
-    if (posts.isNotEmpty) {
-      for (var i = 0; i < posts.length; i++) {
-        if (userLikes.length < posts.length) {
-          setState(() {
-            userLikes.add(false);
-          });
-        }
-        if (likes.isNotEmpty) {
-          for (var j = 0; j < likes.length; j++) {
-            if (token == likes[j]) {
-              setState(() {
-                userLikes[i] = true;
-              });
-            }
-          }
-        }
-      }
-    }
-  }
+  // void gettingUserLikes() {
+  //   Future.delayed(
+  //     Duration(seconds: 2),
+  //   );
+  //   if (posts.isNotEmpty) {
+  //     for (var i = 0; i < posts.length; i++) {
+  //       if (userLikes.length < posts.length) {
+  //         setState(() {
+  //           userLikes.add(false);
+  //         });
+  //       }
+  //       if (likes.isNotEmpty) {
+  //         for (var j = 0; j < likes.length; j++) {
+  //           if (token == likes[j]) {
+  //             setState(() {
+  //               userLikes[i] = true;
+  //             });
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
-  void gettingUserFavorites() {
-    Future.delayed(
-      Duration(seconds: 2),
-    );
-    if (posts.isNotEmpty) {
-      for (var i = 0; i < posts.length; i++) {
-        if (userFavorites.length < posts.length) {
-          setState(() {
-            userFavorites.add(false);
-          });
-        }
-        if (favourites.isNotEmpty) {
-          for (var j = 0; j < favourites.length; j++) {
-            if (token == favourites[j]) {
-              setState(() {
-                userFavorites[i] = true;
-              });
-            }
-          }
-        }
-      }
-    }
-  }
+  // void gettingUserFavorites() {
+  //   Future.delayed(
+  //     Duration(seconds: 2),
+  //   );
+  //   if (posts.isNotEmpty) {
+  //     for (var i = 0; i < posts.length; i++) {
+  //       if (userFavorites.length < posts.length) {
+  //         setState(() {
+  //           userFavorites.add(false);
+  //         });
+  //       }
+  //       if (favourites.isNotEmpty) {
+  //         for (var j = 0; j < favourites.length; j++) {
+  //           if (token == favourites[j]) {
+  //             setState(() {
+  //               userFavorites[i] = true;
+  //             });
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 }

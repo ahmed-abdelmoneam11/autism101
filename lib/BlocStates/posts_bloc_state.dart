@@ -71,13 +71,9 @@ class GetTimeLinePostsErrorState extends PostsState {
 }
 
 class GetFavouritePostsSuccessState extends PostsState {
-  final List posts;
-  final List likes;
-  final List favourites;
+  final Stream<QuerySnapshot> posts;
   GetFavouritePostsSuccessState({
     required this.posts,
-    required this.likes,
-    required this.favourites,
   });
 }
 

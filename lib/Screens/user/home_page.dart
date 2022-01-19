@@ -115,6 +115,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                //Most Important Topics.
                 Text(
                   'Most Important Topics',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -184,6 +185,7 @@ class _HomePageState extends State<HomePage> {
                   }).toList(),
                 ),
                 K_vSpace,
+                //Categories.
                 Text(
                   'Categories',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
