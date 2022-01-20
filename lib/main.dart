@@ -19,6 +19,9 @@ import 'package:autism101/BlocStates/posts_bloc_state.dart';
 import 'package:autism101/Blocs/events_bloc.dart';
 import 'package:autism101/BlocData/events_bloc_data.dart';
 import 'package:autism101/BlocStates/events_bloc_state.dart';
+import 'package:autism101/Blocs/chatting_bloc.dart';
+import 'package:autism101/BlocData/chatting_bloc_data.dart';
+import 'package:autism101/BlocStates/chatting_bloc_state.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:provider/provider.dart';
@@ -80,6 +83,12 @@ void main() async {
           create: (context) => EventsBloc(
             EventsInitialState(),
             EventsApi(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => ChatBloc(
+            ChatInitialState(),
+            ChatApi(),
           ),
         ),
       ],

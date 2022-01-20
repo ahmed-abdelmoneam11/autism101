@@ -10,20 +10,10 @@ class ProfileApi {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   getProfileData() async {
-    var prefs = await SharedPreferences.getInstance();
     try {
-      // var userEmail = auth.currentUser!.email;
-      // if (userEmail == null) {
-      //   throw "User Not Found";
-      // }
-      //Getting Current user doc id.
-      var token = prefs.getString("TOKEN");
-      if (token == null) {
-        throw "User Not Found";
-      }
       var queryResult = await firestore
           .collection('users')
-          .where('userID', isEqualTo: token)
+          .where('userID', isEqualTo: auth.currentUser!.uid)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;
@@ -72,20 +62,25 @@ class ProfileApi {
 
   searchUser(String query) async {
     try {
-      var queryResult = firestore
-          .collection('users')
-          .where('firstName', isEqualTo: query)
-          .snapshots();
-      if (await queryResult.isEmpty) {
+      if (query.contains('@')) {
+        var queryResult = firestore
+            .collection('users')
+            .where('email', isEqualTo: query)
+            .snapshots();
         return {
           "code": 200,
-          "data": "No Users Matched This Name!",
+          "data": queryResult,
+        };
+      } else {
+        var queryResult = firestore
+            .collection('users')
+            .where('firstName', isEqualTo: query)
+            .snapshots();
+        return {
+          "code": 200,
+          "data": queryResult,
         };
       }
-      return {
-        "code": 200,
-        "data": queryResult,
-      };
     } on Exception catch (e) {
       return {
         "code": 400,
@@ -98,20 +93,10 @@ class ProfileApi {
     String firstName,
     String lastName,
   ) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
-      // var userEmail = auth.currentUser!.email;
-      // if (userEmail == null) {
-      //   throw "User Not Found";
-      // }
-      var token = prefs.getString("TOKEN");
-      if (token == null) {
-        throw "User Not Found";
-      }
-
       var queryResult = await firestore
           .collection('users')
-          .where('userID', isEqualTo: token)
+          .where('userID', isEqualTo: auth.currentUser!.uid)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;
@@ -137,19 +122,10 @@ class ProfileApi {
     String email,
     String password,
   ) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
-      // var userEmail = auth.currentUser!.email;
-      // if (userEmail == null) {
-      //   throw "User Not Found";
-      // }
-      var token = prefs.getString("TOKEN");
-      if (token == null) {
-        throw "User Not Found";
-      }
       var queryResult = await firestore
           .collection('users')
-          .where('userID', isEqualTo: token)
+          .where('userID', isEqualTo: auth.currentUser!.uid)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;
@@ -192,13 +168,9 @@ class ProfileApi {
   ) async {
     var prefs = await SharedPreferences.getInstance();
     try {
-      var token = prefs.getString("TOKEN");
-      if (token == null) {
-        throw "User Not Found";
-      }
       var queryResult = await firestore
           .collection('users')
-          .where('userID', isEqualTo: token)
+          .where('userID', isEqualTo: auth.currentUser!.uid)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;
@@ -264,17 +236,9 @@ class ProfileApi {
   ) async {
     try {
       var prefs = await SharedPreferences.getInstance();
-      // var userEmail = auth.currentUser!.email;
-      // if (userEmail == null) {
-      //   throw "User Not Found";
-      // }
-      var token = prefs.getString("TOKEN");
-      if (token == null) {
-        throw "User Not Found";
-      }
       var queryResult = await firestore
           .collection('users')
-          .where('userID', isEqualTo: token)
+          .where('userID', isEqualTo: auth.currentUser!.uid)
           .limit(1)
           .get();
       var docId = queryResult.docs.first.id;

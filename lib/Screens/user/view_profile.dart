@@ -1,6 +1,6 @@
-import 'package:autism101/Constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:like_button/like_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +10,8 @@ import 'package:autism101/BlocStates/profile_bloc_state.dart';
 import 'package:autism101/Blocs/posts_bloc.dart';
 import 'package:autism101/BlocEvents/posts_bloc_events.dart';
 import 'package:autism101/BlocStates/posts_bloc_state.dart';
-import 'package:like_button/like_button.dart';
+import 'package:autism101/Screens/user/chat_screen.dart';
+import 'package:autism101/Constants.dart';
 
 class ProfileView extends StatefulWidget {
   final userDocId;
@@ -256,6 +257,56 @@ class _ProfileViewState extends State<ProfileView> {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                K_vSpace,
+                //Message Button.
+                Container(
+                  height: 50.0,
+                  width: 500.0,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: shadow,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            userName: '$firstName $lastName',
+                            userImage: profilePictureUrl,
+                            userDocId: widget.userDocId,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.mail,
+                            color: Colors.blue,
+                            size: 25.0,
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Text(
+                            "Message",
+                            style: TextStyle(
+                              fontFamily: "Futura",
+                              color: Colors.blue,
+                              fontSize: 20.0,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

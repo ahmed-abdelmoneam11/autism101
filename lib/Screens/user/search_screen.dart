@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/profile_bloc.dart';
 import 'package:autism101/BlocEvents/profile_bloc_events.dart';
 import 'package:autism101/BlocStates/profile_bloc_state.dart';
 import 'package:autism101/Screens/user/view_profile.dart';
+import 'package:autism101/Screens/user/profile_user.dart';
 import 'package:autism101/flush_bar.dart';
+import 'package:autism101/Constants.dart';
 
 class Search extends StatefulWidget {
   @override
@@ -15,9 +18,11 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
+  FirebaseAuth auth = FirebaseAuth.instance;
   late ProfileBloc profileBloc;
   late TextEditingController _searchQueryController = TextEditingController();
   List usersList = [];
+  bool isLoading = false;
   var users;
 
   @override
@@ -37,6 +42,7 @@ class _SearchState extends State<Search> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        shape: appBarShape,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -55,7 +61,7 @@ class _SearchState extends State<Search> {
             height: 1.0,
           ),
           decoration: InputDecoration(
-            hintText: "Enter User Name...",
+            hintText: "Enter User Name Or Email...",
             border: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.transparent),
             ),
@@ -80,17 +86,9 @@ class _SearchState extends State<Search> {
       body: BlocListener<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is ProfileLodingState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: <Widget>[
-                    CircularProgressIndicator(),
-                    Text("  Loading...")
-                  ],
-                ),
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            setState(() {
+              isLoading = true;
+            });
           } else if (state is SearchUsersErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -100,83 +98,117 @@ class _SearchState extends State<Search> {
                 behavior: SnackBarBehavior.floating,
               ),
             );
+            setState(() {
+              isLoading = false;
+            });
           } else if (state is SearchUsersSuccessState) {
             setState(() {
               users = state.users;
+              isLoading = false;
             });
           }
         },
-        child: StreamBuilder<QuerySnapshot>(
-          stream: users,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
+        child: isLoading
+            ? Center(
                 child: CircularProgressIndicator(
                   backgroundColor: Colors.white,
+                  strokeWidth: 3.0,
                 ),
-              );
-            }
-            final usersData = snapshot.data!.docs;
-            for (var user in usersData) {
-              final userFirstName = user.get('firstName');
-              final userLastName = user.get('lastName');
-              final userPictureUrl = user.get('ProfilePicture');
-              final userDocId = user.id;
-
-              usersList.add(
-                {
-                  "userName": '$userFirstName $userLastName',
-                  "ProfilePicture": userPictureUrl,
-                  "userDocId": userDocId,
-                },
-              );
-            }
-            return snapshot.hasData
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.size,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        leading:
-                            //image of the owner of the post
-                            ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.network(
-                            usersList[index]['ProfilePicture'],
-                            height: 60.0,
-                            width: 60.0,
-                            fit: BoxFit.cover,
-                          ),
+              )
+            : StreamBuilder<QuerySnapshot>(
+                stream: users,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: Text(
+                        "No Recent Results",
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          height: 1.0,
                         ),
-                        title: Text(
-                          '${usersList[index]['userName']}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfileView(
-                                userDocId: usersList[index]['userDocId'],
-                              ),
-                            ),
-                          );
-                        },
                       ),
-                    ),
-                  )
-                : Center(
-                    child: Text(
-                      "No User Found That Name !",
-                    ),
-                  );
-          },
-        ),
+                    );
+                  }
+                  final usersData = snapshot.data!.docs;
+                  for (var user in usersData) {
+                    final userFirstName = user.get('firstName');
+                    final userLastName = user.get('lastName');
+                    final userPictureUrl = user.get('ProfilePicture');
+                    final userID = user.get('fireID');
+                    final userDocId = user.id;
+
+                    usersList.add(
+                      {
+                        "userName": '$userFirstName $userLastName',
+                        "ProfilePicture": userPictureUrl,
+                        "userDocId": userDocId,
+                        "userID": userID,
+                      },
+                    );
+                  }
+                  return snapshot.hasData
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: snapshot.data!.size,
+                          itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListTile(
+                              leading:
+                                  //image of the owner of the post
+                                  ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: Image.network(
+                                  usersList[index]['ProfilePicture'],
+                                  height: 60.0,
+                                  width: 60.0,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              title: Text(
+                                '${usersList[index]['userName']}',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              onTap: () {
+                                auth.currentUser!.uid ==
+                                        usersList[index]['userID']
+                                    ? Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MyHomePage(),
+                                        ),
+                                      )
+                                    : Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ProfileView(
+                                            userDocId: usersList[index]
+                                                ['userDocId'],
+                                          ),
+                                        ),
+                                      );
+                              },
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            "No Users Found !",
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              height: 1.0,
+                            ),
+                          ),
+                        );
+                },
+              ),
       ),
     );
   }

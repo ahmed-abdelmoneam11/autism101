@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
 import 'package:autism101/Screens/LoginForm.dart';
@@ -10,26 +11,23 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  FirebaseAuth auth = FirebaseAuth.instance;
   var token;
   @override
   void initState() {
-    Timer(Duration(seconds: 4), () async {
-      var prefs = await SharedPreferences.getInstance();
-      setState(() {
-        token = prefs.getString("TOKEN");
-      });
-      if (token == null) {
+    Timer(Duration(seconds: 4), () {
+      if (auth.currentUser != null) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Loginform(),
+            builder: (context) => HomeScreen(),
           ),
         );
       } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomeScreen(),
+            builder: (context) => Loginform(),
           ),
         );
       }

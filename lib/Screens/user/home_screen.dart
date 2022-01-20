@@ -9,6 +9,7 @@ import 'package:autism101/Screens/user/search_screen.dart';
 import 'home_page.dart';
 import 'menu.dart';
 import 'notification.dart';
+import 'chat_rooms_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -20,11 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget cusSearchBar = Text("Autism");
   //the bar of home & chat & notification
   List<Widget> _pages = [
-    Scaffold(
-      body: Center(
-        child: Text("Chat"),
-      ),
-    ),
+    ChatRooms(),
     HomePage(),
     MyNotification(),
   ];

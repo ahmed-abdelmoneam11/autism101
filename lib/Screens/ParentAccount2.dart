@@ -10,7 +10,7 @@ import 'package:autism101/Blocs/auth_bloc.dart';
 import 'package:autism101/BlocEvents/auth_bloc_events.dart';
 import 'package:autism101/BlocStates/auth_bloc_state.dart';
 import 'package:autism101/flush_bar.dart';
-import 'package:autism101/Screens/user/home_screen.dart';
+import 'package:autism101/Screens/user/autism_test_screens/start_test_screen.dart';
 
 class ParentAccount2 extends StatefulWidget {
   final firstName;
@@ -84,7 +84,7 @@ class _ParentAccountState extends State<ParentAccount2> {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => HomeScreen(),
+                builder: (context) => StartTest(),
               ),
               (route) => false,
             );

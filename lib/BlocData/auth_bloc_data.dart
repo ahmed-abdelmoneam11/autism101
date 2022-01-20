@@ -67,8 +67,7 @@ class AuthApi {
         "postsCount": 0,
         "followingCount": 0,
         "followersCount": 0,
-        "userID": data['idToken'],
-        // "userID": auth.currentUser!.uid,
+        "userID": auth.currentUser!.uid,
         "favourites": [],
       }).onError(
         (error, stackTrace) => throw ("Registration Failed"),
@@ -157,31 +156,11 @@ class AuthApi {
     String email,
     String password,
   ) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
-      var res = await http.post(
-        Uri.parse(
-          'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$apiKey',
-        ),
-        body: {
-          "email": email,
-          "password": password,
-        },
+      await auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
-      Map<String, dynamic> data = json.decode(res.body);
-      if (data.containsKey("error") &&
-          data['error']['message'] == 'EMAIL_NOT_FOUND') {
-        throw ("The email address or password is incorrect");
-      }
-      if (data.containsKey("error") &&
-          data['error']['message'] == 'INVALID_PASSWORD') {
-        throw ("The email address or password is incorrect");
-      }
-      if (data.containsKey("error") &&
-          data['error']['message'] == 'USER_DISABLED') {
-        throw ("User not found");
-      }
-      prefs.setString('TOKEN', data['idToken']);
       return {
         "code": 200,
       };
@@ -194,8 +173,6 @@ class AuthApi {
   }
 
   signOut() async {
-    var prefs = await SharedPreferences.getInstance();
-    prefs.remove('TOKEN');
-    auth.signOut();
+    await auth.signOut();
   }
 }
