@@ -18,25 +18,21 @@ class MyProfile extends StatelessWidget {
 }
 
 class SchoolProfile extends StatelessWidget {
-  ///profile page
-
   @override
   Widget build(BuildContext context) {
-    List<Product> prodList =
-        Provider.of<Products>(context, listen: true).productsList;
-
     return Scaffold(
       appBar: AppBar(
         shape: appBarShape,
         backgroundColor: Colors.white,
-        title: Text('Autism school - Profile',style: TextStyle(color: Colors.black),),
+        title: Text(
+          'Autism school - Profile',
+          style: TextStyle(color: Colors.black),
+        ),
         leading: IconButton(
-            onPressed: (){
+            onPressed: () {
               Navigator.pop(context);
-            }, icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black
-        )),
+            },
+            icon: Icon(Icons.arrow_back, color: Colors.black)),
       ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -171,7 +167,6 @@ class SchoolProfile extends StatelessWidget {
                           child: Text(
                             'Add event',
                           ))
-
                     ],
                   ),
                 ),
@@ -201,12 +196,11 @@ class SchoolProfile extends StatelessWidget {
                                     width: 50.0,
                                     fit: BoxFit.cover,
                                   )),
+
                               ///the name of the user //////////////////
                               TextButton(
                                 //    onPressed: (null),
-                                onPressed: () {
-
-                                },
+                                onPressed: () {},
                                 child: Text(
                                   ('Autism school'),
                                   style: TextStyle(
@@ -216,7 +210,6 @@ class SchoolProfile extends StatelessWidget {
                                 ),
                               ),
                               Expanded(child: Container()),
-
                             ],
                           ),
                           K_vSpace,
@@ -246,7 +239,6 @@ class SchoolProfile extends StatelessWidget {
                           Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
-
                                 Expanded(
                                   child: TextField(
                                     decoration: InputDecoration(
@@ -297,9 +289,7 @@ class SchoolProfile extends StatelessWidget {
                               ///the name of the user //////////////////
                               TextButton(
                                 //    onPressed: (null),
-                                onPressed: () {
-
-                                },
+                                onPressed: () {},
                                 child: Text(
                                   ('Autism school'),
                                   style: TextStyle(
@@ -309,7 +299,6 @@ class SchoolProfile extends StatelessWidget {
                                 ),
                               ),
                               Expanded(child: Container()),
-
                             ],
                           ),
                           K_vSpace,

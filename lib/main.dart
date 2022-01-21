@@ -1,4 +1,3 @@
-// import 'package:autism101/Screens/admin/admin_home.dart';
 import 'package:autism101/Screens/splash_screen.dart';
 import 'package:autism101/utils/theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +16,9 @@ import 'package:autism101/BlocStates/events_bloc_state.dart';
 import 'package:autism101/Blocs/chatting_bloc.dart';
 import 'package:autism101/BlocData/chatting_bloc_data.dart';
 import 'package:autism101/BlocStates/chatting_bloc_state.dart';
+import 'package:autism101/Blocs/admin_bloc.dart';
+import 'package:autism101/BlocData/admin_bloc_data.dart';
+import 'package:autism101/BlocStates/admin_bloc_state.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -56,6 +58,12 @@ void main() async {
             ChatApi(),
           ),
         ),
+        BlocProvider(
+          create: (context) => AdminBloc(
+            AdminInitialState(),
+            AdminApi(),
+          ),
+        ),
       ],
       child: MyApp(),
     ),
@@ -74,7 +82,6 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: myThemeData,
       home: Splash(),
-      //Admin_Home(),
     );
   }
 }

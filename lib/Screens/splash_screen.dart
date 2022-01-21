@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:autism101/Screens/admin/admin_home.dart';
+import 'package:autism101/Screens/admin/admin_home.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
 import 'package:autism101/Screens/LoginForm.dart';
 
@@ -12,21 +12,30 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   FirebaseAuth auth = FirebaseAuth.instance;
+
   @override
   void initState() {
     Timer(Duration(seconds: 8), () {
-      if (auth.currentUser != null) {
+      if (auth.currentUser != null &&
+          auth.currentUser!.email != 'autism101@admin.domain') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => HomeScreen(),
           ),
         );
+      } else if (auth.currentUser != null &&
+          auth.currentUser!.email == 'autism101@admin.domain') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AdminHome(),
+          ),
+        );
       } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            // builder: (context) => Admin_Home(),
             builder: (context) => Loginform(),
           ),
         );

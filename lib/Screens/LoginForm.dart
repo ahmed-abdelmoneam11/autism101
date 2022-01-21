@@ -11,6 +11,7 @@ import 'package:autism101/flush_bar.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
 import 'package:autism101/Screens/Register.dart';
 import 'package:autism101/Screens/find_user_screen.dart';
+import 'package:autism101/Screens/admin/admin_home.dart';
 
 class Loginform extends StatefulWidget {
   @override
@@ -62,6 +63,15 @@ class _LoginformState extends State<Loginform> {
                 ),
                 behavior: SnackBarBehavior.floating,
               ),
+            );
+          } else if (state is SignInSuccessState &&
+              _emailController.text == 'autism101@admin.domain') {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AdminHome(),
+              ),
+              (route) => false,
             );
           } else if (state is SignInSuccessState) {
             Navigator.pushAndRemoveUntil(

@@ -105,7 +105,9 @@ class _MyMenuItemsState extends State<MyMenuItems> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Movies(),
+                  builder: (context) => Movies(
+                    isAdmin: false,
+                  ),
                 ),
               );
             },
@@ -158,7 +160,9 @@ class _MyMenuItemsState extends State<MyMenuItems> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Inspiring(),
+                  builder: (context) => Inspiring(
+                    isAdmin: false,
+                  ),
                 ),
               );
             },
@@ -193,63 +197,64 @@ class _MyMenuItemsState extends State<MyMenuItems> {
       );
     } else {
       showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              elevation: 1.0,
-              title: Text(
-                "Sign Out",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 21.0,
-                  height: 1.3,
-                ),
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            elevation: 1.0,
+            title: Text(
+              "Sign Out",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 21.0,
+                height: 1.3,
               ),
-              content: Text(
-                "Are you sure? signing out will remove all Autism 101 data from this device.",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 18.0,
-                  height: 1.3,
-                ),
+            ),
+            content: Text(
+              "Are you sure? signing out will remove all Autism 101 data from this device.",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w400,
+                fontSize: 18.0,
+                height: 1.3,
               ),
-              actions: [
-                TextButton(
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18.0,
-                      height: 1.3,
-                    ),
+            ),
+            actions: [
+              TextButton(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0,
+                    height: 1.3,
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
                 ),
-                TextButton(
-                  child: Text(
-                    'Ok',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18.0,
-                      height: 1.3,
-                    ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text(
+                  'Ok',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0,
+                    height: 1.3,
                   ),
-                  onPressed: () {
-                    authBloc.add(SignOutButtonPressed());
-                    Navigator.pop(context);
-                  },
                 ),
-              ],
-            );
-          });
+                onPressed: () {
+                  authBloc.add(SignOutButtonPressed());
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 }

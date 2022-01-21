@@ -112,6 +112,9 @@ class _ChatScreenState extends State<ChatScreen> {
         child: StreamBuilder<QuerySnapshot>(
           stream: messages,
           builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Container();
+            }
             final messagesStream = snapshot.data!.docs;
             List<MessageBubble> messageBubbles = [];
             for (var msg in messagesStream) {
@@ -138,7 +141,11 @@ class _ChatScreenState extends State<ChatScreen> {
             return ListView(
               padding: EdgeInsets.symmetric(vertical: 60),
               reverse: true,
-              children: messageBubbles,
+              children: messageBubbles.isNotEmpty
+                  ? messageBubbles
+                  : [
+                      Container(),
+                    ],
             );
           },
         ),
