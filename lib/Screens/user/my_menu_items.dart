@@ -15,7 +15,6 @@ import 'package:autism101/flush_bar.dart';
 import 'Behavioral_agenda.dar.dart';
 import 'Inspiring.dart';
 import 'Movie.dart';
-// import 'MovieScreen.dart';
 
 class MyMenuItems extends StatefulWidget {
   @override
@@ -33,7 +32,6 @@ class _MyMenuItemsState extends State<MyMenuItems> {
 
   @override
   Widget build(BuildContext context) {
-    //color: Colors.black;
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is LodingState) {
@@ -167,7 +165,12 @@ class _MyMenuItemsState extends State<MyMenuItems> {
           ),
           //Logout
           ListTile(
-            title: Text('Logout'),
+            title: Text(
+              'Logout',
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
             leading: Transform.rotate(
               angle: 15.7,
               child: const Icon(Icons.login_rounded),

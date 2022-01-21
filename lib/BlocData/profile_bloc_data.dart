@@ -313,6 +313,13 @@ class ProfileApi {
         "followers": followers,
         "followersCount": followersCount + 1,
       });
+      await firestore.collection('notifications').add({
+        "userID": otherUserData['userID'],
+        "notificationTitle":
+            '${data['firstName']} ${data['lastName']} Liked Your Post',
+        "userImage": data['ProfilePicture'],
+        "timeStamp": DateTime.now(),
+      });
     } on Exception catch (e) {
       return {
         "code": 400,

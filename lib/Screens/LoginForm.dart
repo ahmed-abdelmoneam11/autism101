@@ -10,10 +10,9 @@ import 'package:autism101/BlocStates/auth_bloc_state.dart';
 import 'package:autism101/flush_bar.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
 import 'package:autism101/Screens/Register.dart';
+import 'package:autism101/Screens/find_user_screen.dart';
 
 class Loginform extends StatefulWidget {
-  const Loginform({Key? key}) : super(key: key);
-
   @override
   _LoginformState createState() => _LoginformState();
 }
@@ -136,21 +135,32 @@ class _LoginformState extends State<Loginform> {
                 ),
                 //Forgot Password Button.
                 TextButton(
-                  onPressed: () {},
-                  child:
-                      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                    Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        color: colorOFtext,
-                        decoration: TextDecoration.underline,
-                        decorationColor: colorOFtext,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FindUser(),
                       ),
-                    ),
-                    Padding(padding: EdgeInsets.only(right: 40))
-                  ]),
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Forgot Password?',
+                        style: TextStyle(
+                          color: colorOFtext,
+                          decoration: TextDecoration.underline,
+                          decorationColor: colorOFtext,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(right: 40),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(height: 20),
                 //Login Button.
@@ -164,7 +174,7 @@ class _LoginformState extends State<Loginform> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25.0)),
                     ),
-                    onPressed: signUp,
+                    onPressed: signIn,
                     child: Text(
                       'Login',
                       style: TextStyle(
@@ -213,7 +223,7 @@ class _LoginformState extends State<Loginform> {
     );
   }
 
-  void signUp() async {
+  void signIn() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       Warning().errorMessage(

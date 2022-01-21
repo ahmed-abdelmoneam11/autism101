@@ -84,6 +84,20 @@ class GetFavouritePostsErrorState extends PostsState {
   });
 }
 
+class GetNotificationsSuccessState extends PostsState {
+  final Stream<QuerySnapshot> notifications;
+  GetNotificationsSuccessState({
+    required this.notifications,
+  });
+}
+
+class GetNotificationsErrorState extends PostsState {
+  final String message;
+  GetNotificationsErrorState({
+    required this.message,
+  });
+}
+
 class DeletePostSuccessState extends PostsState {}
 
 class DeletePostErrorState extends PostsState {

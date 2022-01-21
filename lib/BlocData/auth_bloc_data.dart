@@ -175,4 +175,34 @@ class AuthApi {
   signOut() async {
     await auth.signOut();
   }
+
+  sendCode(String email) async {
+    try {
+      await auth.sendPasswordResetEmail(
+        email: email,
+      );
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  resetPassword(
+    String code,
+    String newPassword,
+  ) async {
+    try {
+      await auth.confirmPasswordReset(code: code, newPassword: newPassword);
+      return {
+        "code": 200,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
 }

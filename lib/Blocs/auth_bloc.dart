@@ -59,6 +59,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield LodingState();
       await api.signOut();
       yield SignOutSuccessState();
+    } else if (event is SendConfirmationCode) {
+      await api.sendCode(event.email);
+    } else if (event is ResetPassword) {
+      yield LodingState();
+      var data = await api.resetPassword(event.code, event.newPassword);
+      if (data['code'] == 400) {
+        yield ResetPasswordErrorState(message: data['message']);
+      } else if (data['code'] == 200) {
+        yield ResetPasswordSuccessState();
+      }
     }
   }
 }

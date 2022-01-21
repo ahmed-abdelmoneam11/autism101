@@ -15,7 +15,6 @@ class ChatRooms extends StatefulWidget {
 class _ChatRoomsState extends State<ChatRooms> {
   FirebaseAuth auth = FirebaseAuth.instance;
   late ChatBloc chatBloc;
-  bool isLoading = false;
   var chatRooms;
   List rooms = [];
 
@@ -34,7 +33,6 @@ class _ChatRoomsState extends State<ChatRooms> {
           if (state is GettingChatRoomsSuccessState) {
             setState(() {
               chatRooms = state.chatRooms;
-              isLoading = false;
             });
           } else if (state is GettingChatRoomsErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -47,96 +45,89 @@ class _ChatRoomsState extends State<ChatRooms> {
             );
           }
         },
-        child: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.white,
-                  strokeWidth: 3.0,
+        child: StreamBuilder<QuerySnapshot>(
+          stream: chatRooms,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: Text(
+                  "No Recent Chats",
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    height: 1.0,
+                  ),
                 ),
-              )
-            : StreamBuilder<QuerySnapshot>(
-                stream: chatRooms,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: Text(
-                        "No Recent Chats",
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          height: 1.0,
+              );
+            }
+            final chatRoomsData = snapshot.data!.docs;
+            for (var room in chatRoomsData) {
+              final firstUserDocID = room.get('FirstUserDocID');
+              final firstUserID = room.get('FirstUserID');
+              final firstUserName = room.get('FirstUserName');
+              final firstUserImage = room.get('FirstUserImage');
+              final secondUserDocID = room.get('SecondUserDocID');
+              final secondUserID = room.get('SecondUserID');
+              final secondUserName = room.get('SecondUserName');
+              final secondUserImage = room.get('SecondUserImage');
+              final List users = room.get('Users');
+              users.indexOf(auth.currentUser!.uid) == 0
+                  ? rooms.add({
+                      'UserDocID': secondUserDocID,
+                      'UserID': secondUserID,
+                      'UserName': secondUserName,
+                      'UserImage': secondUserImage,
+                    })
+                  : rooms.add({
+                      'UserDocID': firstUserDocID,
+                      'UserID': firstUserID,
+                      'UserName': firstUserName,
+                      'UserImage': firstUserImage,
+                    });
+            }
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: snapshot.data!.size,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  leading:
+                      //image of the owner of the post
+                      ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image.network(
+                      rooms[index]['UserImage'],
+                      height: 60.0,
+                      width: 60.0,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  title: Text(
+                    '${rooms[index]['UserName']}',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatScreen(
+                          userName: rooms[index]['UserName'],
+                          userImage: rooms[index]['UserImage'],
+                          userDocId: rooms[index]['UserDocID'],
                         ),
                       ),
                     );
-                  }
-                  final chatRoomsData = snapshot.data!.docs;
-                  for (var room in chatRoomsData) {
-                    final firstUserDocID = room.get('FirstUserDocID');
-                    final firstUserID = room.get('FirstUserID');
-                    final firstUserName = room.get('FirstUserName');
-                    final firstUserImage = room.get('FirstUserImage');
-                    final secondUserDocID = room.get('SecondUserDocID');
-                    final secondUserID = room.get('SecondUserID');
-                    final secondUserName = room.get('SecondUserName');
-                    final secondUserImage = room.get('SecondUserImage');
-                    final List users = room.get('Users');
-                    users.indexOf(auth.currentUser!.uid) == 0
-                        ? rooms.add({
-                            'UserDocID': secondUserDocID,
-                            'UserID': secondUserID,
-                            'UserName': secondUserName,
-                            'UserImage': secondUserImage,
-                          })
-                        : rooms.add({
-                            'UserDocID': firstUserDocID,
-                            'UserID': firstUserID,
-                            'UserName': firstUserName,
-                            'UserImage': firstUserImage,
-                          });
-                  }
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.size,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        leading:
-                            //image of the owner of the post
-                            ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.network(
-                            rooms[index]['UserImage'],
-                            height: 60.0,
-                            width: 60.0,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        title: Text(
-                          '${rooms[index]['UserName']}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatScreen(
-                                userName: rooms[index]['UserName'],
-                                userImage: rooms[index]['UserImage'],
-                                userDocId: rooms[index]['UserDocID'],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                },
+                  },
+                ),
               ),
+            );
+          },
+        ),
       ),
     );
   }

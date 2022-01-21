@@ -51,3 +51,17 @@ class SignInButtonPressed extends AuthEvent {
 }
 
 class SignOutButtonPressed extends AuthEvent {}
+
+class SendConfirmationCode extends AuthEvent {
+  final String email;
+  SendConfirmationCode({required this.email});
+}
+
+class ResetPassword extends AuthEvent {
+  final String code;
+  final String newPassword;
+  ResetPassword({
+    required this.code,
+    required this.newPassword,
+  });
+}

@@ -31,3 +31,10 @@ class SignInErrorState extends AuthState {
 }
 
 class SignOutSuccessState extends AuthState {}
+
+class ResetPasswordSuccessState extends AuthState {}
+
+class ResetPasswordErrorState extends AuthState {
+  final String message;
+  ResetPasswordErrorState({required this.message});
+}

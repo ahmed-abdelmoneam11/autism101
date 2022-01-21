@@ -86,6 +86,18 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
           posts: data['data'],
         );
       }
+    } else if (event is GetNotifications) {
+      yield PostsLodingState();
+      var data = await api.getFavouritePosts();
+      if (data['code'] == 400) {
+        yield GetNotificationsErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetNotificationsSuccessState(
+          notifications: data['data'],
+        );
+      }
     } else if (event is EditPostContentAndImage) {
       yield PostsLodingState();
       var data = await api.editPostContentAndImage(

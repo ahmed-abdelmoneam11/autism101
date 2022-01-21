@@ -241,6 +241,32 @@ class PostsApi {
     }
   }
 
+  getNotfications() async {
+    try {
+      //Getting Notifications.
+      var notifications = firestore
+          .collection('notifications')
+          .where('userID', isEqualTo: auth.currentUser!.uid)
+          .orderBy(
+            'timeStamp',
+            descending: true,
+          )
+          .snapshots();
+      if (await notifications.isEmpty) {
+        throw "No Notifications Available";
+      }
+      return {
+        "code": 200,
+        "data": notifications,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
   likePost(String post) async {
     try {
       //Find The Post to be deleted.
@@ -272,6 +298,20 @@ class PostsApi {
           .doc(favoritePostDocId)
           .update({
         "postLikes": likes,
+      });
+      var userQueryResult = await firestore
+          .collection('users')
+          .where('userID', isEqualTo: auth.currentUser!.uid)
+          .limit(1)
+          .get();
+      var userDocId = userQueryResult.docs.first.id;
+      var userData = await firestore.collection('users').doc(userDocId).get();
+      await firestore.collection('notifications').add({
+        "userID": postsData['userID'],
+        "notificationTitle":
+            '${userData['firstName']} ${userData['lastName']} Liked Your Post',
+        "userImage": userData['ProfilePicture'],
+        "timeStamp": DateTime.now(),
       });
     } on Exception catch (e) {
       //Return State Code & Error Message.

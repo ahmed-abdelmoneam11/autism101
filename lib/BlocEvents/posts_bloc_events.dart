@@ -37,6 +37,8 @@ class GetTimeLinePosts extends PostsEvent {}
 
 class GetFavouritePosts extends PostsEvent {}
 
+class GetNotifications extends PostsEvent {}
+
 class DeletePost extends PostsEvent {
   final String post;
   DeletePost({
