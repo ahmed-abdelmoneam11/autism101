@@ -9,7 +9,7 @@ class ChatApi {
     try {
       var firstUserQueryResult = await firestore
           .collection('users')
-          .where('fireID', isEqualTo: auth.currentUser!.uid)
+          .where('userID', isEqualTo: auth.currentUser!.uid)
           .limit(1)
           .get();
       var firstUserDocId = firstUserQueryResult.docs.first.id;
@@ -24,16 +24,16 @@ class ChatApi {
 
       await firestore.collection('chatRooms').add({
         "FirstUserDocID": firstUserDocId,
-        "FirstUserID": firstUserData['fireID'],
+        "FirstUserID": firstUserData['userID'],
         "FirstUserName": "$firstUserFirstName $firstUserLastName",
         "FirstUserImage": firstUserData['ProfilePicture'],
         "SecondUserDocID": otherUserDocID,
-        "SecondUserID": secondUserData['fireID'],
+        "SecondUserID": secondUserData['userID'],
         "SecondUserName": "$secondUserFirstName $secondUserLastName",
         "SecondUserImage": secondUserData['ProfilePicture'],
         "Users": [
-          firstUserData['fireID'],
-          secondUserData['fireID'],
+          firstUserData['userID'],
+          secondUserData['userID'],
         ],
         "TimeStamp": DateTime.now(),
       });
@@ -54,20 +54,20 @@ class ChatApi {
           await firestore.collection('users').doc(otherUserDocID).get();
       var chatRoomsQueryResult1 =
           await firestore.collection('chatRooms').where('Users', isEqualTo: [
-        secondUserData['fireID'],
+        secondUserData['userID'],
         auth.currentUser!.uid,
       ]).get();
       var chatRoomsQueryResult2 =
           await firestore.collection('chatRooms').where('Users', isEqualTo: [
         auth.currentUser!.uid,
-        secondUserData['fireID'],
+        secondUserData['userID'],
       ]).get();
       if (chatRoomsQueryResult1.docs.length != 0) {
         var chatRoomDocID = chatRoomsQueryResult1.docs.first.id;
         await firestore.collection('messages').add({
           "ChatRoomID": chatRoomDocID,
           "SenderID": auth.currentUser!.uid,
-          "ReceiverID": secondUserData['fireID'],
+          "ReceiverID": secondUserData['userID'],
           "Message": message,
           "TimeStamp": DateTime.now(),
         });
@@ -79,7 +79,7 @@ class ChatApi {
         await firestore.collection('messages').add({
           "ChatRoomID": chatRoomDocID,
           "SenderID": auth.currentUser!.uid,
-          "ReceiverID": secondUserData['fireID'],
+          "ReceiverID": secondUserData['userID'],
           "Message": message,
           "TimeStamp": DateTime.now(),
         });
@@ -125,12 +125,12 @@ class ChatApi {
       var chatRoomsQuery1 =
           await firestore.collection('chatRooms').where('Users', isEqualTo: [
         auth.currentUser!.uid,
-        otherUserData['fireID'],
+        otherUserData['userID'],
       ]).get();
 
       var chatRoomsQuery2 =
           await firestore.collection('chatRooms').where('Users', isEqualTo: [
-        otherUserData['fireID'],
+        otherUserData['userID'],
         auth.currentUser!.uid,
       ]).get();
       if (chatRoomsQuery1.docs.length != 0) {

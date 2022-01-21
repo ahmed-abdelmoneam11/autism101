@@ -73,6 +73,15 @@ class EditPostImage extends PostsEvent {
   });
 }
 
+class EditPostAddImage extends PostsEvent {
+  final String post;
+  final File postImage;
+  EditPostAddImage({
+    required this.post,
+    required this.postImage,
+  });
+}
+
 class LikePost extends PostsEvent {
   final String post;
   LikePost({

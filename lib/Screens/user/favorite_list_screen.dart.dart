@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/posts_bloc.dart';
 import 'package:autism101/BlocEvents/posts_bloc_events.dart';
@@ -92,7 +90,7 @@ class _FavoriteListState extends State<FavoriteList> {
                 final userLastName = post.get('userLastName');
                 final userPictureUrl = post.get('userPictureUrl');
                 final userDocId = post.get('userDocID');
-                final userID = post.get('userToken');
+                final userID = post.get('userID');
                 final postImageFlag = post.get('postHasImage');
                 final List postLikes = post.get('postLikes');
                 final List favourites = post.get('usersWhoFavourite');
@@ -162,24 +160,25 @@ class _FavoriteListState extends State<FavoriteList> {
                                       //the name of the user
                                       TextButton(
                                         onPressed: () {
-                                          // posts[index]['userID'] == token
-                                          //     ? Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               MyHomePage(),
-                                          //         ),
-                                          //       )
-                                          //     : Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               ProfileView(
-                                          //             userDocId: posts[index]
-                                          //                 ['userDocId'],
-                                          //           ),
-                                          //         ),
-                                          //       );
+                                          posts[index]['userID'] ==
+                                                  auth.currentUser!.uid
+                                              ? Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MyHomePage(),
+                                                  ),
+                                                )
+                                              : Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProfileView(
+                                                      userDocId: posts[index]
+                                                          ['userDocId'],
+                                                    ),
+                                                  ),
+                                                );
                                         },
                                         child: Text(
                                           ('${postsList[index]['userName']}'),

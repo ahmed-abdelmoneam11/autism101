@@ -126,6 +126,19 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
       } else if (data['code'] == 200) {
         yield EditPostImageSuccessState();
       }
+    } else if (event is EditPostAddImage) {
+      yield PostsLodingState();
+      var data = await api.editPostAddImage(
+        event.post,
+        event.postImage,
+      );
+      if (data['code'] == 400) {
+        yield EditPostAddImageErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield EditPostAddImageSuccessState();
+      }
     } else if (event is DeletePost) {
       yield PostsLodingState();
       var data = await api.deletePost(event.post);

@@ -48,6 +48,7 @@ class ProfileApi {
         "firstName": data['firstName'],
         "lastName": data['lastName'],
         "ProfilePicture": data['ProfilePicture'],
+        "followers": data['followers'],
         "postsCount": data['postsCount'],
         "followingCount": data['followingCount'],
         "followersCount": data['followersCount'],
@@ -278,6 +279,76 @@ class ProfileApi {
       if (imageUrl != null) {
         firebase_storage.FirebaseStorage.instance.refFromURL(imageUrl).delete();
       }
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  followUser(String userDocID) async {
+    try {
+      var queryResult = await firestore
+          .collection('users')
+          .where('userID', isEqualTo: auth.currentUser!.uid)
+          .limit(1)
+          .get();
+      var docId = queryResult.docs.first.id;
+      var data = await firestore.collection('users').doc(docId).get();
+      List following = data['following'];
+      int followingCount = data['followingCount'];
+      var otherUserData =
+          await firestore.collection('users').doc(userDocID).get().onError(
+                (error, stackTrace) => throw "User Not Found",
+              );
+      List followers = otherUserData['followers'];
+      int followersCount = otherUserData['followersCount'];
+      followers.add(auth.currentUser!.uid);
+      following.add(otherUserData['userID']);
+      await firestore.collection('users').doc(docId).update({
+        "following": following,
+        "followingCount": followingCount + 1,
+      });
+      await firestore.collection('users').doc(userDocID).update({
+        "followers": followers,
+        "followersCount": followersCount + 1,
+      });
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  unFollowUser(String userDocID) async {
+    try {
+      var queryResult = await firestore
+          .collection('users')
+          .where('userID', isEqualTo: auth.currentUser!.uid)
+          .limit(1)
+          .get();
+      var docId = queryResult.docs.first.id;
+      var data = await firestore.collection('users').doc(docId).get();
+      List following = data['following'];
+      int followingCount = data['followingCount'];
+      var otherUserData =
+          await firestore.collection('users').doc(userDocID).get().onError(
+                (error, stackTrace) => throw "User Not Found",
+              );
+      List followers = otherUserData['followers'];
+      int followersCount = otherUserData['followersCount'];
+      followers.remove(auth.currentUser!.uid);
+      following.remove(otherUserData['userID']);
+      await firestore.collection('users').doc(docId).update({
+        "following": following,
+        "followingCount": followingCount - 1,
+      });
+      await firestore.collection('users').doc(userDocID).update({
+        "followers": followers,
+        "followersCount": followersCount - 1,
+      });
+    } on Exception catch (e) {
       return {
         "code": 400,
         "message": e.toString(),

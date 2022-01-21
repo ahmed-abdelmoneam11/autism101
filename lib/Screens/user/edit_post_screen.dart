@@ -83,7 +83,7 @@ class _EditPostState extends State<EditPost> {
         ],
         shape: appBarShape,
         title: Text(
-          'Create post',
+          'Edit post',
           style: TextStyle(
             color: Colors.black,
           ),
@@ -284,7 +284,46 @@ class _EditPostState extends State<EditPost> {
                                   : Container(),
                             ],
                           )
-                        : Container(),
+                        : Stack(
+                            children: [
+                              hasNewImage
+                                  ? Container(
+                                      padding: EdgeInsets.all(
+                                        10.0,
+                                      ),
+                                      width: 400.0,
+                                      height: 350.0,
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: FileImage(
+                                            newImage!,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                              hasNewImage
+                                  ? Positioned(
+                                      top: 8.0,
+                                      right: 8.0,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            hasNewImage = false;
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.remove_circle,
+                                          size: 35.0,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
+                          ),
                   ],
                 ),
               ),
@@ -375,6 +414,7 @@ class _EditPostState extends State<EditPost> {
       newImage = File(pickedFile!.path);
       hasNewImage = true;
     });
+    print(hasNewImage);
   }
 
   Future deletePost() async {
@@ -469,9 +509,17 @@ class _EditPostState extends State<EditPost> {
           newPost: _postController.text,
         ),
       );
-    } else if (_postController.text == widget.post && hasNewImage) {
+    } else if (_postController.text == widget.post &&
+        widget.imageFlag == true &&
+        hasNewImage) {
       postsBloc.add(
         EditPostImage(oldPost: widget.post, newImage: newImage!),
+      );
+    } else if (_postController.text == widget.post &&
+        widget.imageFlag == false &&
+        hasNewImage) {
+      postsBloc.add(
+        EditPostAddImage(post: widget.post, postImage: newImage!),
       );
     }
   }

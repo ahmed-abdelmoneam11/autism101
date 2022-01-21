@@ -36,8 +36,6 @@ class PostsApi {
         "postHasImage": false,
         "usersWhoFavourite": [],
         "postLikes": [],
-        "usersWhoFavouriteUID": [],
-        "postLikesUID": [],
       }).onError(
         (error, stackTrace) => throw ("Failed to add new post"),
       );
@@ -101,8 +99,6 @@ class PostsApi {
         "postHasImage": true,
         "usersWhoFavourite": [],
         "postLikes": [],
-        "usersWhoFavouriteUID": [],
-        "postLikesUID": [],
       }).onError(
         (error, stackTrace) => throw ("Failed to add new post"),
       );
@@ -224,6 +220,7 @@ class PostsApi {
       //Getting Posts.
       var posts = firestore
           .collection('favoritePosts')
+          .where('usersWhoFavourite', arrayContains: auth.currentUser!.uid)
           .orderBy(
             'timeStamp',
             descending: true,
@@ -286,7 +283,6 @@ class PostsApi {
   }
 
   unLikePost(String post) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
       //Find The Post to be deleted.
       var postQueryResult = await firestore
@@ -300,13 +296,9 @@ class PostsApi {
       var postDocId = postQueryResult.docs.first.id;
       var postsData = await firestore.collection('posts').doc(postDocId).get();
       List likes = postsData['postLikes'];
-      List likesUID = postsData['postLikesUID'];
-      var token = prefs.getString("TOKEN");
-      likes.remove(token);
-      likesUID.remove(auth.currentUser!.uid);
+      likes.remove(auth.currentUser!.uid);
       await firestore.collection('posts').doc(postDocId).update({
         "postLikes": likes,
-        "postLikesUID": likesUID,
       }).onError(
         (error, stackTrace) => throw "Failed to unlike post",
       );
@@ -320,7 +312,7 @@ class PostsApi {
           .collection('favoritePosts')
           .doc(favoritePostDocId)
           .update({
-        "postLikes": likesUID,
+        "postLikes": likes,
       });
     } on Exception catch (e) {
       //Return State Code & Error Message.
@@ -332,17 +324,7 @@ class PostsApi {
   }
 
   favouritePost(String post) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
-      var token = prefs.getString("TOKEN");
-      // var queryResult = await firestore
-      //     .collection('users')
-      //     .where('userID', isEqualTo: token)
-      //     .limit(1)
-      //     .get();
-      // var docId = queryResult.docs.first.id;
-      // var userData = await firestore.collection('users').doc(docId).get();
-      // List favouritePosts = userData['favourites'];
       var postQueryResult = await firestore
           .collection('posts')
           .where('post', isEqualTo: post)
@@ -354,18 +336,15 @@ class PostsApi {
       var postDocId = postQueryResult.docs.first.id;
       var postsData = await firestore.collection('posts').doc(postDocId).get();
       List usersWhoFavourite = postsData['usersWhoFavourite'];
-      List usersWhoFavouriteUID = postsData['usersWhoFavouriteUID'];
-      usersWhoFavourite.add(token);
-      usersWhoFavouriteUID.add(auth.currentUser!.uid);
+      usersWhoFavourite.add(auth.currentUser!.uid);
       await firestore.collection('posts').doc(postDocId).update({
         "usersWhoFavourite": usersWhoFavourite,
-        "usersWhoFavouriteUID": usersWhoFavouriteUID,
       }).onError(
         (error, stackTrace) => throw "Failed to favourite post",
       );
       await firestore.collection('favoritePosts').add({
         "userDocID": postsData['userDocID'],
-        "userToken": postsData['userToken'],
+        "userID": postsData['userID'],
         "post": postsData['post'],
         "postImageUrl": postsData['postImageUrl'],
         "timeStamp": postsData['timeStamp'],
@@ -373,8 +352,8 @@ class PostsApi {
         "userLastName": postsData['userLastName'],
         "userPictureUrl": postsData['userPictureUrl'],
         "postHasImage": postsData['postHasImage'],
-        "usersWhoFavourite": usersWhoFavouriteUID,
-        "postLikes": postsData['postLikesUID'],
+        "usersWhoFavourite": usersWhoFavourite,
+        "postLikes": postsData['postLikes'],
       }).onError(
         (error, stackTrace) => throw "Failed to favourite post",
       );
@@ -388,17 +367,7 @@ class PostsApi {
   }
 
   unFavouritePost(String post) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
-      var token = prefs.getString("TOKEN");
-      // var queryResult = await firestore
-      //     .collection('users')
-      //     .where('userID', isEqualTo: token)
-      //     .limit(1)
-      //     .get();
-      // var docId = queryResult.docs.first.id;
-      // var userData = await firestore.collection('users').doc(docId).get();
-      // List favouritePosts = userData['favourites'];
       var postQueryResult = await firestore
           .collection('posts')
           .where('post', isEqualTo: post)
@@ -410,12 +379,9 @@ class PostsApi {
       var postDocId = postQueryResult.docs.first.id;
       var postsData = await firestore.collection('posts').doc(postDocId).get();
       List usersWhoFavourite = postsData['usersWhoFavourite'];
-      List usersWhoFavouriteUID = postsData['usersWhoFavouriteUID'];
-      usersWhoFavourite.remove(token);
-      usersWhoFavouriteUID.remove(auth.currentUser!.uid);
+      usersWhoFavourite.remove(auth.currentUser!.uid);
       await firestore.collection('posts').doc(postDocId).update({
         "usersWhoFavourite": usersWhoFavourite,
-        "usersWhoFavouriteUID": usersWhoFavouriteUID,
       }).onError(
         (error, stackTrace) => throw "Failed to favourite post",
       );
@@ -460,10 +426,6 @@ class PostsApi {
       var userData = await firestore.collection('users').doc(userDocId).get();
       int postsCount = userData['postsCount'];
 
-      //Deleting Post & Image.
-      await firestore.collection('posts').doc(postDocId).delete().onError(
-            (error, stackTrace) => throw "Error Deleting Post",
-          );
       if (postsData['postHasImage']) {
         await firebase_storage.FirebaseStorage.instance
             .refFromURL(postsData['postImageUrl'])
@@ -472,6 +434,11 @@ class PostsApi {
               (error, stackTrace) => throw "Error Deleting Post Image",
             );
       }
+
+      //Deleting Post & Image.
+      await firestore.collection('posts').doc(postDocId).delete().onError(
+            (error, stackTrace) => throw "Error Deleting Post",
+          );
 
       //Update posts count in user doc.
       await firestore
@@ -717,6 +684,61 @@ class PostsApi {
         "code": 400,
         "message": e.toString(),
       };
+    }
+  }
+
+  editPostAddImage(
+    String post,
+    File postImage,
+  ) async {
+    var prefs = await SharedPreferences.getInstance();
+    try {
+      var queryResult = await firestore
+          .collection('posts')
+          .where('post', isEqualTo: post)
+          .limit(1)
+          .get();
+      var docId = queryResult.docs.first.id;
+      //Uploading Post Image.
+      String fileName = Path.basename(postImage.path);
+      firebase_storage.Reference ref =
+          firebase_storage.FirebaseStorage.instance.ref().child(fileName);
+      firebase_storage.UploadTask uploadTask = ref.putFile(postImage);
+      await uploadTask.whenComplete(() => null).onError(
+            (error, stackTrace) => throw ("Failed to upload post image"),
+          );
+      String uploadedImageUrl = await ref.getDownloadURL();
+      prefs.setString("IMAGE", uploadedImageUrl);
+
+      //Adding new post.
+      await firestore.collection('posts').doc(docId).update({
+        "postImageUrl": uploadedImageUrl,
+        "postHasImage": true,
+      }).onError(
+        (error, stackTrace) => throw ("Failed to add new post"),
+      );
+      return {
+        "code": 200,
+      };
+    } on Exception catch (e) {
+      if (e.toString() == "Failed to add new post") {
+        var prefs = await SharedPreferences.getInstance();
+        var imageUrl = prefs.getString("IMAGE");
+        if (imageUrl != null) {
+          firebase_storage.FirebaseStorage.instance
+              .refFromURL(imageUrl)
+              .delete();
+        }
+        return {
+          "code": 400,
+          "message": e.toString(),
+        };
+      } else {
+        return {
+          "code": 400,
+          "message": e.toString(),
+        };
+      }
     }
   }
 }

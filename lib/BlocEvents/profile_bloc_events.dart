@@ -72,3 +72,13 @@ class UpdateProfileWithEmailAndName extends ProfileEvent {
     required this.password,
   });
 }
+
+class FollowUser extends ProfileEvent {
+  final String userDocID;
+  FollowUser({required this.userDocID});
+}
+
+class UnFollowUser extends ProfileEvent {
+  final String userDocID;
+  UnFollowUser({required this.userDocID});
+}

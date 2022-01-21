@@ -1,12 +1,9 @@
 // ignore_for_file: must_be_immutable, deprecated_member_use
-// import 'package:autism101/model/posts.dart';
-import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/profile_bloc.dart';
 import 'package:autism101/BlocEvents/profile_bloc_events.dart';
@@ -17,8 +14,6 @@ import 'package:autism101/BlocStates/posts_bloc_state.dart';
 import 'package:autism101/Screens/user/edit_profile_screen.dart';
 import 'package:autism101/Screens/user/edit_post_screen.dart';
 import 'package:autism101/Constants.dart';
-// import 'package:provider/provider.dart';
-import 'add_posts.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -42,7 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
   var followingCount = 0;
   var followersCount = 0;
   var posts;
-  var token;
 
   @override
   void initState() {
@@ -54,19 +48,11 @@ class _MyHomePageState extends State<MyHomePage> {
     postsBloc.add(
       GetUserPosts(),
     );
-    Timer(Duration(seconds: 1), () async {
-      var prefs = await SharedPreferences.getInstance();
-      setState(() {
-        token = prefs.getString("TOKEN");
-      });
-    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // List<Product> prodList =
-    //     Provider.of<Products>(context, listen: true).productsList;
     return Scaffold(
       appBar: AppBar(
         shape: appBarShape,
@@ -337,8 +323,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       final postContent = post.get('post');
                       final postImageUrl = post.get('postImageUrl');
                       final postImageFlag = post.get('postHasImage');
-                      final List postLikes = post.get('postLikesUID');
-                      final List favourites = post.get('usersWhoFavouriteUID');
+                      final List postLikes = post.get('postLikes');
+                      final List favourites = post.get('usersWhoFavourite');
                       postImageFlag
                           ? postsList.add(
                               {
@@ -350,6 +336,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           : postsList.add(
                               {
                                 "post": postContent,
+                                "image": postImageUrl,
                                 "postImageFlag": postImageFlag,
                               },
                             );
@@ -362,7 +349,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                     return snapshot.hasData
                         ? Container(
-                            height: 500.0,
+                            height: 400.0,
                             width: double.infinity,
                             child: ListView.builder(
                               shrinkWrap: true,
@@ -391,7 +378,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            50),
+                                                      50,
+                                                    ),
                                                     child: Image.network(
                                                       profilePictureUrl,
                                                       height: 50.0,
@@ -414,58 +402,95 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     child: Container(),
                                                   ),
                                                   //Book Mark Button.
-                                                  LikeButton(
-                                                    isLiked:
-                                                        userFavourites[index],
-                                                    onTap:
-                                                        (bool isLiked) async {
-                                                      if (isLiked) {
-                                                        postsBloc.add(
-                                                          UnFavouritePost(
-                                                            post:
-                                                                postsList[index]
+                                                  Row(
+                                                    children: [
+                                                      LikeButton(
+                                                        isLiked: userFavourites[
+                                                            index],
+                                                        onTap: (bool
+                                                            isLiked) async {
+                                                          if (isLiked) {
+                                                            postsBloc.add(
+                                                              UnFavouritePost(
+                                                                post: postsList[
+                                                                        index]
                                                                     ['post'],
-                                                          ),
-                                                        );
-                                                        setState(() {
-                                                          userFavourites[
-                                                              index] = false;
-                                                        });
-                                                      } else {
-                                                        postsBloc.add(
-                                                          FavouritePost(
-                                                            post:
-                                                                postsList[index]
+                                                              ),
+                                                            );
+                                                            setState(() {
+                                                              userFavourites[
+                                                                      index] =
+                                                                  false;
+                                                            });
+                                                          } else {
+                                                            postsBloc.add(
+                                                              FavouritePost(
+                                                                post: postsList[
+                                                                        index]
                                                                     ['post'],
-                                                          ),
-                                                        );
-                                                        setState(() {
-                                                          userFavourites[
-                                                              index] = true;
-                                                        });
-                                                      }
-                                                      return isLiked;
-                                                    },
-                                                    bubblesColor: BubblesColor(
-                                                      dotPrimaryColor:
-                                                          Color(0xff33b5e5),
-                                                      dotSecondaryColor:
-                                                          Color(0xff0099cc),
-                                                    ),
-                                                    likeBuilder:
-                                                        (bool isLiked) {
-                                                      return Icon(
-                                                        isLiked
-                                                            ? CupertinoIcons
-                                                                .bookmark_fill
-                                                            : CupertinoIcons
-                                                                .bookmark,
-                                                        color: isLiked
-                                                            ? Colors.blue
-                                                            : Colors.grey,
-                                                        size: 25.0,
-                                                      );
-                                                    },
+                                                              ),
+                                                            );
+                                                            setState(() {
+                                                              userFavourites[
+                                                                  index] = true;
+                                                            });
+                                                          }
+                                                          return isLiked;
+                                                        },
+                                                        bubblesColor:
+                                                            BubblesColor(
+                                                          dotPrimaryColor:
+                                                              Color(0xff33b5e5),
+                                                          dotSecondaryColor:
+                                                              Color(0xff0099cc),
+                                                        ),
+                                                        likeBuilder:
+                                                            (bool isLiked) {
+                                                          return Icon(
+                                                            isLiked
+                                                                ? CupertinoIcons
+                                                                    .bookmark_fill
+                                                                : CupertinoIcons
+                                                                    .bookmark,
+                                                            color: isLiked
+                                                                ? Colors.blue
+                                                                : Colors.grey,
+                                                            size: 25.0,
+                                                          );
+                                                        },
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5.0,
+                                                      ),
+                                                      IconButton(
+                                                        onPressed: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      EditPost(
+                                                                post: postsList[
+                                                                        index]
+                                                                    ['post'],
+                                                                imageFlag: postsList[
+                                                                        index][
+                                                                    'postImageFlag'],
+                                                                postImageUrl:
+                                                                    postsList[
+                                                                            index]
+                                                                        [
+                                                                        'image'],
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        icon: Icon(
+                                                          Icons.edit,
+                                                        ),
+                                                        color: Colors.blue,
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                               ),

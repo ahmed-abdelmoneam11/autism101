@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class EventsApi {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -23,7 +22,6 @@ class EventsApi {
   }
 
   joinEvent(String name) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
       var eventQueryResult = await firestore
           .collection('events')
@@ -37,8 +35,7 @@ class EventsApi {
       var eventsData =
           await firestore.collection('events').doc(eventDocId).get();
       List joins = eventsData['joinedUsers'];
-      var token = prefs.getString("TOKEN");
-      joins.add(token);
+      joins.add(auth.currentUser!.uid);
       await firestore
           .collection('events')
           .doc(eventDocId)
@@ -55,7 +52,6 @@ class EventsApi {
   }
 
   unJoinEvent(String name) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
       var eventQueryResult = await firestore
           .collection('events')
@@ -69,8 +65,7 @@ class EventsApi {
       var eventsData =
           await firestore.collection('events').doc(eventDocId).get();
       List joins = eventsData['joinedUsers'];
-      var token = prefs.getString("TOKEN");
-      joins.remove(token);
+      joins.remove(auth.currentUser!.uid);
       await firestore
           .collection('events')
           .doc(eventDocId)
@@ -87,7 +82,6 @@ class EventsApi {
   }
 
   interestEvent(String name) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
       var eventQueryResult = await firestore
           .collection('events')
@@ -101,8 +95,7 @@ class EventsApi {
       var eventsData =
           await firestore.collection('events').doc(eventDocId).get();
       List interests = eventsData['InterestedUsers'];
-      var token = prefs.getString("TOKEN");
-      interests.add(token);
+      interests.add(auth.currentUser!.uid);
       await firestore
           .collection('events')
           .doc(eventDocId)
@@ -119,7 +112,6 @@ class EventsApi {
   }
 
   unInterestEvent(String name) async {
-    var prefs = await SharedPreferences.getInstance();
     try {
       var eventQueryResult = await firestore
           .collection('events')
@@ -133,8 +125,7 @@ class EventsApi {
       var eventsData =
           await firestore.collection('events').doc(eventDocId).get();
       List interests = eventsData['InterestedUsers'];
-      var token = prefs.getString("TOKEN");
-      interests.remove(token);
+      interests.remove(auth.currentUser!.uid);
       await firestore
           .collection('events')
           .doc(eventDocId)

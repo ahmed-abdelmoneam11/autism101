@@ -63,29 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             actions: [
               IconButton(
-                // onPressed: () {
-                //   scaffoldKey.currentState!.showBottomSheet(
-                //     (context) => BackdropFilter(
-                //       filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                //       child: Container(
-                //         height: double.infinity,
-                //         color: Colors.transparent,
-                //         child: TextField(
-                //           decoration: InputDecoration(
-                //             enabledBorder: InputBorder.none,
-                //             focusedBorder: InputBorder.none,
-                //             hintText: "Search",
-                //             prefixIcon: Icon(
-                //               CupertinoIcons.search,
-                //               color: Colors.grey,
-                //               size: 25.0,
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   );
-                // },
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -135,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else if (state is DeletePostSuccessState ||
                       state is EditPostContentAndImageSuccessState ||
                       state is EditPostContentSuccessState ||
-                      state is EditPostImageSuccessState) {
+                      state is EditPostImageSuccessState ||
+                      state is EditPostAddImageSuccessState) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -178,11 +156,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
               ///notification screen will be call her
               BottomNavigationBarItem(
-                  icon: Icon(
-                    CupertinoIcons.bell,
-                    size: 25.0,
-                  ),
-                  label: 'Notifications')
+                icon: Icon(
+                  CupertinoIcons.bell,
+                  size: 25.0,
+                ),
+                label: 'Notifications',
+              ),
             ],
           ),
         ),

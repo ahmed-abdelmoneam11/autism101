@@ -1,4 +1,3 @@
-import 'package:autism101/Screens/user/alarm/views/homepage.dart';
 import 'package:autism101/Screens/user/event.dart';
 import 'package:autism101/Screens/user/people_youMayKnow.dart';
 import 'package:autism101/Screens/user/progress.dart';
@@ -16,7 +15,7 @@ import 'package:autism101/flush_bar.dart';
 import 'Behavioral_agenda.dar.dart';
 import 'Inspiring.dart';
 import 'Movie.dart';
-import 'MovieScreen.dart';
+// import 'MovieScreen.dart';
 
 class MyMenuItems extends StatefulWidget {
   @override
@@ -100,19 +99,6 @@ class _MyMenuItemsState extends State<MyMenuItems> {
               );
             },
             leading: const Icon(Icons.favorite_border),
-          ),
-          //Alarm Schedule
-          ListTile(
-            title: Text('Alarm Schedule '),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomePage(),
-                ),
-              );
-            },
-            leading: const Icon(Icons.alarm),
           ),
           //Movies
           ListTile(

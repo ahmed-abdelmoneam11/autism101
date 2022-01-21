@@ -4,7 +4,6 @@ import 'package:flutter/rendering.dart';
 import 'LayoutForm.dart';
 import 'package:autism101/Screens/ParentAccount.dart';
 import 'package:autism101/Screens/school/SchoolAccount.dart';
-import 'package:autism101/Screens/user/autism_test_screens/start_test_screen.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -87,8 +86,7 @@ class _RegisterState extends State<Register> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          // builder: (context) => ParentAccount(),
-                          builder: (context) => StartTest(),
+                          builder: (context) => ParentAccount(),
                         ),
                       );
                     },

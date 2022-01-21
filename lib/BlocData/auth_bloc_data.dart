@@ -43,7 +43,6 @@ class AuthApi {
           data['error']['message'] == 'MISSING_EMAIL') {
         throw ("Invalid email");
       }
-      prefs.setString('TOKEN', data['idToken']);
       await auth.signInWithEmailAndPassword(email: email, password: password);
 
       //Uploading Profile Picture.
@@ -67,8 +66,9 @@ class AuthApi {
         "postsCount": 0,
         "followingCount": 0,
         "followersCount": 0,
+        "followers": [],
+        "following": [],
         "userID": auth.currentUser!.uid,
-        "favourites": [],
       }).onError(
         (error, stackTrace) => throw ("Registration Failed"),
       );

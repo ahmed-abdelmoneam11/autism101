@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,7 +30,6 @@ FirebaseAuth auth = FirebaseAuth.instance;
 class _HomePageState extends State<HomePage> {
   TextEditingController _commentController = TextEditingController();
   late PostsBloc postsBloc;
-  var token;
   //her where the posts of the people you follow will be in
   List imageList = [
     'assets/images/whatisautism.jpg',
@@ -61,12 +58,6 @@ class _HomePageState extends State<HomePage> {
     postsBloc.add(
       GetTimeLinePosts(),
     );
-    Timer(Duration(seconds: 2), () async {
-      var prefs = await SharedPreferences.getInstance();
-      setState(() {
-        token = prefs.getString("TOKEN");
-      });
-    });
     super.initState();
   }
 
@@ -387,7 +378,7 @@ class _HomePageState extends State<HomePage> {
                       final userLastName = post.get('userLastName');
                       final userPictureUrl = post.get('userPictureUrl');
                       final userDocId = post.get('userDocID');
-                      final userID = post.get('userToken');
+                      final userID = post.get('userID');
                       final postImageFlag = post.get('postHasImage');
                       final List postLikes = post.get('postLikes');
                       final List favourites = post.get('usersWhoFavourite');
@@ -413,10 +404,10 @@ class _HomePageState extends State<HomePage> {
                                 "postImageFlag": postImageFlag,
                               },
                             );
-                      postLikes.contains(token)
+                      postLikes.contains(auth.currentUser!.uid)
                           ? userLikes.add(true)
                           : userLikes.add(false);
-                      favourites.contains(token)
+                      favourites.contains(auth.currentUser!.uid)
                           ? userFavourites.add(true)
                           : userFavourites.add(false);
                     }
@@ -466,7 +457,8 @@ class _HomePageState extends State<HomePage> {
                                                     onPressed: () {
                                                       postsList[index]
                                                                   ['userID'] ==
-                                                              token
+                                                              auth.currentUser!
+                                                                  .uid
                                                           ? Navigator.push(
                                                               context,
                                                               MaterialPageRoute(

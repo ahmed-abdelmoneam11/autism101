@@ -1,20 +1,20 @@
-import 'package:autism101/Screens/user/alarm/enums.dart';
 
-import 'package:flutter/foundation.dart';
 
-class MenuInfo extends ChangeNotifier {
-  MenuType menuType;
-  String? title;
-  String? imageSource;
+// import 'package:flutter/foundation.dart';
 
-  MenuInfo(this.menuType, {this.title, this.imageSource});
+// class MenuInfo extends ChangeNotifier {
+//   MenuType menuType;
+//   String? title;
+//   String? imageSource;
 
-  updateMenu(MenuInfo menuInfo) {
-    this.menuType = menuInfo.menuType;
-    this.title = menuInfo.title;
-    this.imageSource = menuInfo.imageSource;
+//   MenuInfo(this.menuType, {this.title, this.imageSource});
 
-//Important
-    notifyListeners();
-  }
-}
+//   updateMenu(MenuInfo menuInfo) {
+//     this.menuType = menuInfo.menuType;
+//     this.title = menuInfo.title;
+//     this.imageSource = menuInfo.imageSource;
+
+// //Important
+//     notifyListeners();
+//   }
+// }

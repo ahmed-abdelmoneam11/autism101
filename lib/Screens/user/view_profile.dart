@@ -32,6 +32,7 @@ class _ProfileViewState extends State<ProfileView> {
   List postsList = [];
   List userLikes = [];
   List userFavourites = [];
+  List userFollowers = [];
   var postsCount = 0;
   var followingCount = 0;
   var followersCount = 0;
@@ -104,6 +105,7 @@ class _ProfileViewState extends State<ProfileView> {
                   firstName = state.firstName;
                   lastName = state.lastName;
                   profilePictureUrl = state.profilePictureUrl;
+                  userFollowers = state.followers;
                   postsCount = state.postsCount;
                   followingCount = state.followingCount;
                   followersCount = state.followersCount;
@@ -181,9 +183,35 @@ class _ProfileViewState extends State<ProfileView> {
                                     ),
                                   ),
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      if (userFollowers
+                                          .contains(auth.currentUser!.uid)) {
+                                        profileBloc.add(
+                                          UnFollowUser(
+                                            userDocID: widget.userDocId,
+                                          ),
+                                        );
+                                        setState(() {
+                                          userFollowers
+                                              .remove(auth.currentUser!.uid);
+                                        });
+                                      } else {
+                                        profileBloc.add(
+                                          FollowUser(
+                                            userDocID: widget.userDocId,
+                                          ),
+                                        );
+                                        setState(() {
+                                          userFollowers
+                                              .add(auth.currentUser!.uid);
+                                        });
+                                      }
+                                    },
                                     child: Text(
-                                      "Follow",
+                                      userFollowers
+                                              .contains(auth.currentUser!.uid)
+                                          ? "Following"
+                                          : "Follow",
                                     ),
                                   ),
                                 ],

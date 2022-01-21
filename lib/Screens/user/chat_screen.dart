@@ -1,3 +1,4 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
 import 'package:toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,7 +27,6 @@ class _ChatScreenState extends State<ChatScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
   TextEditingController _message = TextEditingController();
   late ChatBloc chatBloc;
-  bool isLoading = false;
   List messagesData = [];
   var messages;
 
@@ -94,14 +94,9 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: BlocListener<ChatBloc, ChatState>(
         listener: (context, state) {
-          if (state is ChatLodingState) {
-            setState(() {
-              isLoading = true;
-            });
-          } else if (state is GettingMessagesSuccessState) {
+          if (state is GettingMessagesSuccessState) {
             setState(() {
               messages = state.messages;
-              isLoading = false;
             });
           } else if (state is GettingMessagesErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -114,46 +109,39 @@ class _ChatScreenState extends State<ChatScreen> {
             );
           }
         },
-        child: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.white,
-                  strokeWidth: 3.0,
-                ),
-              )
-            : StreamBuilder<QuerySnapshot>(
-                stream: messages,
-                builder: (context, snapshot) {
-                  final messagesStream = snapshot.data!.docs;
-                  List<MessageBubble> messageBubbles = [];
-                  for (var msg in messagesStream) {
-                    final sender = msg.get('SenderID');
-                    // final receiver = msg.get('ReceiverID');
-                    final message = msg.get('Message');
-                    final messageDocID = msg.id;
-                    if (auth.currentUser!.uid == sender) {
-                      final messageBubble = MessageBubble(
-                        messageText: message,
-                        isMe: true,
-                        messageDocID: messageDocID,
-                      );
-                      messageBubbles.add(messageBubble);
-                    } else {
-                      final messageBubble = MessageBubble(
-                        messageText: message,
-                        isMe: false,
-                        messageDocID: messageDocID,
-                      );
-                      messageBubbles.add(messageBubble);
-                    }
-                  }
-                  return ListView(
-                    padding: EdgeInsets.symmetric(vertical: 60),
-                    reverse: true,
-                    children: messageBubbles,
-                  );
-                },
-              ),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: messages,
+          builder: (context, snapshot) {
+            final messagesStream = snapshot.data!.docs;
+            List<MessageBubble> messageBubbles = [];
+            for (var msg in messagesStream) {
+              final sender = msg.get('SenderID');
+              // final receiver = msg.get('ReceiverID');
+              final message = msg.get('Message');
+              final messageDocID = msg.id;
+              if (auth.currentUser!.uid == sender) {
+                final messageBubble = MessageBubble(
+                  messageText: message,
+                  isMe: true,
+                  messageDocID: messageDocID,
+                );
+                messageBubbles.add(messageBubble);
+              } else {
+                final messageBubble = MessageBubble(
+                  messageText: message,
+                  isMe: false,
+                  messageDocID: messageDocID,
+                );
+                messageBubbles.add(messageBubble);
+              }
+            }
+            return ListView(
+              padding: EdgeInsets.symmetric(vertical: 60),
+              reverse: true,
+              children: messageBubbles,
+            );
+          },
+        ),
       ),
       bottomSheet: Padding(
         padding: EdgeInsets.only(

@@ -41,6 +41,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           firstName: data['firstName'],
           lastName: data['lastName'],
           profilePictureUrl: data['ProfilePicture'],
+          followers: data['followers'],
           postsCount: data['postsCount'],
           followingCount: data['followingCount'],
           followersCount: data['followersCount'],
@@ -109,6 +110,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       } else if (data['code'] == 200) {
         yield SearchUsersSuccessState(users: data['data']);
       }
+    } else if (event is FollowUser) {
+      await api.followUser(event.userDocID);
+    } else if (event is UnFollowUser) {
+      await api.unFollowUser(event.userDocID);
     }
   }
 }

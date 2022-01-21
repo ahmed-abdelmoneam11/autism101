@@ -31,12 +31,6 @@ class _ChatRoomsState extends State<ChatRooms> {
     return Scaffold(
       body: BlocListener<ChatBloc, ChatState>(
         listener: (context, state) {
-          // if (state is ChatLodingState) {
-          //   setState(() {
-          //     isLoading = true;
-          //   });
-          // }
-          // else
           if (state is GettingChatRoomsSuccessState) {
             setState(() {
               chatRooms = state.chatRooms;

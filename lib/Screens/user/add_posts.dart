@@ -48,58 +48,18 @@ class _AddProductState extends State<AddProduct> {
     super.initState();
   }
 
-  // Builder buildDialogItem(
-  //     BuildContext context, String text, IconData icon, ImageSource src) {
-  //   return Builder(
-  //     builder: (innerContext) => Container(
-  //       decoration: BoxDecoration(
-  //         color: Theme.of(context).primaryColor,
-  //         borderRadius: BorderRadius.circular(15),
-  //       ),
-  //       child: ListTile(
-  //         leading: Icon(icon, color: Colors.white),
-  //         title: Text(text),
-  //         onTap: () {
-  //           context.read<Products>().getImage(src);
-  //           Navigator.of(innerContext).pop();
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          // ignore: deprecated_member_use
           RaisedButton(
             textColor: Colors.black,
             child: Text(
               "Post",
             ),
             onPressed: addPost,
-            // () async {
-            //   if (titleController.text.isEmpty && _image == null) {
-            //     Toast.show("Please enter your post", context,
-            //         duration: Toast.LENGTH_LONG);
-            //   } else if (_image == null) {
-            //     Toast.show("Please select an image", context,
-            //         duration: Toast.LENGTH_LONG);
-            //   } else {
-            //       try {
-            //         value.add(
-            //           title: titleController.text,
-            //         );
-            //         await Navigator.pushReplacement(context,
-            //             MaterialPageRoute(builder: (_) => HomeScreen()));
-            //       } catch (e) {
-            //         Toast.show("Please enter a valid price", ctx,
-            //             duration: Toast.LENGTH_LONG);
-            //         print(e);
-            //       }
-            //   }
-            // },
           ),
         ],
         shape: appBarShape,
@@ -116,31 +76,6 @@ class _AddProductState extends State<AddProduct> {
             ),
             onPressed: () => Navigator.pop(context)),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     var ad = AlertDialog(
-      //       title: Text("Choose Picture from:"),
-      //       content: Container(
-      //         height: 150,
-      //         child: Column(
-      //           children: [
-      //             Divider(color: Colors.black),
-      //             buildDialogItem(context, "Camera", Icons.add_a_photo_outlined,
-      //                 ImageSource.camera),
-      //             SizedBox(height: 10),
-      //             buildDialogItem(context, "Gallery", Icons.image_outlined,
-      //                 ImageSource.gallery),
-      //           ],
-      //         ),
-      //       ),
-      //     );
-      //     showDialog(builder: (context) => ad, context: context);
-      //   },
-      //   child: Icon(
-      //     CupertinoIcons.photo_on_rectangle,
-      //     color: Colors.white,
-      //   ),
-      // ),
       body: MultiBlocListener(
         listeners: [
           BlocListener<ProfileBloc, ProfileState>(

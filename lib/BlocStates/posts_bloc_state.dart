@@ -113,3 +113,10 @@ class EditPostImageErrorState extends PostsState {
   final String message;
   EditPostImageErrorState({required this.message});
 }
+
+class EditPostAddImageSuccessState extends PostsState {}
+
+class EditPostAddImageErrorState extends PostsState {
+  final String message;
+  EditPostAddImageErrorState({required this.message});
+}
