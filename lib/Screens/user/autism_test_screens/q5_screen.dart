@@ -339,7 +339,7 @@ class _TestQ5State extends State<TestQ5> {
                     ],
                   ),
                   SizedBox(
-                    width: 100.0,
+                    width: 75.0,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,

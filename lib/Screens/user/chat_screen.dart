@@ -153,11 +153,12 @@ class _ChatScreenState extends State<ChatScreen> {
       bottomSheet: Padding(
         padding: EdgeInsets.only(
           left: 15.0,
+          right: 10.0,
         ),
         child: Row(
           children: [
             Container(
-              width: 330.0,
+              width: 300.0,
               height: 60.0,
               child: TextField(
                 style: TextStyle(
@@ -188,7 +189,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             SizedBox(
-              width: 10.0,
+              width: 15.0,
             ),
             Expanded(
               child: Row(

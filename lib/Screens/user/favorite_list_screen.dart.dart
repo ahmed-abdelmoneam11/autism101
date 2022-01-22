@@ -8,6 +8,7 @@ import 'package:autism101/Blocs/posts_bloc.dart';
 import 'package:autism101/BlocEvents/posts_bloc_events.dart';
 import 'package:autism101/BlocStates/posts_bloc_state.dart';
 import 'package:autism101/Constants.dart';
+import 'package:autism101/Screens/user/post_details_screen.dart';
 import 'package:autism101/Screens/user/view_profile.dart';
 import 'package:autism101/Screens/user/profile_user.dart';
 
@@ -24,7 +25,6 @@ class _FavoriteListState extends State<FavoriteList> {
   List userFavourites = [];
   bool isLoading = false;
   var posts;
-  var token;
 
   @override
   void initState() {
@@ -94,6 +94,7 @@ class _FavoriteListState extends State<FavoriteList> {
                 final postImageFlag = post.get('postHasImage');
                 final List postLikes = post.get('postLikes');
                 final List favourites = post.get('usersWhoFavourite');
+                final List comments = post.get('comments');
                 postImageFlag
                     ? postsList.add(
                         {
@@ -104,16 +105,23 @@ class _FavoriteListState extends State<FavoriteList> {
                           "userDocId": userDocId,
                           "userID": userID,
                           "postImageFlag": postImageFlag,
+                          "postLikes": postLikes,
+                          "postFavorites": favourites,
+                          "postComments": comments,
                         },
                       )
                     : postsList.add(
                         {
                           "post": postContent,
+                          "postImage": postImageUrl,
                           "userName": '$userFirstName $userLastName',
                           "userPicture": userPictureUrl,
                           "userDocId": userDocId,
                           "userID": userID,
                           "postImageFlag": postImageFlag,
+                          "postLikes": postLikes,
+                          "postFavorites": favourites,
+                          "postComments": comments,
                         },
                       );
                 postLikes.contains(auth.currentUser!.uid)
@@ -236,21 +244,50 @@ class _FavoriteListState extends State<FavoriteList> {
                                     ],
                                   ),
                                   //The text of the post
-                                  Container(
-                                    padding: EdgeInsets.all(
-                                      5.0,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${postsList[index]['post']}',
-                                          style: TextStyle(
-                                            fontSize: 20,
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => PostDetails(
+                                            post: postsList[index]['post'],
+                                            postImage: postsList[index]
+                                                ['postImage'],
+                                            postImageFlag: postsList[index]
+                                                ['postImageFlag'],
+                                            userName: postsList[index]
+                                                ['userName'],
+                                            userDocId: postsList[index]
+                                                ['userDocId'],
+                                            userID: postsList[index]['userID'],
+                                            userPicture: postsList[index]
+                                                ['userPicture'],
+                                            postLikes: postsList[index]
+                                                ['postLikes'],
+                                            postComments: postsList[index]
+                                                ['postComments'],
+                                            postFavorites: postsList[index]
+                                                ['postFavorites'],
                                           ),
                                         ),
-                                      ],
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(
+                                        5.0,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${postsList[index]['post']}',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   //the image of the post
@@ -346,52 +383,4 @@ class _FavoriteListState extends State<FavoriteList> {
       ),
     );
   }
-
-  // void gettingUserLikes() {
-  //   Future.delayed(
-  //     Duration(seconds: 2),
-  //   );
-  //   if (posts.isNotEmpty) {
-  //     for (var i = 0; i < posts.length; i++) {
-  //       if (userLikes.length < posts.length) {
-  //         setState(() {
-  //           userLikes.add(false);
-  //         });
-  //       }
-  //       if (likes.isNotEmpty) {
-  //         for (var j = 0; j < likes.length; j++) {
-  //           if (token == likes[j]) {
-  //             setState(() {
-  //               userLikes[i] = true;
-  //             });
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-
-  // void gettingUserFavorites() {
-  //   Future.delayed(
-  //     Duration(seconds: 2),
-  //   );
-  //   if (posts.isNotEmpty) {
-  //     for (var i = 0; i < posts.length; i++) {
-  //       if (userFavorites.length < posts.length) {
-  //         setState(() {
-  //           userFavorites.add(false);
-  //         });
-  //       }
-  //       if (favourites.isNotEmpty) {
-  //         for (var j = 0; j < favourites.length; j++) {
-  //           if (token == favourites[j]) {
-  //             setState(() {
-  //               userFavorites[i] = true;
-  //             });
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 }

@@ -36,6 +36,7 @@ class PostsApi {
         "postHasImage": false,
         "usersWhoFavourite": [],
         "postLikes": [],
+        "comments": [],
       }).onError(
         (error, stackTrace) => throw ("Failed to add new post"),
       );
@@ -99,6 +100,7 @@ class PostsApi {
         "postHasImage": true,
         "usersWhoFavourite": [],
         "postLikes": [],
+        "comments": [],
       }).onError(
         (error, stackTrace) => throw ("Failed to add new post"),
       );
@@ -394,6 +396,7 @@ class PostsApi {
         "postHasImage": postsData['postHasImage'],
         "usersWhoFavourite": usersWhoFavourite,
         "postLikes": postsData['postLikes'],
+        "comments": postsData['comments'],
       }).onError(
         (error, stackTrace) => throw "Failed to favourite post",
       );
@@ -779,6 +782,63 @@ class PostsApi {
           "message": e.toString(),
         };
       }
+    }
+  }
+
+  addComment(String post, String comment) async {
+    try {
+      var postQueryResult = await firestore
+          .collection('posts')
+          .where('post', isEqualTo: post)
+          .limit(1)
+          .get()
+          .onError(
+            (error, stackTrace) => throw "Post not found",
+          );
+      var postDocId = postQueryResult.docs.first.id;
+      var postsData = await firestore.collection('posts').doc(postDocId).get();
+      List comments = postsData['comments'];
+      var userQueryResult = await firestore
+          .collection('users')
+          .where('userID', isEqualTo: auth.currentUser!.uid)
+          .limit(1)
+          .get();
+      var userDocId = userQueryResult.docs.first.id;
+      var userData = await firestore.collection('users').doc(userDocId).get();
+      comments.add({
+        "comment": comment,
+        "userName": "${userData['firstName']} ${userData['lastName']}",
+        "userImage": userData['ProfilePicture'],
+      });
+      await firestore.collection('posts').doc(postDocId).update({
+        "comments": comments,
+      }).onError(
+        (error, stackTrace) => throw "Failed to comment",
+      );
+      var favoritePostQueryResult = await firestore
+          .collection('favoritePosts')
+          .where('post', isEqualTo: post)
+          .limit(1)
+          .get();
+      var favoritePostDocId = favoritePostQueryResult.docs.first.id;
+      await firestore
+          .collection('favoritePosts')
+          .doc(favoritePostDocId)
+          .update({
+        "comments": comments,
+      });
+      await firestore.collection('notifications').add({
+        "userID": postsData['userID'],
+        "notificationTitle":
+            '${userData['firstName']} ${userData['lastName']} Commented On Your Post',
+        "userImage": userData['ProfilePicture'],
+        "timeStamp": DateTime.now(),
+      });
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
     }
   }
 }

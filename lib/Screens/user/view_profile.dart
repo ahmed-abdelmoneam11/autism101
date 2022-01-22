@@ -10,6 +10,7 @@ import 'package:autism101/BlocStates/profile_bloc_state.dart';
 import 'package:autism101/Blocs/posts_bloc.dart';
 import 'package:autism101/BlocEvents/posts_bloc_events.dart';
 import 'package:autism101/BlocStates/posts_bloc_state.dart';
+import 'package:autism101/Screens/user/post_details_screen.dart';
 import 'package:autism101/Screens/user/chat_screen.dart';
 import 'package:autism101/Constants.dart';
 
@@ -157,12 +158,11 @@ class _ProfileViewState extends State<ProfileView> {
                           borderRadius: BorderRadius.circular(50),
                           child: Image.network(
                             profilePictureUrl,
-                            height: 90.0,
-                            width: 90.0,
+                            height: 75.0,
+                            width: 75.0,
                             fit: BoxFit.cover,
                           ),
                         ),
-                        K_hSpace,
                         K_hSpace,
                         Expanded(
                           child: Column(
@@ -170,18 +170,17 @@ class _ProfileViewState extends State<ProfileView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   //User Name.
                                   Text(
                                     ('$firstName $lastName'),
                                     style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 23,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                  K_hSpace,
                                   TextButton(
                                     onPressed: () {
                                       if (userFollowers
@@ -355,21 +354,42 @@ class _ProfileViewState extends State<ProfileView> {
                     for (var post in postsData) {
                       final postContent = post.get('post');
                       final postImageUrl = post.get('postImageUrl');
+                      final userFirstName = post.get('userFirstName');
+                      final userLastName = post.get('userLastName');
+                      final userPictureUrl = post.get('userPictureUrl');
+                      final userDocId = post.get('userDocID');
+                      final userID = post.get('userID');
                       final postImageFlag = post.get('postHasImage');
-                      final List postLikes = post.get('postLikesUID');
-                      final List favourites = post.get('usersWhoFavouriteUID');
+                      final List postLikes = post.get('postLikes');
+                      final List favourites = post.get('usersWhoFavourite');
+                      final List comments = post.get('comments');
                       postImageFlag
                           ? postsList.add(
                               {
                                 "post": postContent,
-                                "image": postImageUrl,
+                                "postImage": postImageUrl,
+                                "userName": '$userFirstName $userLastName',
+                                "userPicture": userPictureUrl,
+                                "userDocId": userDocId,
+                                "userID": userID,
                                 "postImageFlag": postImageFlag,
+                                "postLikes": postLikes,
+                                "postFavorites": favourites,
+                                "postComments": comments,
                               },
                             )
                           : postsList.add(
                               {
                                 "post": postContent,
+                                "postImage": postImageUrl,
+                                "userName": '$userFirstName $userLastName',
+                                "userPicture": userPictureUrl,
+                                "userDocId": userDocId,
+                                "userID": userID,
                                 "postImageFlag": postImageFlag,
+                                "postLikes": postLikes,
+                                "postFavorites": favourites,
+                                "postComments": comments,
                               },
                             );
                       postLikes.contains(auth.currentUser!.uid)
@@ -489,21 +509,61 @@ class _ProfileViewState extends State<ProfileView> {
                                               ),
                                               K_vSpace,
                                               //The text of the post
-                                              Container(
-                                                padding: EdgeInsets.only(
-                                                  bottom: 10.0,
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      '${postsList[index]['post']}',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PostDetails(
+                                                        post: postsList[index]
+                                                            ['post'],
+                                                        postImage:
+                                                            postsList[index]
+                                                                ['postImage'],
+                                                        postImageFlag: postsList[
+                                                                index]
+                                                            ['postImageFlag'],
+                                                        userName:
+                                                            postsList[index]
+                                                                ['userName'],
+                                                        userDocId:
+                                                            postsList[index]
+                                                                ['userDocId'],
+                                                        userID: postsList[index]
+                                                            ['userID'],
+                                                        userPicture:
+                                                            postsList[index]
+                                                                ['userPicture'],
+                                                        postLikes:
+                                                            postsList[index]
+                                                                ['postLikes'],
+                                                        postComments: postsList[
+                                                                index]
+                                                            ['postComments'],
+                                                        postFavorites: postsList[
+                                                                index]
+                                                            ['postFavorites'],
                                                       ),
                                                     ),
-                                                  ],
+                                                  );
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.only(
+                                                    bottom: 10.0,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        '${postsList[index]['post']}',
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                               //the image of the post

@@ -11,6 +11,7 @@ import 'package:autism101/BlocStates/profile_bloc_state.dart';
 import 'package:autism101/Blocs/posts_bloc.dart';
 import 'package:autism101/BlocEvents/posts_bloc_events.dart';
 import 'package:autism101/BlocStates/posts_bloc_state.dart';
+import 'package:autism101/Screens/user/post_details_screen.dart';
 import 'package:autism101/Screens/user/edit_profile_screen.dart';
 import 'package:autism101/Screens/user/edit_post_screen.dart';
 import 'package:autism101/Constants.dart';
@@ -322,22 +323,42 @@ class _MyHomePageState extends State<MyHomePage> {
                     for (var post in postsData) {
                       final postContent = post.get('post');
                       final postImageUrl = post.get('postImageUrl');
+                      final userFirstName = post.get('userFirstName');
+                      final userLastName = post.get('userLastName');
+                      final userPictureUrl = post.get('userPictureUrl');
+                      final userDocId = post.get('userDocID');
+                      final userID = post.get('userID');
                       final postImageFlag = post.get('postHasImage');
                       final List postLikes = post.get('postLikes');
                       final List favourites = post.get('usersWhoFavourite');
+                      final List comments = post.get('comments');
                       postImageFlag
                           ? postsList.add(
                               {
                                 "post": postContent,
-                                "image": postImageUrl,
+                                "postImage": postImageUrl,
+                                "userName": '$userFirstName $userLastName',
+                                "userPicture": userPictureUrl,
+                                "userDocId": userDocId,
+                                "userID": userID,
                                 "postImageFlag": postImageFlag,
+                                "postLikes": postLikes,
+                                "postFavorites": favourites,
+                                "postComments": comments,
                               },
                             )
                           : postsList.add(
                               {
                                 "post": postContent,
-                                "image": postImageUrl,
+                                "postImage": postImageUrl,
+                                "userName": '$userFirstName $userLastName',
+                                "userPicture": userPictureUrl,
+                                "userDocId": userDocId,
+                                "userID": userID,
                                 "postImageFlag": postImageFlag,
+                                "postLikes": postLikes,
+                                "postFavorites": favourites,
+                                "postComments": comments,
                               },
                             );
                       postLikes.contains(auth.currentUser!.uid)
@@ -496,22 +517,62 @@ class _MyHomePageState extends State<MyHomePage> {
                                               ),
                                               K_vSpace,
                                               //The text of the post
-                                              Container(
-                                                padding: EdgeInsets.only(
-                                                  bottom: 10.0,
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      '${postsList[index]['post']}',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontFamily: "Futura",
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PostDetails(
+                                                        post: postsList[index]
+                                                            ['post'],
+                                                        postImage:
+                                                            postsList[index]
+                                                                ['postImage'],
+                                                        postImageFlag: postsList[
+                                                                index]
+                                                            ['postImageFlag'],
+                                                        userName:
+                                                            postsList[index]
+                                                                ['userName'],
+                                                        userDocId:
+                                                            postsList[index]
+                                                                ['userDocId'],
+                                                        userID: postsList[index]
+                                                            ['userID'],
+                                                        userPicture:
+                                                            postsList[index]
+                                                                ['userPicture'],
+                                                        postLikes:
+                                                            postsList[index]
+                                                                ['postLikes'],
+                                                        postComments: postsList[
+                                                                index]
+                                                            ['postComments'],
+                                                        postFavorites: postsList[
+                                                                index]
+                                                            ['postFavorites'],
                                                       ),
                                                     ),
-                                                  ],
+                                                  );
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.only(
+                                                    bottom: 10.0,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        '${postsList[index]['post']}',
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                          fontFamily: "Futura",
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                               //the image of the post

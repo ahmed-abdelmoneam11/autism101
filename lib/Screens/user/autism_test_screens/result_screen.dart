@@ -39,7 +39,7 @@ class _ResultState extends State<Result> {
                   height: 15.0,
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(15.0),
                   child: Row(
                     children: [
                       Text(
@@ -71,7 +71,7 @@ class _ResultState extends State<Result> {
                   width: double.infinity,
                   height: 350.0,
                   padding: EdgeInsets.all(
-                    10.0,
+                    20.0,
                   ),
                   child: Image.asset(
                     getIndicator(),
@@ -82,7 +82,7 @@ class _ResultState extends State<Result> {
                   height: 20.0,
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: Text(
                     "Your answers suggest ${widget.prevDegree}% indication that you are experiencing.symptoms common among people with autism. However, this quiz is no substitute for a proper diagnois.from a health care professional and we would encourage you to schedule an appointment with your doctor or other mental health professional now.",
                     style: TextStyle(

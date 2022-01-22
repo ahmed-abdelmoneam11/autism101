@@ -24,6 +24,15 @@ class AddPostWithImage extends PostsEvent {
   });
 }
 
+class AddComment extends PostsEvent {
+  final String post;
+  final String comment;
+  AddComment({
+    required this.post,
+    required this.comment,
+  });
+}
+
 class GetUserPosts extends PostsEvent {}
 
 class GetOtherUsersPosts extends PostsEvent {

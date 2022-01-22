@@ -153,6 +153,12 @@ class ChatApi {
           "code": 200,
           "data": messages,
         };
+      } else {
+        var messages = firestore.collection('messages').snapshots();
+        return {
+          "code": 200,
+          "data": messages,
+        };
       }
     } on Exception catch (e) {
       return {

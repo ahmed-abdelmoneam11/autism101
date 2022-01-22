@@ -36,6 +36,8 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
       } else if (data['code'] == 200) {
         yield AddPostWithImageSuccessState();
       }
+    } else if (event is AddComment) {
+      await api.addComment(event.post, event.comment);
     } else if (event is GetUserPosts) {
       yield PostsLodingState();
       var data = await api.getUserPosts();
@@ -88,7 +90,7 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
       }
     } else if (event is GetNotifications) {
       yield PostsLodingState();
-      var data = await api.getFavouritePosts();
+      var data = await api.getNotfications();
       if (data['code'] == 400) {
         yield GetNotificationsErrorState(
           message: data['message'],
