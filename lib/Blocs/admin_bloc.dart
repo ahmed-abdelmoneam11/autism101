@@ -23,6 +23,30 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
           movies: data['data'],
         );
       }
+    } else if (event is GetSchoolsEvent) {
+      yield AdminLodingState();
+      var data = await api.getUnVerifiedSchools();
+      if (data['code'] == 400) {
+        yield GetSchoolsErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetSchoolsSuccessState(
+          schools: data['data'],
+        );
+      }
+    } else if (event is GetInspiringEvent) {
+      yield AdminLodingState();
+      var data = await api.getInspiring();
+      if (data['code'] == 400) {
+        yield GetInspiringErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetInspiringSuccessState(
+          inspiring: data['data'],
+        );
+      }
     } else if (event is DeleteMovie) {
       yield AdminLodingState();
       var data = await api.deleteMovie(event.movieName);
@@ -32,6 +56,26 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         );
       } else if (data['code'] == 200) {
         yield DeleteMovieSuccessState();
+      }
+    } else if (event is DeleteInspiring) {
+      yield AdminLodingState();
+      var data = await api.deleteInspiring(event.name);
+      if (data['code'] == 400) {
+        yield DeleteInspiringErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield DeleteInspiringSuccessState();
+      }
+    } else if (event is DeleteUser) {
+      yield AdminLodingState();
+      var data = await api.deleteUser(event.email);
+      if (data['code'] == 400) {
+        yield DeleteUserErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield DeleteUserSuccessState();
       }
     } else if (event is AddMovie) {
       yield AdminLodingState();
@@ -50,28 +94,24 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       } else if (data['code'] == 200) {
         yield AddMovieSuccessState();
       }
-    } else if (event is DeleteUser) {
+    } else if (event is AddInspiring) {
       yield AdminLodingState();
-      var data = await api.deleteUser(event.email);
+      var data = await api.addInspiring(
+        event.name,
+        event.brief,
+        event.date,
+        event.autismCase,
+        event.image,
+      );
       if (data['code'] == 400) {
-        yield DeleteUserErrorState(
+        yield AddInspiringErrorState(
           message: data['message'],
         );
       } else if (data['code'] == 200) {
-        yield DeleteUserSuccessState();
+        yield AddInspiringSuccessState();
       }
-    } else if (event is GetInspiringEvent) {
-      yield AdminLodingState();
-      var data = await api.getInspiring();
-      if (data['code'] == 400) {
-        yield GetInspiringErrorState(
-          message: data['message'],
-        );
-      } else if (data['code'] == 200) {
-        yield GetInspiringSuccessState(
-          inspiring: data['data'],
-        );
-      }
+    } else if (event is VerifySchoolEvent) {
+      await api.verifySchool(event.webSite);
     }
   }
 }

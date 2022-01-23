@@ -24,6 +24,20 @@ class GetMoviesErrorState extends AdminState {
   });
 }
 
+class GetSchoolsSuccessState extends AdminState {
+  final Stream<QuerySnapshot> schools;
+  GetSchoolsSuccessState({
+    required this.schools,
+  });
+}
+
+class GetSchoolsErrorState extends AdminState {
+  final String message;
+  GetSchoolsErrorState({
+    required this.message,
+  });
+}
+
 class GetInspiringSuccessState extends AdminState {
   final Stream<QuerySnapshot> inspiring;
   GetInspiringSuccessState({
@@ -45,6 +59,13 @@ class DeleteMovieErrorState extends AdminState {
   DeleteMovieErrorState({required this.message});
 }
 
+class DeleteInspiringSuccessState extends AdminState {}
+
+class DeleteInspiringErrorState extends AdminState {
+  final String message;
+  DeleteInspiringErrorState({required this.message});
+}
+
 class DeleteUserSuccessState extends AdminState {}
 
 class DeleteUserErrorState extends AdminState {
@@ -57,4 +78,11 @@ class AddMovieSuccessState extends AdminState {}
 class AddMovieErrorState extends AdminState {
   final String message;
   AddMovieErrorState({required this.message});
+}
+
+class AddInspiringSuccessState extends AdminState {}
+
+class AddInspiringErrorState extends AdminState {
+  final String message;
+  AddInspiringErrorState({required this.message});
 }

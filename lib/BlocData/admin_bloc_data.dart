@@ -66,6 +66,61 @@ class AdminApi {
     }
   }
 
+  addInspiring(
+    String name,
+    String brief,
+    String date,
+    String autismCase,
+    File image,
+  ) async {
+    var prefs = await SharedPreferences.getInstance();
+    try {
+      //Uploading movie Image.
+      String fileName = Path.basename(image.path);
+      firebase_storage.Reference ref =
+          firebase_storage.FirebaseStorage.instance.ref().child(fileName);
+      firebase_storage.UploadTask uploadTask = ref.putFile(image);
+      await uploadTask.whenComplete(() => null).onError(
+            (error, stackTrace) => throw ("Failed to upload movie image"),
+          );
+      String uploadedImageUrl = await ref.getDownloadURL();
+      prefs.setString("IMAGE", uploadedImageUrl);
+
+      //Adding new post.
+      await firestore.collection('Inspiring').add({
+        "name": name,
+        "brief": brief,
+        "date": date,
+        "autismCase": autismCase,
+        "imageUrl": uploadedImageUrl,
+      }).onError(
+        (error, stackTrace) => throw ("Failed to add new inspiring"),
+      );
+      return {
+        "code": 200,
+      };
+    } on Exception catch (e) {
+      if (e.toString() == "Failed to add new inspiring") {
+        var prefs = await SharedPreferences.getInstance();
+        var imageUrl = prefs.getString("IMAGE");
+        if (imageUrl != null) {
+          firebase_storage.FirebaseStorage.instance
+              .refFromURL(imageUrl)
+              .delete();
+        }
+        return {
+          "code": 400,
+          "message": e.toString(),
+        };
+      } else {
+        return {
+          "code": 400,
+          "message": e.toString(),
+        };
+      }
+    }
+  }
+
   getMovies() async {
     try {
       //Getting Movies.
@@ -83,6 +138,39 @@ class AdminApi {
         "message": e.toString(),
       };
     }
+  }
+
+  getUnVerifiedSchools() async {
+    try {
+      //Getting Movies.
+      var schools = firestore
+          .collection('schools')
+          .where('isVerified', isEqualTo: false)
+          .snapshots();
+      if (await schools.isEmpty) {
+        throw "No Schools Available";
+      }
+      return {
+        "code": 200,
+        "data": schools,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  verifySchool(String webSite) async {
+    var schoolQuery = await firestore
+        .collection('schools')
+        .where('website', isEqualTo: webSite)
+        .get();
+    var docID = schoolQuery.docs.first.id;
+    await firestore.collection('schools').doc(docID).update({
+      "isVerified": true,
+    });
   }
 
   getInspiring() async {
@@ -155,6 +243,38 @@ class AdminApi {
             (error, stackTrace) => throw "Error Deleting Movie Image",
           );
       await firestore.collection('movies').doc(movieDocId).delete();
+      return {
+        "code": 200,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  deleteInspiring(String name) async {
+    try {
+      //Find The Movie to be deleted.
+      var movieQueryResult = await firestore
+          .collection('Inspiring')
+          .where('name', isEqualTo: name)
+          .limit(1)
+          .get()
+          .onError(
+            (error, stackTrace) => throw "Inspiring not found",
+          );
+      var movieDocId = movieQueryResult.docs.first.id;
+      var moviesData =
+          await firestore.collection('Inspiring').doc(movieDocId).get();
+      await firebase_storage.FirebaseStorage.instance
+          .refFromURL(moviesData['imageUrl'])
+          .delete()
+          .onError(
+            (error, stackTrace) => throw "Error Deleting Inspiring Image",
+          );
+      await firestore.collection('Inspiring').doc(movieDocId).delete();
       return {
         "code": 200,
       };

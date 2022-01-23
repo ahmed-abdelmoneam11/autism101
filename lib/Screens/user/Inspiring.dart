@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/admin_bloc.dart';
 import 'package:autism101/BlocEvents/admin_bloc_events.dart';
 import 'package:autism101/BlocStates/admin_bloc_state.dart';
+import 'package:autism101/Screens/admin/add_inspiring_screen.dart';
 import 'package:autism101/Screens/user/characters_screen.dart';
 
 class Inspiring extends StatefulWidget {
@@ -182,12 +183,12 @@ class _InspiringState extends State<Inspiring> {
       floatingActionButton: widget.isAdmin
           ? FloatingActionButton.extended(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => AddMovieScreen(),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddInspiringScreen(),
+                  ),
+                );
               },
               label: Row(
                 children: [

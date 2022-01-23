@@ -131,6 +131,7 @@ class AuthApi {
         "phone": phone,
         "website": webSite,
         "address": address,
+        "isVerified": false,
       }).onError((error, stackTrace) => throw ("Registration Failed"));
       return {
         "code": 200,

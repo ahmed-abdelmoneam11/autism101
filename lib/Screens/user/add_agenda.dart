@@ -39,7 +39,11 @@ class _AddAgendaState extends State<AddAgenda> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () => Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (_) => MyAgendaPage())),
+              context,
+              MaterialPageRoute(
+                builder: (_) => MyAgendaPage(),
+              ),
+            ),
           )),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20),

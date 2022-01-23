@@ -12,7 +12,9 @@ import 'package:autism101/Screens/LoginForm.dart';
 import 'package:autism101/Screens/user/Movie.dart';
 import 'package:autism101/Screens/user/home_page.dart';
 import 'package:autism101/Screens/admin/delete_user_screen.dart';
+import 'package:autism101/Screens/admin/topic_screen.dart';
 import 'package:autism101/Screens/user/Inspiring.dart';
+import 'package:autism101/Screens/admin/verify_school.dart';
 
 class AdminHome extends StatefulWidget {
   @override
@@ -187,38 +189,48 @@ class _AdminHomeState extends State<AdminHome> {
                   ),
                   Column(
                     children: <Widget>[
-                      Container(
-                        //Main Container
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(K_mainRadius),
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [K_moveColor, K_blueColor],
-                            stops: [0.1, 1],
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => VerifySchools(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          //Main Container
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(K_mainRadius),
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [K_moveColor, K_blueColor],
+                              stops: [0.1, 1],
+                            ),
                           ),
-                        ),
-                        width: deviceWidth! * 0.45,
-                        height: 154,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10.0, top: 10.0),
-                          child: SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            child: Column(
-                              //Column inside the container
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  'Edit Courses',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 10.0,
-                                ),
-                              ],
+                          width: deviceWidth! * 0.45,
+                          height: 154,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10.0, top: 10.0),
+                            child: SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              child: Column(
+                                //Column inside the container
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    'Verify School',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 10.0,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -226,35 +238,45 @@ class _AdminHomeState extends State<AdminHome> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      Container(
-                        //Main Container
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(K_mainRadius),
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [K_blueColor, K_mainColor],
-                            stops: [0.1, 1],
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Topics(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          //Main Container
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(K_mainRadius),
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [K_blueColor, K_mainColor],
+                              stops: [0.1, 1],
+                            ),
                           ),
-                        ),
-                        width: deviceWidth! * 0.45,
-                        height: 200.0,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10.0, top: 10.0),
-                          child: SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            child: Column(
-                              //Column inside the container
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  'Edit Topics',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
+                          width: deviceWidth! * 0.45,
+                          height: 200.0,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10.0, top: 10.0),
+                            child: SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              child: Column(
+                                //Column inside the container
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    'Edit Topics',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -264,6 +286,7 @@ class _AdminHomeState extends State<AdminHome> {
                 ],
               ),
               K_vSpace,
+              //Edit Inspiring.
               InkWell(
                 onTap: () {
                   Navigator.push(
