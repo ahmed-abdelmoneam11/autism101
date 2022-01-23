@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:equatable/equatable.dart';
 
 class EventsEvent extends Equatable {
@@ -27,4 +28,17 @@ class InterestEvent extends EventsEvent {
 class UnInterestEvent extends EventsEvent {
   final String eventName;
   UnInterestEvent({required this.eventName});
+}
+
+class AddEvent extends EventsEvent {
+  final String name;
+  final String facebookLink;
+  final String bio;
+  final File image;
+  AddEvent({
+    required this.name,
+    required this.facebookLink,
+    required this.bio,
+    required this.image,
+  });
 }

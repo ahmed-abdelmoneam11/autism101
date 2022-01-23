@@ -1,7 +1,7 @@
 import 'package:autism101/Screens/user/event.dart';
 import 'package:autism101/Screens/user/people_youMayKnow.dart';
+import 'package:autism101/Screens/user/contact_with_school_screen.dart';
 import 'package:autism101/Screens/user/progress.dart';
-import 'package:autism101/Screens/user/school_category.dart';
 import 'favorite_list_screen.dart.dart';
 import 'package:autism101/Screens/LoginForm.dart';
 import 'package:flutter/cupertino.dart';
@@ -147,7 +147,7 @@ class _MyMenuItemsState extends State<MyMenuItems> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => School_Category(),
+                  builder: (context) => ContactWithSchool(),
                 ),
               );
             },

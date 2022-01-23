@@ -134,6 +134,28 @@ class PostsApi {
     }
   }
 
+  addAgenda(
+    String title,
+    String content,
+  ) async {
+    try {
+      await firestore.collection("agendas").add({
+        "title": title,
+        "content": content,
+        "timeStamp": DateTime.now(),
+        "userID": auth.currentUser!.uid,
+      }).onError((error, stackTrace) => throw "Failed to add agenda");
+      return {
+        "code": 200,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
   getUserPosts() async {
     try {
       var queryResult = await firestore
@@ -284,6 +306,31 @@ class PostsApi {
       return {
         "code": 200,
         "data": comments,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  getAgends() async {
+    try {
+      var agendas = firestore
+          .collection('agendas')
+          .where('userID', isEqualTo: auth.currentUser!.uid)
+          .orderBy(
+            'timeStamp',
+            descending: true,
+          )
+          .snapshots();
+      if (await agendas.isEmpty) {
+        throw "No Agendas Available";
+      }
+      return {
+        "code": 200,
+        "data": agendas,
       };
     } on Exception catch (e) {
       return {
@@ -530,6 +577,22 @@ class PostsApi {
       };
     } on Exception catch (e) {
       //Return State Code & Error Message.
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  deleteAgenda(String agendaDocID) async {
+    try {
+      await firestore.collection('agendas').doc(agendaDocID).delete().onError(
+            (error, stackTrace) => throw "Failed to delete Agenda",
+          );
+      return {
+        "code": 200,
+      };
+    } on Exception catch (e) {
       return {
         "code": 400,
         "message": e.toString(),

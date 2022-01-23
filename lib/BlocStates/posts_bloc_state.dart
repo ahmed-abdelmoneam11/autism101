@@ -28,6 +28,15 @@ class AddPostWithImageErrorState extends PostsState {
   });
 }
 
+class AddAgendaSuccessState extends PostsState {}
+
+class AddAgendaErrorState extends PostsState {
+  final String message;
+  AddAgendaErrorState({
+    required this.message,
+  });
+}
+
 class GetUserPostsSuccessState extends PostsState {
   final Stream<QuerySnapshot> posts;
   GetUserPostsSuccessState({
@@ -108,6 +117,20 @@ class GetCommentsSuccessState extends PostsState {
 class GetCommentsErrorState extends PostsState {
   final String message;
   GetCommentsErrorState({
+    required this.message,
+  });
+}
+
+class GetAgendasSuccessState extends PostsState {
+  final Stream<QuerySnapshot> agendas;
+  GetAgendasSuccessState({
+    required this.agendas,
+  });
+}
+
+class GetAgendasErrorState extends PostsState {
+  final String message;
+  GetAgendasErrorState({
     required this.message,
   });
 }

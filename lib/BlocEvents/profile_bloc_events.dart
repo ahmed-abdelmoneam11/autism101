@@ -17,6 +17,10 @@ class GetOtherUsersProfileDataEvent extends ProfileEvent {
   });
 }
 
+class GetPeopleYouMayKnowEvent extends ProfileEvent {}
+
+class GetSchoolsEvent extends ProfileEvent {}
+
 class SearchUsers extends ProfileEvent {
   final String query;
   SearchUsers({
@@ -81,4 +85,14 @@ class FollowUser extends ProfileEvent {
 class UnFollowUser extends ProfileEvent {
   final String userDocID;
   UnFollowUser({required this.userDocID});
+}
+
+class FollowSchool extends ProfileEvent {
+  final String schoolDocID;
+  FollowSchool({required this.schoolDocID});
+}
+
+class UnFollowSchool extends ProfileEvent {
+  final String schoolDocID;
+  UnFollowSchool({required this.schoolDocID});
 }

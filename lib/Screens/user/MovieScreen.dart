@@ -261,7 +261,7 @@ class _MovieScreenState extends State<MovieScreen> {
           backgroundColor: Colors.white,
           elevation: 1.0,
           title: Text(
-            "Sign Out",
+            "Delete",
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,

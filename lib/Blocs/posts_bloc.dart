@@ -38,6 +38,14 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
       }
     } else if (event is AddComment) {
       await api.addComment(event.post, event.comment);
+    } else if (event is AddAgenda) {
+      yield PostsLodingState();
+      var data = await api.addAgenda(event.title, event.content);
+      if (data['code'] == 400) {
+        yield AddAgendaErrorState(message: data['message']);
+      } else if (data['code'] == 200) {
+        yield AddAgendaSuccessState();
+      }
     } else if (event is GetUserPosts) {
       yield PostsLodingState();
       var data = await api.getUserPosts();
@@ -112,6 +120,18 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
           comments: data['data'],
         );
       }
+    } else if (event is GetAgendas) {
+      yield PostsLodingState();
+      var data = await api.getAgends();
+      if (data['code'] == 400) {
+        yield GetAgendasErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetAgendasSuccessState(
+          agendas: data['data'],
+        );
+      }
     } else if (event is EditPostContentAndImage) {
       yield PostsLodingState();
       var data = await api.editPostContentAndImage(
@@ -175,6 +195,8 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
       } else if (data['code'] == 200) {
         yield DeletePostSuccessState();
       }
+    } else if (event is DeleteAgenda) {
+      await api.deleteAgenda(event.agendaDocID);
     } else if (event is LikePost) {
       await api.likePost(event.post);
     } else if (event is UnLikePost) {

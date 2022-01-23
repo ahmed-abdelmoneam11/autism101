@@ -1,9 +1,68 @@
+import 'dart:io';
+import 'package:path/path.dart' as Path;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_auth/firebase_auth.dart';
 
 class EventsApi {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  addEvent(
+    String name,
+    String facebookLink,
+    String bio,
+    File image,
+  ) async {
+    var prefs = await SharedPreferences.getInstance();
+    try {
+      //Uploading movie Image.
+      String fileName = Path.basename(image.path);
+      firebase_storage.Reference ref =
+          firebase_storage.FirebaseStorage.instance.ref().child(fileName);
+      firebase_storage.UploadTask uploadTask = ref.putFile(image);
+      await uploadTask.whenComplete(() => null).onError(
+            (error, stackTrace) => throw ("Failed to upload image"),
+          );
+      String uploadedImageUrl = await ref.getDownloadURL();
+      prefs.setString("IMAGE", uploadedImageUrl);
+
+      //Adding new post.
+      await firestore.collection('events').add({
+        "Name": name,
+        "Bio": bio,
+        "Facebook Link": facebookLink,
+        "ImageUrl": uploadedImageUrl,
+        "joinedUsers": [],
+        "InterestedUsers": [],
+      }).onError(
+        (error, stackTrace) => throw ("Failed to add new event"),
+      );
+      return {
+        "code": 200,
+      };
+    } on Exception catch (e) {
+      if (e.toString() == "Failed to add new event") {
+        var prefs = await SharedPreferences.getInstance();
+        var imageUrl = prefs.getString("IMAGE");
+        if (imageUrl != null) {
+          firebase_storage.FirebaseStorage.instance
+              .refFromURL(imageUrl)
+              .delete();
+        }
+        return {
+          "code": 400,
+          "message": e.toString(),
+        };
+      } else {
+        return {
+          "code": 400,
+          "message": e.toString(),
+        };
+      }
+    }
+  }
 
   getEvents() async {
     try {

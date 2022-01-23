@@ -124,12 +124,7 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 );
               } else if (state is AddPostSuccessState) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomeScreen(),
-                  ),
-                );
+                Navigator.pop(context);
               }
             },
           ),

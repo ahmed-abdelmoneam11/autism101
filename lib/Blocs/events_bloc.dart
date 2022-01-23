@@ -11,6 +11,19 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
   Stream<EventsState> mapEventToState(EventsEvent event) async* {
     if (event is EventsStartEvent) {
       yield EventsInitialState();
+    } else if (event is AddEvent) {
+      yield EventsInitialState();
+      var data = await api.addEvent(
+        event.name,
+        event.facebookLink,
+        event.bio,
+        event.image,
+      );
+      if (data["code"] == 400) {
+        yield AddEventErrorState(message: data["message"]);
+      } else if (data["code"] == 200) {
+        yield AddEventSuccessState();
+      }
     } else if (event is GetEvents) {
       yield EventsLodingState();
       var data = await api.getEvents();

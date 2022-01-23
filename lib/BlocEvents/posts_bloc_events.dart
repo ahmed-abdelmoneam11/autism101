@@ -33,7 +33,18 @@ class AddComment extends PostsEvent {
   });
 }
 
+class AddAgenda extends PostsEvent {
+  final String title;
+  final String content;
+  AddAgenda({
+    required this.title,
+    required this.content,
+  });
+}
+
 class GetUserPosts extends PostsEvent {}
+
+class GetAgendas extends PostsEvent {}
 
 class GetOtherUsersPosts extends PostsEvent {
   final userDocId;
@@ -59,6 +70,13 @@ class DeletePost extends PostsEvent {
   final String post;
   DeletePost({
     required this.post,
+  });
+}
+
+class DeleteAgenda extends PostsEvent {
+  final String agendaDocID;
+  DeleteAgenda({
+    required this.agendaDocID,
   });
 }
 

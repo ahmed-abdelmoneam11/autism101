@@ -61,6 +61,64 @@ class ProfileApi {
     }
   }
 
+  getPeopleYouMayKnow() async {
+    try {
+      var queryResult = await firestore
+          .collection('users')
+          .where('userID', isEqualTo: auth.currentUser!.uid)
+          .limit(1)
+          .get();
+      var docId = queryResult.docs.first.id;
+      var userData = await firestore.collection('users').doc(docId).get();
+      List following = userData['following'];
+      if (following.isNotEmpty) {
+        var users = firestore
+            .collection('users')
+            .where('userID', whereNotIn: following)
+            .snapshots();
+        return {
+          "code": 200,
+          "data": users,
+        };
+      } else {
+        var users = firestore
+            .collection('users')
+            .where('userID', isNotEqualTo: auth.currentUser!.uid)
+            .snapshots();
+        return {
+          "code": 200,
+          "data": users,
+        };
+      }
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  getSchools() async {
+    try {
+      var schools = firestore
+          .collection('schools')
+          .where('isVerified', isEqualTo: true)
+          .snapshots();
+      if (await schools.isEmpty) {
+        throw "No Schools Available";
+      }
+      return {
+        "code": 200,
+        "data": schools,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
   searchUser(String query) async {
     try {
       if (query.contains('@')) {
@@ -355,6 +413,46 @@ class ProfileApi {
         "followers": followers,
         "followersCount": followersCount - 1,
       });
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  followSchool(String schoolDocID) async {
+    try {
+      var schoolData =
+          await firestore.collection('schools').doc(schoolDocID).get();
+      List followers = schoolData['followers'];
+      followers.add(auth.currentUser!.uid);
+      await firestore.collection('schools').doc(schoolDocID).update({
+        'followers': followers,
+      });
+      return {
+        "code": 200,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  unFollowSchool(String schoolDocID) async {
+    try {
+      var schoolData =
+          await firestore.collection('schools').doc(schoolDocID).get();
+      List followers = schoolData['followers'];
+      followers.remove(auth.currentUser!.uid);
+      await firestore.collection('schools').doc(schoolDocID).update({
+        'followers': followers,
+      });
+      return {
+        "code": 200,
+      };
     } on Exception catch (e) {
       return {
         "code": 400,

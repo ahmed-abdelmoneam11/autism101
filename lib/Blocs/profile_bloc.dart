@@ -47,6 +47,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           followersCount: data['followersCount'],
         );
       }
+    } else if (event is GetPeopleYouMayKnowEvent) {
+      yield ProfileLodingState();
+      var data = await api.getPeopleYouMayKnow();
+      if (data['code'] == 400) {
+        yield GetPeopleYouMayKnowErrorState(message: data['message']);
+      } else if (data['code'] == 200) {
+        yield GetPeopleYouMayKnowSuccessState(users: data['data']);
+      }
+    } else if (event is GetSchoolsEvent) {
+      yield ProfileLodingState();
+      var data = await api.getSchools();
+      if (data['code'] == 400) {
+        yield GetSchoolsErrorState(message: data['message']);
+      } else if (data['code'] == 200) {
+        yield GetSchoolsSuccessState(schools: data['data']);
+      }
     } else if (event is UpdateUserName) {
       yield ProfileLodingState();
       var data = await api.updateProfileName(
@@ -114,6 +130,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       await api.followUser(event.userDocID);
     } else if (event is UnFollowUser) {
       await api.unFollowUser(event.userDocID);
+    } else if (event is FollowSchool) {
+      await api.followSchool(event.schoolDocID);
+    } else if (event is UnFollowSchool) {
+      await api.unFollowSchool(event.schoolDocID);
     }
   }
 }

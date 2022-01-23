@@ -67,7 +67,7 @@ class AuthApi {
         "followingCount": 0,
         "followersCount": 0,
         "followers": [],
-        "following": [],
+        "following": [auth.currentUser!.uid],
         "userID": auth.currentUser!.uid,
       }).onError(
         (error, stackTrace) => throw ("Registration Failed"),
@@ -132,6 +132,10 @@ class AuthApi {
         "website": webSite,
         "address": address,
         "isVerified": false,
+        "followers": [],
+        "followersCount": 0,
+        "eventsCount": 0,
+        "schoolID": auth.currentUser!.uid,
       }).onError((error, stackTrace) => throw ("Registration Failed"));
       return {
         "code": 200,

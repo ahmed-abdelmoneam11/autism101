@@ -1,23 +1,29 @@
-import 'package:autism101/Constants.dart';
-import 'package:autism101/Screens/user/add_posts.dart';
-import 'package:autism101/model/posts.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:autism101/Constants.dart';
 
-class MyProfile extends StatelessWidget {
+class SchoolProfile extends StatefulWidget {
+  final String webSite;
+  final String schoolDocID;
+  final String phone;
+  final int followersCount;
+  final int eventsCount;
+  SchoolProfile({
+    required this.webSite,
+    required this.schoolDocID,
+    required this.phone,
+    required this.eventsCount,
+    required this.followersCount,
+  });
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-          primaryColor: Colors.orange,
-          canvasColor: Color.fromRGBO(255, 238, 219, 1)),
-      debugShowCheckedModeBanner: false,
-      home: SchoolProfile(),
-    );
-  }
+  State<SchoolProfile> createState() => _SchoolProfileState();
 }
 
-class SchoolProfile extends StatelessWidget {
+class _SchoolProfileState extends State<SchoolProfile> {
+  bool star1 = false;
+  bool star2 = false;
+  bool star3 = false;
+  bool star4 = false;
+  bool star5 = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,14 +31,18 @@ class SchoolProfile extends StatelessWidget {
         shape: appBarShape,
         backgroundColor: Colors.white,
         title: Text(
-          'Autism school - Profile',
+          '${widget.webSite} - Profile',
           style: TextStyle(color: Colors.black),
         ),
         leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.arrow_back, color: Colors.black)),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -53,85 +63,79 @@ class SchoolProfile extends StatelessWidget {
                   child: Row(
                     children: [
                       ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.asset(
-                            'assets/images/school1.png',
-                            height: 90.0,
-                            width: 90.0,
-                            fit: BoxFit.cover,
-                          )),
-                      K_hSpace,
+                        borderRadius: BorderRadius.circular(50),
+                        child: Icon(
+                          Icons.school,
+                          size: 40.0,
+                        ),
+                      ),
                       K_hSpace,
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              ('Autism school'),
+                              ('${widget.webSite}'),
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 25,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            K_vSpace,
+                            Text(
+                              ('${widget.phone}'),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold),
                             ),
                             K_vSpace,
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 //Posts
                                 Column(
                                   children: [
                                     Text(
-                                      ('18'),
+                                      '${widget.eventsCount}',
                                       style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w400),
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
                                     Text(
-                                      ('Posts'),
+                                      ('Events'),
                                       style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400),
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
                                   ],
+                                ),
+                                SizedBox(
+                                  width: 50.0,
                                 ),
                                 //Followers
                                 Column(
                                   children: [
                                     Text(
-                                      ('0'),
+                                      '${widget.followersCount}',
                                       style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.w400),
+                                        color: Colors.black,
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
                                     Text(
                                       ('Followers'),
                                       style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ],
-                                ),
-                                //Following
-                                Column(
-                                  children: [
-                                    Text(
-                                      ('18'),
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    Text(
-                                      ('Following'),
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400),
+                                        color: Colors.black,
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -150,201 +154,74 @@ class SchoolProfile extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: shadow,
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20.0),
+                  ),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Edit profile',
-                          )),
-                      TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Add event',
-                          ))
-                    ],
-                  ),
-                ),
-              ),
-              K_vSpace,
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: shadow,
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(15.0),
-                  child: Column(
-                    children: <Widget>[
-                      Column(
-                        children: [
-                          ///the inf of the owner of the post
-                          Row(
-                            children: <Widget>[
-                              ///image of the owner of the post//////////////////////
-                              ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: Image.asset(
-                                    'assets/images/school1.png',
-                                    height: 50.0,
-                                    width: 50.0,
-                                    fit: BoxFit.cover,
-                                  )),
-
-                              ///the name of the user //////////////////
-                              TextButton(
-                                //    onPressed: (null),
-                                onPressed: () {},
-                                child: Text(
-                                  ('Autism school'),
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              ),
-                              Expanded(child: Container()),
-                            ],
-                          ),
-                          K_vSpace,
-
-                          ///the image of the post
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white30,
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(40.0),
-                                  bottomLeft: Radius.circular(40.0),
-                                  //  Radius.circular(10)
-                                )),
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  'assets/images/school1.png',
-                                  height: 400.0,
-                                  width: 330.0,
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-
-                          ///the button where you can like & save & see comments
-
-                          K_vSpace,
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Expanded(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      hintText: "Comment",
-                                      prefixIcon: Icon(
-                                        Icons.comment,
-                                        color: Colors.grey,
-                                        size: 25.0,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ]),
-                        ],
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            star1 = !star1;
+                          });
+                        },
+                        icon: Icon(
+                          star1 ? Icons.star : Icons.star_outline,
+                          color: star1 ? Colors.yellowAccent : Colors.black,
+                        ),
+                        iconSize: 30.0,
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              K_vSpace,
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: shadow,
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(15.0),
-                  child: Column(
-                    children: <Widget>[
-                      Column(
-                        children: [
-                          ///the inf of the owner of the post
-                          Row(
-                            children: <Widget>[
-                              ///image of the owner of the post//////////////////////
-                              ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: Image.asset(
-                                    'assets/images/school1.png',
-                                    height: 50.0,
-                                    width: 50.0,
-                                    fit: BoxFit.cover,
-                                  )),
-
-                              ///the name of the user //////////////////
-                              TextButton(
-                                //    onPressed: (null),
-                                onPressed: () {},
-                                child: Text(
-                                  ('Autism school'),
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              ),
-                              Expanded(child: Container()),
-                            ],
-                          ),
-                          K_vSpace,
-
-                          ///the image of the post
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white30,
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(40.0),
-                                  bottomLeft: Radius.circular(40.0),
-                                  //  Radius.circular(10)
-                                )),
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  'assets/images/school1.png',
-                                  height: 400.0,
-                                  width: 330.0,
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-
-                          ///the button where you can like & save & see comments
-
-                          K_vSpace,
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                //icon heart
-                                Expanded(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      hintText: "Comment",
-                                      prefixIcon: Icon(
-                                        Icons.comment,
-                                        color: Colors.grey,
-                                        size: 25.0,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ]),
-                        ],
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            star2 = !star2;
+                          });
+                        },
+                        icon: Icon(
+                          star2 ? Icons.star : Icons.star_outline,
+                          color: star2 ? Colors.yellowAccent : Colors.black,
+                        ),
+                        iconSize: 30.0,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            star3 = !star3;
+                          });
+                        },
+                        icon: Icon(
+                          star3 ? Icons.star : Icons.star_outline,
+                          color: star3 ? Colors.yellowAccent : Colors.black,
+                        ),
+                        iconSize: 30.0,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            star4 = !star4;
+                          });
+                        },
+                        icon: Icon(
+                          star4 ? Icons.star : Icons.star_outline,
+                          color: star4 ? Colors.yellowAccent : Colors.black,
+                        ),
+                        iconSize: 30.0,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            star5 = !star5;
+                          });
+                        },
+                        icon: Icon(
+                          star5 ? Icons.star : Icons.star_outline,
+                          color: star5 ? Colors.yellowAccent : Colors.black,
+                        ),
+                        iconSize: 30.0,
                       ),
                     ],
                   ),

@@ -154,7 +154,7 @@ class ChatApi {
           "data": messages,
         };
       } else {
-        var messages = firestore.collection('messages').snapshots();
+        var messages;
         return {
           "code": 200,
           "data": messages,

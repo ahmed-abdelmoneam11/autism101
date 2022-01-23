@@ -64,6 +64,36 @@ class GetOtherUsersProfileDataErrorState extends ProfileState {
   });
 }
 
+class GetPeopleYouMayKnowSuccessState extends ProfileState {
+  final Stream<QuerySnapshot> users;
+  GetPeopleYouMayKnowSuccessState({
+    required this.users,
+  });
+}
+
+class GetPeopleYouMayKnowErrorState extends ProfileState {
+  final String message;
+
+  GetPeopleYouMayKnowErrorState({
+    required this.message,
+  });
+}
+
+class GetSchoolsSuccessState extends ProfileState {
+  final Stream<QuerySnapshot> schools;
+  GetSchoolsSuccessState({
+    required this.schools,
+  });
+}
+
+class GetSchoolsErrorState extends ProfileState {
+  final String message;
+
+  GetSchoolsErrorState({
+    required this.message,
+  });
+}
+
 class SearchUsersSuccessState extends ProfileState {
   final Stream<QuerySnapshot> users;
   SearchUsersSuccessState({

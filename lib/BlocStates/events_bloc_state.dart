@@ -24,18 +24,11 @@ class GetEventsErrorState extends EventsState {
   });
 }
 
-// class JoinEventSuccessState extends EventsState {}
+class AddEventSuccessState extends EventsState {}
 
-// class JoinEventErrorState extends EventsState {}
-
-// class UnJoinEventSuccessState extends EventsState {}
-
-// class UnJoinEventErrorState extends EventsState {}
-
-// class InterestEventSuccessState extends EventsState {}
-
-// class InterestEventErrorState extends EventsState {}
-
-// class UnInterestEventSuccessState extends EventsState {}
-
-// class UnInterestEventErrorState extends EventsState {}
+class AddEventErrorState extends EventsState {
+  final String message;
+  AddEventErrorState({
+    required this.message,
+  });
+}

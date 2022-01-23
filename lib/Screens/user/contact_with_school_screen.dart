@@ -1,5 +1,7 @@
+import 'package:autism101/Screens/school/school_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/profile_bloc.dart';
 import 'package:autism101/BlocEvents/profile_bloc_events.dart';
@@ -8,22 +10,23 @@ import 'package:autism101/Screens/user/chat_screen.dart';
 import 'package:autism101/Screens/user/view_profile.dart';
 import 'package:autism101/Constants.dart';
 
-class PeopleYouMayKnow extends StatefulWidget {
+class ContactWithSchool extends StatefulWidget {
   @override
-  _PeopleYouMayKnowState createState() => _PeopleYouMayKnowState();
+  _ContactWithSchoolState createState() => _ContactWithSchoolState();
 }
 
-class _PeopleYouMayKnowState extends State<PeopleYouMayKnow> {
+class _ContactWithSchoolState extends State<ContactWithSchool> {
+  FirebaseAuth auth = FirebaseAuth.instance;
   late ProfileBloc profileBloc;
-  List usersList = [];
-  List<bool> following = [];
-  var users;
+  List schoolsList = [];
+  List<bool> followers = [];
+  var schools;
 
   @override
   void initState() {
     profileBloc = BlocProvider.of<ProfileBloc>(context);
     profileBloc.add(
-      GetPeopleYouMayKnowEvent(),
+      GetSchoolsEvent(),
     );
     super.initState();
   }
@@ -35,7 +38,7 @@ class _PeopleYouMayKnowState extends State<PeopleYouMayKnow> {
         shape: appBarShape,
         backgroundColor: Colors.white,
         title: Text(
-          'People you may know',
+          'Contact With Schools',
           style: TextStyle(color: Colors.black),
         ),
         leading: IconButton(
@@ -62,11 +65,11 @@ class _PeopleYouMayKnowState extends State<PeopleYouMayKnow> {
                 behavior: SnackBarBehavior.floating,
               ),
             );
-          } else if (state is GetPeopleYouMayKnowSuccessState) {
+          } else if (state is GetSchoolsSuccessState) {
             setState(() {
-              users = state.users;
+              schools = state.schools;
             });
-          } else if (state is GetPeopleYouMayKnowErrorState) {
+          } else if (state is GetSchoolsErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -78,27 +81,31 @@ class _PeopleYouMayKnowState extends State<PeopleYouMayKnow> {
           }
         },
         child: StreamBuilder<QuerySnapshot>(
-          stream: users,
+          stream: schools,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Container();
             }
-            final usersData = snapshot.data!.docs;
-            for (var user in usersData) {
-              final userFirstName = user.get('firstName');
-              final userLastName = user.get('lastName');
-              final userPictureUrl = user.get('ProfilePicture');
-              final userID = user.get('userID');
-              final userDocId = user.id;
-              usersList.add(
+            final schoolsData = snapshot.data!.docs;
+            for (var school in schoolsData) {
+              final schoolWebSite = school.get('website');
+              final followersCount = school.get('followersCount');
+              final eventsCount = school.get('eventsCount');
+              final phone = school.get('phone');
+              final List schoolFollowers = school.get('followers');
+              final schoolDocId = school.id;
+              schoolsList.add(
                 {
-                  "UserName": '$userFirstName $userLastName',
-                  "ProfilePicture": userPictureUrl,
-                  "UserDocId": userDocId,
-                  "UserID": userID,
+                  "WebSite": schoolWebSite,
+                  "SchoolDocId": schoolDocId,
+                  "FollowersCount": followersCount,
+                  "EventsCount": eventsCount,
+                  "Phone": phone,
                 },
               );
-              following.add(false);
+              schoolFollowers.contains(auth.currentUser!.uid)
+                  ? followers.add(true)
+                  : followers.add(false);
             }
             return ListView.builder(
               itemCount: snapshot.data!.size,
@@ -109,7 +116,7 @@ class _PeopleYouMayKnowState extends State<PeopleYouMayKnow> {
                   right: 3.0,
                 ),
                 child: Container(
-                  padding: EdgeInsets.all(20.0),
+                  padding: EdgeInsets.all(10.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(15.0),
@@ -118,65 +125,81 @@ class _PeopleYouMayKnowState extends State<PeopleYouMayKnow> {
                   child: Row(
                     children: <Widget>[
                       ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.network(
-                            usersList[index]['ProfilePicture'],
-                            height: 50.0,
-                            width: 50.0,
-                            fit: BoxFit.cover,
-                          )),
+                        borderRadius: BorderRadius.circular(50),
+                        child: Icon(
+                          Icons.school,
+                          size: 35.0,
+                        ),
+                      ),
                       SizedBox(
-                        width: 10,
+                        width: 8,
                       ),
                       InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfileView(
-                                userDocId: usersList[index]['UserDocId'],
+                              builder: (context) => SchoolProfile(
+                                webSite: schoolsList[index]['WebSite'],
+                                schoolDocID: schoolsList[index]['SchoolDocId'],
+                                eventsCount: schoolsList[index]['EventsCount'],
+                                followersCount: schoolsList[index]
+                                    ['FollowersCount'],
+                                phone: schoolsList[index]['Phone'],
                               ),
                             ),
                           );
                         },
                         child: Text(
-                          '${usersList[index]['UserName']}',
+                          '${schoolsList[index]['WebSite']}',
                           style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w400),
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
-                      Expanded(child: Container()),
+                      SizedBox(
+                        width: 8,
+                      ),
                       TextButton(
                         onPressed: () {
-                          if (!following[index]) {
+                          if (followers[index]) {
                             profileBloc.add(
-                              FollowUser(
-                                userDocID: usersList[index]['UserDocId'],
+                              UnFollowSchool(
+                                schoolDocID: schoolsList[index]['SchoolDocId'],
                               ),
                             );
                             setState(() {
-                              following[index] = true;
+                              followers[index] = false;
+                            });
+                          } else {
+                            profileBloc.add(
+                              FollowSchool(
+                                schoolDocID: schoolsList[index]['SchoolDocId'],
+                              ),
+                            );
+                            setState(() {
+                              followers[index] = true;
                             });
                           }
                         },
                         child: Text(
-                          following[index] ? 'Following' : 'Follow',
+                          followers[index] ? 'Following' : 'Follow',
                         ),
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatScreen(
-                                userName: usersList[index]['UserName'],
-                                userImage: usersList[index]['ProfilePicture'],
-                                userDocId: usersList[index]['UserDocId'],
-                              ),
-                            ),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => ChatScreen(
+                          //       userName: usersList[index]['UserName'],
+                          //       userImage: usersList[index]['ProfilePicture'],
+                          //       userDocId: usersList[index]['UserDocId'],
+                          //     ),
+                          //   ),
+                          // );
                         },
                         child: Text(
                           'Massage',

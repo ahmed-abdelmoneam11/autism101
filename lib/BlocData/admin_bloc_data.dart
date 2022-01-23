@@ -142,7 +142,6 @@ class AdminApi {
 
   getUnVerifiedSchools() async {
     try {
-      //Getting Movies.
       var schools = firestore
           .collection('schools')
           .where('isVerified', isEqualTo: false)
