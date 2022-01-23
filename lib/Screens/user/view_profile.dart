@@ -589,7 +589,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 .circular(20),
                                                         child: Image.network(
                                                           postsList[index]
-                                                              ['image'],
+                                                              ['postImage'],
                                                           height: 400.0,
                                                           width: 330.0,
                                                           fit: BoxFit.cover,

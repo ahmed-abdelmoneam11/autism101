@@ -130,6 +130,7 @@ class _FavoriteListState extends State<FavoriteList> {
                 favourites.contains(auth.currentUser!.uid)
                     ? userFavourites.add(true)
                     : userFavourites.add(false);
+                print("\nPosts:$postsList\n");
               }
               return snapshot.hasData
                   ? ListView.builder(

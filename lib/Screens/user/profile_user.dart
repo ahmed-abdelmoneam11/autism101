@@ -328,7 +328,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       final userPictureUrl = post.get('userPictureUrl');
                       final userDocId = post.get('userDocID');
                       final userID = post.get('userID');
-                      final postImageFlag = post.get('postHasImage');
+                      final bool postImageFlag = post.get('postHasImage');
                       final List postLikes = post.get('postLikes');
                       final List favourites = post.get('usersWhoFavourite');
                       final List comments = post.get('comments');
@@ -367,6 +367,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       favourites.contains(auth.currentUser!.uid)
                           ? userFavourites.add(true)
                           : userFavourites.add(false);
+                      print(
+                          "\nPost1:${postsList[0]['postImage']}\nflag:${postsList[0]['postImageFlag']}");
+                      print(
+                          "\nPost2:${postsList[1]['postImage']}\nflag:${postsList[1]['postImageFlag']}");
                     }
                     return snapshot.hasData
                         ? Container(
@@ -598,7 +602,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                                 .circular(20),
                                                         child: Image.network(
                                                           postsList[index]
-                                                              ['image'],
+                                                              ['postImage'],
                                                           height: 400.0,
                                                           width: 330.0,
                                                           fit: BoxFit.cover,

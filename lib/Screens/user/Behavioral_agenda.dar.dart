@@ -12,25 +12,21 @@ class MyAgendaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ///get the data
-    List<Agenda> prodList =
-        Provider.of<Agendas>(context, listen: true).AgendasList;
-
     return Scaffold(
       backgroundColor: K_backColor,
       appBar: AppBar(
-          shape: appBarShape,
-          backgroundColor: Colors.white,
-          title: Text('Behavioural Agenda',style: TextStyle(color: Colors.black),),
-          leading: IconButton(
-              onPressed: (){
-                Navigator.pop(context);
-          }, icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black
-          )),
+        shape: appBarShape,
+        backgroundColor: Colors.white,
+        title: Text(
+          'Behavioural Agenda',
+          style: TextStyle(color: Colors.black),
+        ),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back, color: Colors.black)),
       ),
-
       body: ListView(
         children: <Widget>[
           Column(
@@ -43,61 +39,57 @@ class MyAgendaPage extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.all(5.0),
                   child: Column(
-                    children: prodList
-                        ///the map of the list to get all the text saved in the agenda module
-                        .map((item) => Column(
+                    children: [
+                      Column(
                         children: <Widget>[
                           //Container of agenda
-                              Dismissible(
-                                background: Container(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Icon(
-                                        CupertinoIcons.delete,
-                                        color: Colors.red,
-                                        size: 30.0,
-                                      ),
-                                      K_hSpace
-                                    ],
+                          Dismissible(
+                            background: Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Icon(
+                                    CupertinoIcons.delete,
+                                    color: Colors.red,
+                                    size: 30.0,
                                   ),
-                                ),
-                                direction: DismissDirection.endToStart,
-                                key: UniqueKey(),
-                                child: Container(
-                                  width: double.infinity,
-                                  child: Card(
-                                    color: Colors.white,
-                                    elevation: 1.0,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Text(
-                                      (item.title),
-                                      style: TextStyle(
+                                  K_hSpace
+                                ],
+                              ),
+                            ),
+                            direction: DismissDirection.endToStart,
+                            key: UniqueKey(),
+                            child: Container(
+                              width: double.infinity,
+                              child: Card(
+                                color: Colors.white,
+                                elevation: 1.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Text(
+                                    "(item.title)",
+                                    style: TextStyle(
                                         fontSize: 15.0,
-                                        fontWeight: FontWeight.w300
-                                      ),
-                                      ),
-                                    ),
+                                        fontWeight: FontWeight.w300),
                                   ),
                                 ),
                               ),
-                            ]))
-                        .toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
-
             ],
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(
-          CupertinoIcons.add
-        ),
-        onPressed: () => Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (ctx) => AddAgenda())),
+        child: Icon(CupertinoIcons.add),
+        onPressed: () => Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (ctx) => AddAgenda())),
       ),
     );
   }

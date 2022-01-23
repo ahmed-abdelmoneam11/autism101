@@ -1,6 +1,4 @@
 import 'package:autism101/Constants.dart';
-import 'package:autism101/model/agendas.dart';
-import 'package:autism101/model/posts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,44 +17,27 @@ class AddAgenda extends StatefulWidget {
 class _AddAgendaState extends State<AddAgenda> {
   var titleController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0XFFF8F9FF),
-      floatingActionButton: Consumer<Agendas>(
-        builder: (ctx, value, _) =>FloatingActionButton(
-          child: Icon(
-            CupertinoIcons.checkmark_alt,
-            color: Colors.white,
-            size: 30.0,
-          ),
-          onPressed: () async {
-            if (titleController.text.isEmpty) {
-              Toast.show("Please enter your Text", ctx,
-                  duration: Toast.LENGTH_LONG);
-            } else {
-              try {
-                value.add(
-                  title: titleController.text,
-                );
-                await Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (_) => MyAgendaPage()));
-              } catch (e) {
-                Toast.show("Please enter a valid price", ctx,
-                    duration: Toast.LENGTH_LONG);
-                print(e);
-              }
-            }
-          },
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          CupertinoIcons.checkmark_alt,
+          color: Colors.white,
+          size: 30.0,
         ),
+        onPressed: () {},
       ),
       appBar: AppBar(
-        shape: appBarShape,
-        backgroundColor: Colors.white,
-          title: Text('Add Agenda',style: TextStyle(color: Colors.black),),
+          shape: appBarShape,
+          backgroundColor: Colors.white,
+          title: Text(
+            'Add Agenda',
+            style: TextStyle(color: Colors.black),
+          ),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back,color: Colors.black),
+            icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () => Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (_) => MyAgendaPage())),
           )),
@@ -66,24 +47,20 @@ class _AddAgendaState extends State<AddAgenda> {
           children: [
             TextField(
               maxLines: 10,
-              style: TextStyle(
-                  fontSize: 23.0,
-                  fontWeight: FontWeight.w300
-              ),
+              style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.w300),
               decoration: InputDecoration(
                 hintText: "Type here...",
                 enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.transparent,
-                    )),
+                  color: Colors.transparent,
+                )),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.transparent,
-                    )),
+                  color: Colors.transparent,
+                )),
               ),
               controller: titleController,
             ),
-
           ],
         ),
       ),
