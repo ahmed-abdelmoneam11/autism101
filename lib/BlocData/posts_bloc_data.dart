@@ -36,7 +36,6 @@ class PostsApi {
         "postHasImage": false,
         "usersWhoFavourite": [],
         "postLikes": [],
-        "comments": [],
       }).onError(
         (error, stackTrace) => throw ("Failed to add new post"),
       );
@@ -100,7 +99,6 @@ class PostsApi {
         "postHasImage": true,
         "usersWhoFavourite": [],
         "postLikes": [],
-        "comments": [],
       }).onError(
         (error, stackTrace) => throw ("Failed to add new post"),
       );
@@ -269,6 +267,32 @@ class PostsApi {
     }
   }
 
+  getComments(String postDocID) async {
+    try {
+      //Getting Posts.
+      var comments = firestore
+          .collection('comments')
+          .where('postDocID', isEqualTo: postDocID)
+          .orderBy(
+            'timeStamp',
+            descending: true,
+          )
+          .snapshots();
+      if (await comments.isEmpty) {
+        throw "No Comments Available";
+      }
+      return {
+        "code": 200,
+        "data": comments,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
   likePost(String post) async {
     try {
       //Find The Post to be deleted.
@@ -385,6 +409,7 @@ class PostsApi {
         (error, stackTrace) => throw "Failed to favourite post",
       );
       await firestore.collection('favoritePosts').add({
+        "OrginalPostDocID": postDocId,
         "userDocID": postsData['userDocID'],
         "userID": postsData['userID'],
         "post": postsData['post'],
@@ -396,7 +421,6 @@ class PostsApi {
         "postHasImage": postsData['postHasImage'],
         "usersWhoFavourite": usersWhoFavourite,
         "postLikes": postsData['postLikes'],
-        "comments": postsData['comments'],
       }).onError(
         (error, stackTrace) => throw "Failed to favourite post",
       );
@@ -785,19 +809,9 @@ class PostsApi {
     }
   }
 
-  addComment(String post, String comment) async {
+  addComment(String postDocID, String comment) async {
     try {
-      var postQueryResult = await firestore
-          .collection('posts')
-          .where('post', isEqualTo: post)
-          .limit(1)
-          .get()
-          .onError(
-            (error, stackTrace) => throw "Post not found",
-          );
-      var postDocId = postQueryResult.docs.first.id;
-      var postsData = await firestore.collection('posts').doc(postDocId).get();
-      List comments = postsData['comments'];
+      var postsData = await firestore.collection('posts').doc(postDocID).get();
       var userQueryResult = await firestore
           .collection('users')
           .where('userID', isEqualTo: auth.currentUser!.uid)
@@ -805,27 +819,12 @@ class PostsApi {
           .get();
       var userDocId = userQueryResult.docs.first.id;
       var userData = await firestore.collection('users').doc(userDocId).get();
-      comments.add({
+      await firestore.collection('comments').add({
         "comment": comment,
         "userName": "${userData['firstName']} ${userData['lastName']}",
         "userImage": userData['ProfilePicture'],
-      });
-      await firestore.collection('posts').doc(postDocId).update({
-        "comments": comments,
-      }).onError(
-        (error, stackTrace) => throw "Failed to comment",
-      );
-      var favoritePostQueryResult = await firestore
-          .collection('favoritePosts')
-          .where('post', isEqualTo: post)
-          .limit(1)
-          .get();
-      var favoritePostDocId = favoritePostQueryResult.docs.first.id;
-      await firestore
-          .collection('favoritePosts')
-          .doc(favoritePostDocId)
-          .update({
-        "comments": comments,
+        "postDocID": postDocID,
+        "timeStamp": DateTime.now(),
       });
       await firestore.collection('notifications').add({
         "userID": postsData['userID'],

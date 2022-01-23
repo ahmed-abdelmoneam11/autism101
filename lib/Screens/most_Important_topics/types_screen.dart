@@ -7,14 +7,22 @@ class Types extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        shape: appBarShape,
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.white,
-            size: 30.0,
+            color: Colors.black,
+            size: 25.0,
           ),
           onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          "Most Important Topics",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20.0,
+          ),
         ),
       ),
       body: ListView(

@@ -98,6 +98,20 @@ class GetNotificationsErrorState extends PostsState {
   });
 }
 
+class GetCommentsSuccessState extends PostsState {
+  final Stream<QuerySnapshot> comments;
+  GetCommentsSuccessState({
+    required this.comments,
+  });
+}
+
+class GetCommentsErrorState extends PostsState {
+  final String message;
+  GetCommentsErrorState({
+    required this.message,
+  });
+}
+
 class DeletePostSuccessState extends PostsState {}
 
 class DeletePostErrorState extends PostsState {

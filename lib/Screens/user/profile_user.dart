@@ -331,7 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       final bool postImageFlag = post.get('postHasImage');
                       final List postLikes = post.get('postLikes');
                       final List favourites = post.get('usersWhoFavourite');
-                      final List comments = post.get('comments');
+                      final postDocID = post.id;
                       postImageFlag
                           ? postsList.add(
                               {
@@ -344,7 +344,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "postImageFlag": postImageFlag,
                                 "postLikes": postLikes,
                                 "postFavorites": favourites,
-                                "postComments": comments,
+                                "postDocID": postDocID,
                               },
                             )
                           : postsList.add(
@@ -358,7 +358,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "postImageFlag": postImageFlag,
                                 "postLikes": postLikes,
                                 "postFavorites": favourites,
-                                "postComments": comments,
+                                "postDocID": postDocID,
                               },
                             );
                       postLikes.contains(auth.currentUser!.uid)
@@ -367,10 +367,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       favourites.contains(auth.currentUser!.uid)
                           ? userFavourites.add(true)
                           : userFavourites.add(false);
-                      print(
-                          "\nPost1:${postsList[0]['postImage']}\nflag:${postsList[0]['postImageFlag']}");
-                      print(
-                          "\nPost2:${postsList[1]['postImage']}\nflag:${postsList[1]['postImageFlag']}");
                     }
                     return snapshot.hasData
                         ? Container(
@@ -550,9 +546,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                         postLikes:
                                                             postsList[index]
                                                                 ['postLikes'],
-                                                        postComments: postsList[
-                                                                index]
-                                                            ['postComments'],
+                                                        postDocID:
+                                                            postsList[index]
+                                                                ['postDocID'],
                                                         postFavorites: postsList[
                                                                 index]
                                                             ['postFavorites'],
@@ -650,20 +646,65 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     },
                                                   ),
                                                   //Comment.
-                                                  Expanded(
-                                                    child: TextField(
-                                                      decoration:
-                                                          InputDecoration(
-                                                        enabledBorder:
-                                                            InputBorder.none,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        hintText: "Comment",
-                                                        prefixIcon: Icon(
-                                                          Icons.comment,
-                                                          color: Colors.grey,
-                                                          size: 25.0,
+                                                  SizedBox(
+                                                    width: 15.0,
+                                                  ),
+                                                  Icon(
+                                                    Icons.comment,
+                                                    color: Colors.grey,
+                                                    size: 25.0,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10.0,
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PostDetails(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                            postImage: postsList[
+                                                                    index]
+                                                                ['postImage'],
+                                                            postImageFlag:
+                                                                postsList[index]
+                                                                    [
+                                                                    'postImageFlag'],
+                                                            userName: postsList[
+                                                                    index]
+                                                                ['userName'],
+                                                            userDocId: postsList[
+                                                                    index]
+                                                                ['userDocId'],
+                                                            userID:
+                                                                postsList[index]
+                                                                    ['userID'],
+                                                            userPicture: postsList[
+                                                                    index]
+                                                                ['userPicture'],
+                                                            postLikes: postsList[
+                                                                    index]
+                                                                ['postLikes'],
+                                                            postFavorites:
+                                                                postsList[index]
+                                                                    [
+                                                                    'postFavorites'],
+                                                            postDocID: postsList[
+                                                                    index]
+                                                                ['postDocID'],
+                                                          ),
                                                         ),
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      "Add Comment",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 18.0,
                                                       ),
                                                     ),
                                                   ),

@@ -100,6 +100,18 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
           notifications: data['data'],
         );
       }
+    } else if (event is GetComments) {
+      yield PostsLodingState();
+      var data = await api.getComments(event.postDocID);
+      if (data['code'] == 400) {
+        yield GetCommentsErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetCommentsSuccessState(
+          comments: data['data'],
+        );
+      }
     } else if (event is EditPostContentAndImage) {
       yield PostsLodingState();
       var data = await api.editPostContentAndImage(

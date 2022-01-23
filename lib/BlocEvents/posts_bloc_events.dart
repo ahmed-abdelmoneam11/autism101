@@ -48,6 +48,13 @@ class GetFavouritePosts extends PostsEvent {}
 
 class GetNotifications extends PostsEvent {}
 
+class GetComments extends PostsEvent {
+  final String postDocID;
+  GetComments({
+    required this.postDocID,
+  });
+}
+
 class DeletePost extends PostsEvent {
   final String post;
   DeletePost({

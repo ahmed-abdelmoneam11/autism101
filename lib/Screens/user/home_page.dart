@@ -18,6 +18,12 @@ import 'package:autism101/Screens/most_Important_topics/chalenges_screen.dart';
 import 'package:autism101/Screens/most_Important_topics/causes_screen.dart';
 import 'package:autism101/Screens/most_Important_topics/what_autism_screen.dart';
 import 'package:autism101/Screens/most_Important_topics/types_screen.dart';
+import 'package:autism101/Screens/most_Important_topics/frequently_asked_questions.dart';
+import 'package:autism101/Screens/most_Important_topics/how_autism_is_treated.dart';
+import 'package:autism101/Screens/most_Important_topics/the_common_misconceptions_of_autism.dart';
+import 'package:autism101/Screens/categories/Medical/medical_main_screen.dart';
+import 'package:autism101/Screens/categories/Educational/educational_main_screen.dart';
+import 'package:autism101/Screens/categories/Behavioural/main_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -164,6 +170,31 @@ class _HomePageState extends State<HomePage> {
                               builder: (context) => Types(),
                             ),
                           );
+                        } else if (imageUrl ==
+                            'assets/images/FREQUENTLYASKEDQUESTIONS.jpg') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FrequentlyAskedQuestions(),
+                            ),
+                          );
+                        } else if (imageUrl ==
+                            'assets/images/HowAutismIsTreated.jpg') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HowAutismIsTreated(),
+                            ),
+                          );
+                        } else if (imageUrl ==
+                            'assets/images/TheCommonMisconceptionsOfAutism.jpg') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  TheCommonMisconceptionsOfAutism(),
+                            ),
+                          );
                         }
                       },
                       child: Container(
@@ -191,7 +222,14 @@ class _HomePageState extends State<HomePage> {
                       //Medical.
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MedicalMainScreen(),
+                              ),
+                            );
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               boxShadow: [
@@ -248,7 +286,14 @@ class _HomePageState extends State<HomePage> {
                       //Educational.
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EducationalMainScreen(),
+                              ),
+                            );
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               boxShadow: [
@@ -305,7 +350,14 @@ class _HomePageState extends State<HomePage> {
                       //Behavioural.
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BehaviouralMainScreen(),
+                              ),
+                            );
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               boxShadow: [
@@ -383,7 +435,7 @@ class _HomePageState extends State<HomePage> {
                       final postImageFlag = post.get('postHasImage');
                       final List postLikes = post.get('postLikes');
                       final List favourites = post.get('usersWhoFavourite');
-                      final List comments = post.get('comments');
+                      final postDocID = post.id;
                       postImageFlag
                           ? postsList.add(
                               {
@@ -396,7 +448,7 @@ class _HomePageState extends State<HomePage> {
                                 "postImageFlag": postImageFlag,
                                 "postLikes": postLikes,
                                 "postFavorites": favourites,
-                                "postComments": comments,
+                                "postDocID": postDocID,
                               },
                             )
                           : postsList.add(
@@ -410,7 +462,7 @@ class _HomePageState extends State<HomePage> {
                                 "postImageFlag": postImageFlag,
                                 "postLikes": postLikes,
                                 "postFavorites": favourites,
-                                "postComments": comments,
+                                "postDocID": postDocID,
                               },
                             );
                       postLikes.contains(auth.currentUser!.uid)
@@ -589,12 +641,12 @@ class _HomePageState extends State<HomePage> {
                                                         postLikes:
                                                             postsList[index]
                                                                 ['postLikes'],
-                                                        postComments: postsList[
-                                                                index]
-                                                            ['postComments'],
                                                         postFavorites: postsList[
                                                                 index]
                                                             ['postFavorites'],
+                                                        postDocID:
+                                                            postsList[index]
+                                                                ['postDocID'],
                                                       ),
                                                     ),
                                                   );
@@ -686,30 +738,65 @@ class _HomePageState extends State<HomePage> {
                                                       return isLiked;
                                                     },
                                                   ),
-                                                  Expanded(
-                                                    child: TextField(
-                                                      controller:
-                                                          _commentController,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        enabledBorder:
-                                                            InputBorder.none,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        hintText: "Comment",
-                                                        prefixIcon: Icon(
-                                                          Icons.comment,
-                                                          color: Colors.grey,
-                                                          size: 25.0,
-                                                        ),
-                                                        suffixIcon: IconButton(
-                                                          onPressed: () {},
-                                                          icon: Icon(
-                                                            Icons.send,
-                                                            color: Colors.blue,
-                                                            size: 25.0,
+                                                  SizedBox(
+                                                    width: 15.0,
+                                                  ),
+                                                  Icon(
+                                                    Icons.comment,
+                                                    color: Colors.grey,
+                                                    size: 25.0,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10.0,
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PostDetails(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                            postImage: postsList[
+                                                                    index]
+                                                                ['postImage'],
+                                                            postImageFlag:
+                                                                postsList[index]
+                                                                    [
+                                                                    'postImageFlag'],
+                                                            userName: postsList[
+                                                                    index]
+                                                                ['userName'],
+                                                            userDocId: postsList[
+                                                                    index]
+                                                                ['userDocId'],
+                                                            userID:
+                                                                postsList[index]
+                                                                    ['userID'],
+                                                            userPicture: postsList[
+                                                                    index]
+                                                                ['userPicture'],
+                                                            postLikes: postsList[
+                                                                    index]
+                                                                ['postLikes'],
+                                                            postFavorites:
+                                                                postsList[index]
+                                                                    [
+                                                                    'postFavorites'],
+                                                            postDocID: postsList[
+                                                                    index]
+                                                                ['postDocID'],
                                                           ),
                                                         ),
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      "Add Comment",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 18.0,
                                                       ),
                                                     ),
                                                   ),

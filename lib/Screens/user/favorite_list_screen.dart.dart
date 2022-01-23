@@ -94,7 +94,7 @@ class _FavoriteListState extends State<FavoriteList> {
                 final postImageFlag = post.get('postHasImage');
                 final List postLikes = post.get('postLikes');
                 final List favourites = post.get('usersWhoFavourite');
-                final List comments = post.get('comments');
+                final postDocID = post.get('OrginalPostDocID');
                 postImageFlag
                     ? postsList.add(
                         {
@@ -107,7 +107,7 @@ class _FavoriteListState extends State<FavoriteList> {
                           "postImageFlag": postImageFlag,
                           "postLikes": postLikes,
                           "postFavorites": favourites,
-                          "postComments": comments,
+                          "postDocID": postDocID,
                         },
                       )
                     : postsList.add(
@@ -121,7 +121,7 @@ class _FavoriteListState extends State<FavoriteList> {
                           "postImageFlag": postImageFlag,
                           "postLikes": postLikes,
                           "postFavorites": favourites,
-                          "postComments": comments,
+                          "postDocID": postDocID,
                         },
                       );
                 postLikes.contains(auth.currentUser!.uid)
@@ -130,7 +130,6 @@ class _FavoriteListState extends State<FavoriteList> {
                 favourites.contains(auth.currentUser!.uid)
                     ? userFavourites.add(true)
                     : userFavourites.add(false);
-                print("\nPosts:$postsList\n");
               }
               return snapshot.hasData
                   ? ListView.builder(
@@ -169,7 +168,7 @@ class _FavoriteListState extends State<FavoriteList> {
                                       //the name of the user
                                       TextButton(
                                         onPressed: () {
-                                          posts[index]['userID'] ==
+                                          postsList[index]['userID'] ==
                                                   auth.currentUser!.uid
                                               ? Navigator.push(
                                                   context,
@@ -183,8 +182,9 @@ class _FavoriteListState extends State<FavoriteList> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         ProfileView(
-                                                      userDocId: posts[index]
-                                                          ['userDocId'],
+                                                      userDocId:
+                                                          postsList[index]
+                                                              ['userDocId'],
                                                     ),
                                                   ),
                                                 );
@@ -265,10 +265,10 @@ class _FavoriteListState extends State<FavoriteList> {
                                                 ['userPicture'],
                                             postLikes: postsList[index]
                                                 ['postLikes'],
-                                            postComments: postsList[index]
-                                                ['postComments'],
                                             postFavorites: postsList[index]
                                                 ['postFavorites'],
+                                            postDocID: postsList[index]
+                                                ['postDocID'],
                                           ),
                                         ),
                                       );
@@ -344,27 +344,51 @@ class _FavoriteListState extends State<FavoriteList> {
                                           return isLiked;
                                         },
                                       ),
-                                      Expanded(
-                                        child: TextField(
-                                          // controller:
-                                          //     _commentController,
-                                          decoration: InputDecoration(
-                                            enabledBorder: InputBorder.none,
-                                            focusedBorder: InputBorder.none,
-                                            hintText: "Comment",
-                                            prefixIcon: Icon(
-                                              Icons.comment,
-                                              color: Colors.grey,
-                                              size: 25.0,
-                                            ),
-                                            suffixIcon: IconButton(
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                Icons.send,
-                                                color: Colors.blue,
-                                                size: 25.0,
+                                      SizedBox(
+                                        width: 15.0,
+                                      ),
+                                      Icon(
+                                        Icons.comment,
+                                        color: Colors.grey,
+                                        size: 25.0,
+                                      ),
+                                      SizedBox(
+                                        width: 10.0,
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => PostDetails(
+                                                post: postsList[index]['post'],
+                                                postImage: postsList[index]
+                                                    ['postImage'],
+                                                postImageFlag: postsList[index]
+                                                    ['postImageFlag'],
+                                                userName: postsList[index]
+                                                    ['userName'],
+                                                userDocId: postsList[index]
+                                                    ['userDocId'],
+                                                userID: postsList[index]
+                                                    ['userID'],
+                                                userPicture: postsList[index]
+                                                    ['userPicture'],
+                                                postLikes: postsList[index]
+                                                    ['postLikes'],
+                                                postFavorites: postsList[index]
+                                                    ['postFavorites'],
+                                                postDocID: postsList[index]
+                                                    ['postDocID'],
                                               ),
                                             ),
+                                          );
+                                        },
+                                        child: Text(
+                                          "Add Comment",
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 18.0,
                                           ),
                                         ),
                                       ),

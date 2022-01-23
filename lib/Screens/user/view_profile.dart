@@ -362,7 +362,7 @@ class _ProfileViewState extends State<ProfileView> {
                       final postImageFlag = post.get('postHasImage');
                       final List postLikes = post.get('postLikes');
                       final List favourites = post.get('usersWhoFavourite');
-                      final List comments = post.get('comments');
+                      final postDocID = post.id;
                       postImageFlag
                           ? postsList.add(
                               {
@@ -375,7 +375,7 @@ class _ProfileViewState extends State<ProfileView> {
                                 "postImageFlag": postImageFlag,
                                 "postLikes": postLikes,
                                 "postFavorites": favourites,
-                                "postComments": comments,
+                                "postDocID": postDocID,
                               },
                             )
                           : postsList.add(
@@ -389,7 +389,7 @@ class _ProfileViewState extends State<ProfileView> {
                                 "postImageFlag": postImageFlag,
                                 "postLikes": postLikes,
                                 "postFavorites": favourites,
-                                "postComments": comments,
+                                "postDocID": postDocID,
                               },
                             );
                       postLikes.contains(auth.currentUser!.uid)
@@ -401,7 +401,7 @@ class _ProfileViewState extends State<ProfileView> {
                     }
                     return snapshot.hasData
                         ? Container(
-                            height: 500.0,
+                            height: 400.0,
                             width: double.infinity,
                             child: ListView.builder(
                               shrinkWrap: true,
@@ -538,9 +538,9 @@ class _ProfileViewState extends State<ProfileView> {
                                                         postLikes:
                                                             postsList[index]
                                                                 ['postLikes'],
-                                                        postComments: postsList[
-                                                                index]
-                                                            ['postComments'],
+                                                        postDocID:
+                                                            postsList[index]
+                                                                ['postDocID'],
                                                         postFavorites: postsList[
                                                                 index]
                                                             ['postFavorites'],
@@ -636,20 +636,65 @@ class _ProfileViewState extends State<ProfileView> {
                                                       return isLiked;
                                                     },
                                                   ),
-                                                  Expanded(
-                                                    child: TextField(
-                                                      decoration:
-                                                          InputDecoration(
-                                                        enabledBorder:
-                                                            InputBorder.none,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        hintText: "Comment",
-                                                        prefixIcon: Icon(
-                                                          Icons.comment,
-                                                          color: Colors.grey,
-                                                          size: 25.0,
+                                                  SizedBox(
+                                                    width: 15.0,
+                                                  ),
+                                                  Icon(
+                                                    Icons.comment,
+                                                    color: Colors.grey,
+                                                    size: 25.0,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10.0,
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PostDetails(
+                                                            post:
+                                                                postsList[index]
+                                                                    ['post'],
+                                                            postImage: postsList[
+                                                                    index]
+                                                                ['postImage'],
+                                                            postImageFlag:
+                                                                postsList[index]
+                                                                    [
+                                                                    'postImageFlag'],
+                                                            userName: postsList[
+                                                                    index]
+                                                                ['userName'],
+                                                            userDocId: postsList[
+                                                                    index]
+                                                                ['userDocId'],
+                                                            userID:
+                                                                postsList[index]
+                                                                    ['userID'],
+                                                            userPicture: postsList[
+                                                                    index]
+                                                                ['userPicture'],
+                                                            postLikes: postsList[
+                                                                    index]
+                                                                ['postLikes'],
+                                                            postFavorites:
+                                                                postsList[index]
+                                                                    [
+                                                                    'postFavorites'],
+                                                            postDocID: postsList[
+                                                                    index]
+                                                                ['postDocID'],
+                                                          ),
                                                         ),
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      "Add Comment",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 18.0,
                                                       ),
                                                     ),
                                                   ),
