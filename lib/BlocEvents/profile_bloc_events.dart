@@ -21,6 +21,8 @@ class GetPeopleYouMayKnowEvent extends ProfileEvent {}
 
 class GetSchoolsEvent extends ProfileEvent {}
 
+class GetSchoolDataEvent extends ProfileEvent {}
+
 class SearchUsers extends ProfileEvent {
   final String query;
   SearchUsers({

@@ -98,11 +98,14 @@ class AuthApi {
   }
 
   signUpForShool(
+    String name,
     String phone,
     String webSite,
     String address,
     String password,
+    File picture,
   ) async {
+    var prefs = await SharedPreferences.getInstance();
     try {
       var res = await http.post(
         Uri.parse(
@@ -127,10 +130,21 @@ class AuthApi {
         password: password,
       );
 
+      //Uploading Profile Picture.
+      String fileName = Path.basename(picture.path);
+      firebase_storage.Reference ref =
+          firebase_storage.FirebaseStorage.instance.ref().child(fileName);
+      firebase_storage.UploadTask uploadTask = ref.putFile(picture);
+      await uploadTask.whenComplete(() => null);
+      String uploadedImageUrl = await ref.getDownloadURL();
+      prefs.setString("IMAGE", uploadedImageUrl);
+
       await firestore.collection('schools').add({
+        "name": name,
         "phone": phone,
         "website": webSite,
         "address": address,
+        "imageUrl": uploadedImageUrl,
         "isVerified": false,
         "followers": [],
         "followersCount": 0,
@@ -143,6 +157,10 @@ class AuthApi {
     } catch (e) {
       await auth.signInWithEmailAndPassword(email: webSite, password: password);
       await auth.currentUser!.delete();
+      var imageUrl = prefs.getString("IMAGE");
+      if (imageUrl != null) {
+        firebase_storage.FirebaseStorage.instance.refFromURL(imageUrl).delete();
+      }
       var queryResult = await firestore
           .collection('schools')
           .where('website', isEqualTo: webSite)

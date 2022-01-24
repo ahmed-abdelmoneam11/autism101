@@ -327,7 +327,6 @@ class _ProfileViewState extends State<ProfileView> {
                           Text(
                             "Message",
                             style: TextStyle(
-                              fontFamily: "Futura",
                               color: Colors.blue,
                               fontSize: 20.0,
                             ),

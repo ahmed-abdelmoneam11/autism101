@@ -121,6 +121,79 @@ class AdminApi {
     }
   }
 
+  addCourse(
+    String name,
+    String url,
+    String type,
+  ) async {
+    try {
+      await firestore.collection('courses').add({
+        "courseName": name,
+        "courseUrl": url,
+        "courseType": type,
+      }).onError((error, stackTrace) => throw "Failed to add course");
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  getActivitiesCourses() async {
+    try {
+      var activitiesCourses = firestore
+          .collection('courses')
+          .where('courseType', isEqualTo: "activities")
+          .snapshots();
+      return {
+        "code": 200,
+        "data": activitiesCourses,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  getSkillsCourses() async {
+    try {
+      var skillsCourses = firestore
+          .collection('courses')
+          .where('courseType', isEqualTo: 'skills')
+          .snapshots();
+      return {
+        "code": 200,
+        "data": skillsCourses,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  getbehaviouralCourses() async {
+    try {
+      var behaviouralCourses = firestore
+          .collection('courses')
+          .where('courseType', isEqualTo: 'behavioural')
+          .snapshots();
+      return {
+        "code": 200,
+        "data": behaviouralCourses,
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
   getMovies() async {
     try {
       //Getting Movies.

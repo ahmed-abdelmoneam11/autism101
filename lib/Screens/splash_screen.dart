@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autism101/Screens/admin/admin_home.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
+import 'package:autism101/Screens/school/school_home_screen.dart';
 import 'package:autism101/Screens/LoginForm.dart';
 
 class Splash extends StatefulWidget {
@@ -22,6 +23,7 @@ class _SplashState extends State<Splash> {
           context,
           MaterialPageRoute(
             builder: (context) => HomeScreen(),
+            // builder: (context) => SchoolHomePage(),
           ),
         );
       } else if (auth.currentUser != null &&
@@ -32,6 +34,8 @@ class _SplashState extends State<Splash> {
             builder: (context) => AdminHome(),
           ),
         );
+      } else if (auth.currentUser != null &&
+          auth.currentUser!.email!.contains('@school.com')) {
       } else {
         Navigator.pushReplacement(
           context,

@@ -119,6 +119,35 @@ class ProfileApi {
     }
   }
 
+  getSchoolData() async {
+    try {
+      var schoolQuery = await firestore
+          .collection('schools')
+          .where('schoolID', isEqualTo: auth.currentUser!.uid)
+          .limit(1)
+          .get();
+      var schoolDocID = schoolQuery.docs.first.id;
+      var schoolData =
+          await firestore.collection('schools').doc(schoolDocID).get().onError(
+                (error, stackTrace) => throw ("Failed To Get School Data"),
+              );
+      return {
+        "code": 200,
+        "WebSite": schoolData['website'],
+        "Image": schoolData['imageUrl'],
+        "DocID": schoolDocID,
+        "FollowersCount": schoolData['followersCount'],
+        "EventsCount": schoolData['eventsCount'],
+        "Phone": schoolData['phone'],
+      };
+    } on Exception catch (e) {
+      return {
+        "code": 400,
+        "message": e.toString(),
+      };
+    }
+  }
+
   searchUser(String query) async {
     try {
       if (query.contains('@')) {

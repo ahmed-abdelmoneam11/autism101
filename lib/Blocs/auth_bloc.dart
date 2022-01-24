@@ -33,10 +33,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is SignUpForSchoolButtonPressed) {
       yield LodingState();
       var data = await api.signUpForShool(
+        event.name,
         event.phone,
         event.webSite,
         event.address,
         event.password,
+        event.profilePicture,
       );
       if (data['code'] == 400) {
         yield SignUpForSchoolErrorState(

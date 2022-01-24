@@ -63,6 +63,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       } else if (data['code'] == 200) {
         yield GetSchoolsSuccessState(schools: data['data']);
       }
+    } else if (event is GetSchoolDataEvent) {
+      yield ProfileLodingState();
+      var data = await api.getSchoolData();
+      if (data['code'] == 400) {
+        yield GetSchoolDataErrorState(
+          error: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetSchoolDataSuccessState(
+          webSite: data['WebSite'],
+          image: data['Image'],
+          docID: data['DocID'],
+          phone: data['Phone'],
+          followersCount: data['FollowersCount'],
+          eventsCount: data['EventsCount'],
+        );
+      }
     } else if (event is UpdateUserName) {
       yield ProfileLodingState();
       var data = await api.updateProfileName(

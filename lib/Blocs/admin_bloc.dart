@@ -47,6 +47,42 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
           inspiring: data['data'],
         );
       }
+    } else if (event is GetActivitiesCoursesEvent) {
+      yield AdminLodingState();
+      var data = await api.getActivitiesCourses();
+      if (data['code'] == 400) {
+        yield GetActivitiesCoursesErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetActivitiesCoursesSuccessState(
+          activitiesCourses: data['data'],
+        );
+      }
+    } else if (event is GetSkillsCoursesEvent) {
+      yield AdminLodingState();
+      var data = await api.getSkillsCourses();
+      if (data['code'] == 400) {
+        yield GetSkillsCoursesErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetSkillsCoursesSuccessState(
+          skillsCourses: data['data'],
+        );
+      }
+    } else if (event is GetbehaviouralCoursesEvent) {
+      yield AdminLodingState();
+      var data = await api.getbehaviouralCourses();
+      if (data['code'] == 400) {
+        yield GetbehaviouralCoursesErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield GetbehaviouralCoursesSuccessState(
+          behaviouralCourses: data['data'],
+        );
+      }
     } else if (event is DeleteMovie) {
       yield AdminLodingState();
       var data = await api.deleteMovie(event.movieName);
@@ -109,6 +145,20 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         );
       } else if (data['code'] == 200) {
         yield AddInspiringSuccessState();
+      }
+    } else if (event is AddCourse) {
+      yield AdminLodingState();
+      var data = await api.addCourse(
+        event.name,
+        event.url,
+        event.type,
+      );
+      if (data['code'] == 400) {
+        yield AddCourseErrorState(
+          message: data['message'],
+        );
+      } else if (data['code'] == 200) {
+        yield AddCourseSuccessState();
       }
     } else if (event is VerifySchoolEvent) {
       await api.verifySchool(event.webSite);

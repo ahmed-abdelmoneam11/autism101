@@ -1,4 +1,3 @@
-import 'package:autism101/Screens/school/school_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,8 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/profile_bloc.dart';
 import 'package:autism101/BlocEvents/profile_bloc_events.dart';
 import 'package:autism101/BlocStates/profile_bloc_state.dart';
-import 'package:autism101/Screens/user/chat_screen.dart';
-import 'package:autism101/Screens/user/view_profile.dart';
+import 'package:autism101/Screens/school/school_profile.dart';
 import 'package:autism101/Constants.dart';
 
 class ContactWithSchool extends StatefulWidget {
@@ -92,6 +90,7 @@ class _ContactWithSchoolState extends State<ContactWithSchool> {
               final followersCount = school.get('followersCount');
               final eventsCount = school.get('eventsCount');
               final phone = school.get('phone');
+              final image = school.get('imageUrl');
               final List schoolFollowers = school.get('followers');
               final schoolDocId = school.id;
               schoolsList.add(
@@ -101,6 +100,7 @@ class _ContactWithSchoolState extends State<ContactWithSchool> {
                   "FollowersCount": followersCount,
                   "EventsCount": eventsCount,
                   "Phone": phone,
+                  "Image": image,
                 },
               );
               schoolFollowers.contains(auth.currentUser!.uid)
@@ -126,9 +126,11 @@ class _ContactWithSchoolState extends State<ContactWithSchool> {
                     children: <Widget>[
                       ClipRRect(
                         borderRadius: BorderRadius.circular(50),
-                        child: Icon(
-                          Icons.school,
-                          size: 35.0,
+                        child: Image.network(
+                          schoolsList[index]['Image'],
+                          height: 90.0,
+                          width: 90.0,
+                          fit: BoxFit.fill,
                         ),
                       ),
                       SizedBox(
@@ -146,6 +148,8 @@ class _ContactWithSchoolState extends State<ContactWithSchool> {
                                 followersCount: schoolsList[index]
                                     ['FollowersCount'],
                                 phone: schoolsList[index]['Phone'],
+                                image: schoolsList[index]['Image'],
+                                isSchool: false,
                               ),
                             ),
                           );
@@ -186,23 +190,6 @@ class _ContactWithSchoolState extends State<ContactWithSchool> {
                         },
                         child: Text(
                           followers[index] ? 'Following' : 'Follow',
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => ChatScreen(
-                          //       userName: usersList[index]['UserName'],
-                          //       userImage: usersList[index]['ProfilePicture'],
-                          //       userDocId: usersList[index]['UserDocId'],
-                          //     ),
-                          //   ),
-                          // );
-                        },
-                        child: Text(
-                          'Massage',
                         ),
                       ),
                     ],

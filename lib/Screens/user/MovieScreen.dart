@@ -116,11 +116,13 @@ class _MovieScreenState extends State<MovieScreen> {
               Container(
                 height: deviceHeight,
                 decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [Colors.black, Colors.transparent],
-                        stops: [0.3, 0.9],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter)),
+                  gradient: LinearGradient(
+                    colors: [Colors.black, Colors.transparent],
+                    stops: [0.3, 0.9],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: 15.0, top: deviceHeight! * 0.7),

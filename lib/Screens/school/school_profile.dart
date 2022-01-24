@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:autism101/Screens/school/add_event_screen.dart';
 import 'package:autism101/Constants.dart';
 
 class SchoolProfile extends StatefulWidget {
   final String webSite;
   final String schoolDocID;
   final String phone;
+  final String image;
   final int followersCount;
   final int eventsCount;
+  final bool isSchool;
   SchoolProfile({
     required this.webSite,
     required this.schoolDocID,
     required this.phone,
+    required this.image,
     required this.eventsCount,
     required this.followersCount,
+    required this.isSchool,
   });
   @override
   State<SchoolProfile> createState() => _SchoolProfileState();
@@ -64,9 +69,11 @@ class _SchoolProfileState extends State<SchoolProfile> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(50),
-                        child: Icon(
-                          Icons.school,
-                          size: 40.0,
+                        child: Image.network(
+                          widget.image,
+                          height: 90.0,
+                          width: 90.0,
+                          fit: BoxFit.fill,
                         ),
                       ),
                       K_hSpace,
@@ -149,84 +156,161 @@ class _SchoolProfileState extends State<SchoolProfile> {
                 ),
               ),
               K_vSpace,
-              Container(
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: shadow,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            star1 = !star1;
-                          });
-                        },
-                        icon: Icon(
-                          star1 ? Icons.star : Icons.star_outline,
-                          color: star1 ? Colors.yellowAccent : Colors.black,
+              widget.isSchool
+                  ? InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddEventScreen(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: shadow,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20.0),
+                          ),
                         ),
-                        iconSize: 30.0,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            star2 = !star2;
-                          });
-                        },
-                        icon: Icon(
-                          star2 ? Icons.star : Icons.star_outline,
-                          color: star2 ? Colors.yellowAccent : Colors.black,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.mail,
+                                  color: Colors.blue,
+                                  size: 25.0,
+                                ),
+                                SizedBox(
+                                  width: 10.0,
+                                ),
+                                Text(
+                                  "Add Event",
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 20.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        iconSize: 30.0,
                       ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            star3 = !star3;
-                          });
-                        },
-                        icon: Icon(
-                          star3 ? Icons.star : Icons.star_outline,
-                          color: star3 ? Colors.yellowAccent : Colors.black,
+                    )
+                  : Container(
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: shadow,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20.0),
                         ),
-                        iconSize: 30.0,
                       ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            star4 = !star4;
-                          });
-                        },
-                        icon: Icon(
-                          star4 ? Icons.star : Icons.star_outline,
-                          color: star4 ? Colors.yellowAccent : Colors.black,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  star1 = !star1;
+                                });
+                              },
+                              icon: Icon(
+                                star1 ? Icons.star : Icons.star_outline,
+                                color:
+                                    star1 ? Colors.yellowAccent : Colors.black,
+                              ),
+                              iconSize: 30.0,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  star2 = !star2;
+                                });
+                                if (star2) {
+                                  setState(() {
+                                    star1 = true;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                star2 ? Icons.star : Icons.star_outline,
+                                color:
+                                    star2 ? Colors.yellowAccent : Colors.black,
+                              ),
+                              iconSize: 30.0,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  star3 = !star3;
+                                });
+                                if (star3) {
+                                  setState(() {
+                                    star1 = true;
+                                    star2 = true;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                star3 ? Icons.star : Icons.star_outline,
+                                color:
+                                    star3 ? Colors.yellowAccent : Colors.black,
+                              ),
+                              iconSize: 30.0,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  star4 = !star4;
+                                });
+                                if (star4) {
+                                  setState(() {
+                                    star1 = true;
+                                    star2 = true;
+                                    star3 = true;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                star4 ? Icons.star : Icons.star_outline,
+                                color:
+                                    star4 ? Colors.yellowAccent : Colors.black,
+                              ),
+                              iconSize: 30.0,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  star5 = !star5;
+                                });
+                                if (star5) {
+                                  setState(() {
+                                    star1 = true;
+                                    star2 = true;
+                                    star3 = true;
+                                    star4 = true;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                star5 ? Icons.star : Icons.star_outline,
+                                color:
+                                    star5 ? Colors.yellowAccent : Colors.black,
+                              ),
+                              iconSize: 30.0,
+                            ),
+                          ],
                         ),
-                        iconSize: 30.0,
                       ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            star5 = !star5;
-                          });
-                        },
-                        icon: Icon(
-                          star5 ? Icons.star : Icons.star_outline,
-                          color: star5 ? Colors.yellowAccent : Colors.black,
-                        ),
-                        iconSize: 30.0,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
             ],
           ),
         ),

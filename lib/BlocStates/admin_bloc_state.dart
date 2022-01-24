@@ -52,6 +52,48 @@ class GetInspiringErrorState extends AdminState {
   });
 }
 
+class GetActivitiesCoursesSuccessState extends AdminState {
+  final Stream<QuerySnapshot> activitiesCourses;
+  GetActivitiesCoursesSuccessState({
+    required this.activitiesCourses,
+  });
+}
+
+class GetActivitiesCoursesErrorState extends AdminState {
+  final String message;
+  GetActivitiesCoursesErrorState({
+    required this.message,
+  });
+}
+
+class GetSkillsCoursesSuccessState extends AdminState {
+  final Stream<QuerySnapshot> skillsCourses;
+  GetSkillsCoursesSuccessState({
+    required this.skillsCourses,
+  });
+}
+
+class GetSkillsCoursesErrorState extends AdminState {
+  final String message;
+  GetSkillsCoursesErrorState({
+    required this.message,
+  });
+}
+
+class GetbehaviouralCoursesSuccessState extends AdminState {
+  final Stream<QuerySnapshot> behaviouralCourses;
+  GetbehaviouralCoursesSuccessState({
+    required this.behaviouralCourses,
+  });
+}
+
+class GetbehaviouralCoursesErrorState extends AdminState {
+  final String message;
+  GetbehaviouralCoursesErrorState({
+    required this.message,
+  });
+}
+
 class DeleteMovieSuccessState extends AdminState {}
 
 class DeleteMovieErrorState extends AdminState {
@@ -85,4 +127,11 @@ class AddInspiringSuccessState extends AdminState {}
 class AddInspiringErrorState extends AdminState {
   final String message;
   AddInspiringErrorState({required this.message});
+}
+
+class AddCourseSuccessState extends AdminState {}
+
+class AddCourseErrorState extends AdminState {
+  final String message;
+  AddCourseErrorState({required this.message});
 }

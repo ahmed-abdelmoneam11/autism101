@@ -1,8 +1,10 @@
 import 'dart:ui';
+import 'dart:io';
 import '../Layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:autism101/Blocs/auth_bloc.dart';
 import 'package:autism101/BlocEvents/auth_bloc_events.dart';
@@ -18,6 +20,7 @@ class SchoolAccount extends StatefulWidget {
 }
 
 class _SchoolAccountstate extends State<SchoolAccount> {
+  TextEditingController _nameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _webSiteController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
@@ -25,10 +28,19 @@ class _SchoolAccountstate extends State<SchoolAccount> {
   TextEditingController _confirmPasswordController = TextEditingController();
   bool passwordVisible = true;
   bool confirmPasswordVisible = true;
+  bool hasProfilePicture = false;
+  late File profilePicture;
+  List<String> profilePictureOptions = [
+    'Profile Picture',
+    'Take photo',
+    'Choose existing photo'
+  ];
+  String _selectedProfilePictureOption = "Profile Picture";
   late AuthBloc authBloc;
 
   @override
   void dispose() {
+    _nameController.dispose();
     _phoneController.dispose();
     _webSiteController.dispose();
     _addressController.dispose();
@@ -100,6 +112,22 @@ class _SchoolAccountstate extends State<SchoolAccount> {
                   child: Text('Create an Account',
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 35)),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  width: 330,
+                  padding: EdgeInsets.all(20),
+                  child: TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        hintText: 'Name',
+                        contentPadding:
+                            const EdgeInsets.fromLTRB(20, 20, 0, 10)),
+                    keyboardType: TextInputType.phone,
+                  ),
                 ),
                 //Phone Number Text Field.
                 Container(
@@ -213,6 +241,89 @@ class _SchoolAccountstate extends State<SchoolAccount> {
                     obscureText: confirmPasswordVisible,
                   ),
                 ),
+                //Picture Options.
+                Container(
+                  width: 200.0,
+                  height: 40.0,
+                  padding: EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                  ),
+                  child: DropdownButton(
+                    icon: Icon(
+                      Icons.add_a_photo,
+                      color: Colors.black,
+                    ),
+                    iconSize: 25.0,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      height: 1.0,
+                    ),
+                    underline: Container(
+                      width: 0.0,
+                    ),
+                    isExpanded: true,
+                    hint: Text('Profile Picture'),
+                    value: _selectedProfilePictureOption,
+                    onChanged: (newValueOne) {
+                      setState(() {
+                        _selectedProfilePictureOption = newValueOne.toString();
+                      });
+                      checkForProfile();
+                    },
+                    items: profilePictureOptions.map((profileOption) {
+                      return DropdownMenuItem(
+                        child: Text(profileOption),
+                        value: profileOption,
+                      );
+                    }).toList(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                hasProfilePicture
+                    ? Stack(
+                        children: [
+                          Container(
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            width: 170.0,
+                            height: 170.0,
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              image: DecorationImage(
+                                image: FileImage(
+                                  profilePicture,
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 8.0,
+                            right: 8.0,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  hasProfilePicture = false;
+                                  _selectedProfilePictureOption =
+                                      "Profile Picture";
+                                });
+                              },
+                              child: Icon(
+                                Icons.remove_circle,
+                                size: 25.0,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
                 SizedBox(height: 30),
                 //SignUp Button.
                 Container(
@@ -244,6 +355,31 @@ class _SchoolAccountstate extends State<SchoolAccount> {
     );
   }
 
+  checkForProfile() async {
+    if (_selectedProfilePictureOption == "Choose existing photo") {
+      chooseFileForProfil();
+    } else if (_selectedProfilePictureOption == "Take photo") {
+      takeImageForProfil();
+    }
+  }
+
+  Future chooseFileForProfil() async {
+    final pickedFile =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+    setState(() {
+      profilePicture = File(pickedFile!.path);
+      hasProfilePicture = true;
+    });
+  }
+
+  Future takeImageForProfil() async {
+    final pickedFile = await ImagePicker().getImage(source: ImageSource.camera);
+    setState(() {
+      profilePicture = File(pickedFile!.path);
+      hasProfilePicture = true;
+    });
+  }
+
   void signUp() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
@@ -267,11 +403,11 @@ class _SchoolAccountstate extends State<SchoolAccount> {
         message: "Please enter your website.",
         icons: Icons.warning,
       );
-    } else if (!_webSiteController.text.contains('@')) {
+    } else if (!_webSiteController.text.contains('@shool.com')) {
       Warning().errorMessage(
         context,
         title: 'Invalid website !',
-        message: "Website must contain '@' ",
+        message: "Website must contain '@shool.com' ",
         icons: Icons.warning,
       );
     } else if (_passwordController.text.isEmpty) {
@@ -295,13 +431,22 @@ class _SchoolAccountstate extends State<SchoolAccount> {
         message: "Please confirm your password.",
         icons: Icons.warning,
       );
+    } else if (hasProfilePicture == false) {
+      Warning().errorMessage(
+        context,
+        title: "Profile picture can't be empty !",
+        message: "Please take or choose profile picture",
+        icons: Icons.warning,
+      );
     } else {
       authBloc.add(
         SignUpForSchoolButtonPressed(
+          name: _nameController.text,
           phone: _phoneController.text,
           webSite: _webSiteController.text,
           address: _addressController.text,
           password: _passwordController.text,
+          profilePicture: profilePicture,
         ),
       );
     }

@@ -49,7 +49,7 @@ class _AdminHomeState extends State<AdminHome> {
               color: Colors.black,
               iconSize: 30.0,
             ),
-          )
+          ),
         ],
         elevation: 0.0,
       ),
@@ -78,263 +78,314 @@ class _AdminHomeState extends State<AdminHome> {
             );
           }
         },
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Column(
+        child: ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      //Edit Movies.
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Movies(
-                                isAdmin: true,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          //Main Container
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(K_mainRadius),
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [K_mainColor, K_blueColor],
-                              stops: [0.1, 1],
-                            ),
-                          ),
-                          width: deviceWidth! * 0.45,
-                          height: 200.0,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.only(left: 10.0, top: 10.0),
-                            child: SingleChildScrollView(
-                              physics: BouncingScrollPhysics(),
-                              child: Column(
-                                //Column inside the container
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    'Edit Movies',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  //Movies
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      //Edit Users
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FindUser(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          //Main Container
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(K_mainRadius),
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [K_blueColor, K_moveColor],
-                              stops: [0.1, 1],
-                            ),
-                          ),
-                          width: deviceWidth! * 0.45,
-                          height: 154,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10.0, top: 10.0),
-                            child: SingleChildScrollView(
-                              physics: BouncingScrollPhysics(),
-                              child: Column(
-                                //Column inside the container
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    'Delete Users',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => VerifySchools(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          //Main Container
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(K_mainRadius),
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [K_moveColor, K_blueColor],
-                              stops: [0.1, 1],
-                            ),
-                          ),
-                          width: deviceWidth! * 0.45,
-                          height: 154,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10.0, top: 10.0),
-                            child: SingleChildScrollView(
-                              physics: BouncingScrollPhysics(),
-                              child: Column(
-                                //Column inside the container
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    'Verify School',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(
-                                    height: 10.0,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Topics(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          //Main Container
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(K_mainRadius),
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [K_blueColor, K_mainColor],
-                              stops: [0.1, 1],
-                            ),
-                          ),
-                          width: deviceWidth! * 0.45,
-                          height: 200.0,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10.0, top: 10.0),
-                            child: SingleChildScrollView(
-                              physics: BouncingScrollPhysics(),
-                              child: Column(
-                                //Column inside the container
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    'Edit Topics',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              K_vSpace,
-              //Edit Inspiring.
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Inspiring(
-                        isAdmin: true,
-                      ),
-                    ),
-                  );
-                },
-                child: Container(
-                  //Main Container
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(K_mainRadius),
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [K_blueColor, K_moveColor],
-                      stops: [0.1, 1],
-                    ),
-                  ),
-                  width: deviceWidth! * 0.45,
-                  height: 154,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10.0, top: 10.0),
-                    child: SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
-                      child: Column(
-                        //Column inside the container
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Column(
                         children: <Widget>[
-                          Text(
-                            'Edit Inspiring People',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          //Edit Movies.
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Movies(
+                                    isAdmin: true,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              //Main Container
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(K_mainRadius),
+                                gradient: LinearGradient(
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  colors: [K_mainColor, K_blueColor],
+                                  stops: [0.1, 1],
+                                ),
+                              ),
+                              width: deviceWidth! * 0.45,
+                              height: 200.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, top: 10.0),
+                                child: SingleChildScrollView(
+                                  physics: BouncingScrollPhysics(),
+                                  child: Column(
+                                    //Column inside the container
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        'Edit Movies',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      //Movies
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          //Edit Users
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FindUser(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              //Main Container
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(K_mainRadius),
+                                gradient: LinearGradient(
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  colors: [K_blueColor, K_moveColor],
+                                  stops: [0.1, 1],
+                                ),
+                              ),
+                              width: deviceWidth! * 0.45,
+                              height: 154,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 10.0, top: 10.0),
+                                child: SingleChildScrollView(
+                                  physics: BouncingScrollPhysics(),
+                                  child: Column(
+                                    //Column inside the container
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        'Delete Users',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
+                      Column(
+                        children: <Widget>[
+                          InkWell(
+                            onTap: () {},
+                            child: Container(
+                              //Main Container
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(K_mainRadius),
+                                gradient: LinearGradient(
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  colors: [K_moveColor, K_blueColor],
+                                  stops: [0.1, 1],
+                                ),
+                              ),
+                              width: deviceWidth! * 0.45,
+                              height: 154,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 10.0, top: 10.0),
+                                child: SingleChildScrollView(
+                                  physics: BouncingScrollPhysics(),
+                                  child: Column(
+                                    //Column inside the container
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        'Edit Courses',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        height: 10.0,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Topics(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              //Main Container
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(K_mainRadius),
+                                gradient: LinearGradient(
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  colors: [K_blueColor, K_mainColor],
+                                  stops: [0.1, 1],
+                                ),
+                              ),
+                              width: deviceWidth! * 0.45,
+                              height: 200.0,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 10.0, top: 10.0),
+                                child: SingleChildScrollView(
+                                  physics: BouncingScrollPhysics(),
+                                  child: Column(
+                                    //Column inside the container
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        'Edit Topics',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  K_vSpace,
+                  //Edit Inspiring.
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Inspiring(
+                            isAdmin: true,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      //Main Container
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(K_mainRadius),
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [K_blueColor, K_moveColor],
+                          stops: [0.1, 1],
+                        ),
+                      ),
+                      width: deviceWidth! * 0.45,
+                      height: 154,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10.0, top: 10.0),
+                        child: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Column(
+                            //Column inside the container
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'Edit Inspiring People',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  K_vSpace,
+                  //Verify School.
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VerifySchools(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      //Main Container
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(K_mainRadius),
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [K_blueColor, K_moveColor],
+                          stops: [0.1, 1],
+                        ),
+                      ),
+                      width: deviceWidth! * 0.45,
+                      height: 154,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10.0, top: 10.0),
+                        child: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Column(
+                            //Column inside the container
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'Verify Schools',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -351,63 +402,64 @@ class _AdminHomeState extends State<AdminHome> {
       );
     } else {
       showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              elevation: 1.0,
-              title: Text(
-                "Sign Out",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 21.0,
-                  height: 1.3,
-                ),
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            elevation: 1.0,
+            title: Text(
+              "Sign Out",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 21.0,
+                height: 1.3,
               ),
-              content: Text(
-                "Confirm Sign Out",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 18.0,
-                  height: 1.3,
-                ),
+            ),
+            content: Text(
+              "Confirm Sign Out",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w400,
+                fontSize: 18.0,
+                height: 1.3,
               ),
-              actions: [
-                TextButton(
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18.0,
-                      height: 1.3,
-                    ),
+            ),
+            actions: [
+              TextButton(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0,
+                    height: 1.3,
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
                 ),
-                TextButton(
-                  child: Text(
-                    'Confirm',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18.0,
-                      height: 1.3,
-                    ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text(
+                  'Confirm',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0,
+                    height: 1.3,
                   ),
-                  onPressed: () {
-                    authBloc.add(SignOutButtonPressed());
-                    Navigator.pop(context);
-                  },
                 ),
-              ],
-            );
-          });
+                onPressed: () {
+                  authBloc.add(SignOutButtonPressed());
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 }

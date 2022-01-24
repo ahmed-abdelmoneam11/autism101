@@ -7,6 +7,7 @@ import 'package:autism101/Blocs/events_bloc.dart';
 import 'package:autism101/BlocEvents/events_bloc_events.dart';
 import 'package:autism101/BlocStates/events_bloc_state.dart';
 import 'package:autism101/flush_bar.dart';
+import 'package:autism101/Constants.dart';
 
 class AddEventScreen extends StatefulWidget {
   @override
@@ -39,24 +40,18 @@ class _AddEventScreenState extends State<AddEventScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.white,
+            color: Colors.black,
           ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Add Event',
-          style: TextStyle(color: Colors.white, fontSize: 20.0),
+          style: TextStyle(color: Colors.black, fontSize: 20.0),
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(15.0),
-            bottomRight: Radius.circular(15.0),
-          ),
-        ),
+        shape: appBarShape,
       ),
       body: BlocListener<EventsBloc, EventsState>(
         listener: (context, state) {
@@ -73,12 +68,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
               ),
             );
           } else if (state is AddEventSuccessState) {
-            // Navigator.pushReplacement(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => AdminHome(),
-            //   ),
-            // );
+            Navigator.pop(context);
           } else if (state is AddEventErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -103,7 +93,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25.0),
                   ),
-                  hintText: 'Movie Name',
+                  hintText: 'Event Name',
                   contentPadding: const EdgeInsets.fromLTRB(20, 20, 0, 10),
                 ),
                 keyboardType: TextInputType.name,
@@ -120,7 +110,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25.0),
                   ),
-                  hintText: 'Movie Brief',
+                  hintText: 'Event Bio',
                   contentPadding: const EdgeInsets.fromLTRB(20, 20, 0, 10),
                 ),
                 keyboardType: TextInputType.name,
@@ -137,7 +127,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25.0),
                   ),
-                  hintText: 'Movie AgeRate',
+                  hintText: 'Event Faceboo Url',
                   contentPadding: const EdgeInsets.fromLTRB(20, 20, 0, 10),
                 ),
                 keyboardType: TextInputType.name,

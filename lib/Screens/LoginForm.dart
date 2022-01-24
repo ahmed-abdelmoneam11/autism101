@@ -8,6 +8,7 @@ import 'package:autism101/Blocs/auth_bloc.dart';
 import 'package:autism101/BlocEvents/auth_bloc_events.dart';
 import 'package:autism101/BlocStates/auth_bloc_state.dart';
 import 'package:autism101/flush_bar.dart';
+import 'package:autism101/Screens/school/school_home_screen.dart';
 import 'package:autism101/Screens/user/home_screen.dart';
 import 'package:autism101/Screens/Register.dart';
 import 'package:autism101/Screens/find_user_screen.dart';
@@ -20,6 +21,7 @@ class Loginform extends StatefulWidget {
 
 class _LoginformState extends State<Loginform> {
   bool passwordVisible = true;
+  bool isSchool = false;
   var colorOFtext = Colors.black;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -70,6 +72,14 @@ class _LoginformState extends State<Loginform> {
               context,
               MaterialPageRoute(
                 builder: (context) => AdminHome(),
+              ),
+              (route) => false,
+            );
+          } else if (state is SignInSuccessState && isSchool) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SchoolHomePage(),
               ),
               (route) => false,
             );
@@ -144,33 +154,57 @@ class _LoginformState extends State<Loginform> {
                   obscureText: passwordVisible,
                 ),
                 //Forgot Password Button.
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FindUser(),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: isSchool,
+                      onChanged: (newValue) {
+                        setState(() {
+                          isSchool = newValue!;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Sign In As School",
+                      style: TextStyle(
+                        color: colorOFtext,
+                        decorationColor: colorOFtext,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
                       ),
-                    );
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          color: colorOFtext,
-                          decoration: TextDecoration.underline,
-                          decorationColor: colorOFtext,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    ),
+                    SizedBox(
+                      width: 30.0,
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FindUser(),
+                          ),
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Forgot Password?',
+                            style: TextStyle(
+                              color: colorOFtext,
+                              decoration: TextDecoration.underline,
+                              decorationColor: colorOFtext,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: 40),
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 40),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
                 //Login Button.

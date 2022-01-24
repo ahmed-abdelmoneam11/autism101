@@ -32,15 +32,19 @@ class SignUpForParentButtonPressed extends AuthEvent {
 
 class SignUpForSchoolButtonPressed extends AuthEvent {
   final String phone;
+  final String name;
   final String webSite;
   final String address;
   final String password;
+  final File profilePicture;
 
   SignUpForSchoolButtonPressed({
     required this.phone,
+    required this.name,
     required this.webSite,
     required this.address,
     required this.password,
+    required this.profilePicture,
   });
 }
 

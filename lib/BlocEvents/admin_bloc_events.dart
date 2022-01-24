@@ -40,11 +40,28 @@ class AddInspiring extends AdminEvent {
   });
 }
 
+class AddCourse extends AdminEvent {
+  final String name;
+  final String url;
+  final String type;
+  AddCourse({
+    required this.name,
+    required this.url,
+    required this.type,
+  });
+}
+
 class GetMoviesEvent extends AdminEvent {}
 
 class GetSchoolsEvent extends AdminEvent {}
 
 class GetInspiringEvent extends AdminEvent {}
+
+class GetActivitiesCoursesEvent extends AdminEvent {}
+
+class GetSkillsCoursesEvent extends AdminEvent {}
+
+class GetbehaviouralCoursesEvent extends AdminEvent {}
 
 class DeleteMovie extends AdminEvent {
   final String movieName;
