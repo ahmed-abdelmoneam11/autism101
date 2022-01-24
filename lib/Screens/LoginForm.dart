@@ -67,7 +67,7 @@ class _LoginformState extends State<Loginform> {
               ),
             );
           } else if (state is SignInSuccessState &&
-              _emailController.text == 'autism101@admin.domain') {
+              _emailController.text == 'autism101@admin.com') {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
