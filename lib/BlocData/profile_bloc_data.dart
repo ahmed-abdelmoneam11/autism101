@@ -403,7 +403,7 @@ class ProfileApi {
       await firestore.collection('notifications').add({
         "userID": otherUserData['userID'],
         "notificationTitle":
-            '${data['firstName']} ${data['lastName']} Liked Your Post',
+            '${data['firstName']} ${data['lastName']} Followed You',
         "userImage": data['ProfilePicture'],
         "timeStamp": DateTime.now(),
       });

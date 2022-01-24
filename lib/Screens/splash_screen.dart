@@ -27,7 +27,7 @@ class _SplashState extends State<Splash> {
           ),
         );
       } else if (auth.currentUser != null &&
-          auth.currentUser!.email == 'autism101@admin.domain') {
+          auth.currentUser!.email == 'autism101@admin.com') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

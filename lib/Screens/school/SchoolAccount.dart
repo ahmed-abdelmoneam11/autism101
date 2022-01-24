@@ -126,7 +126,7 @@ class _SchoolAccountstate extends State<SchoolAccount> {
                         hintText: 'Name',
                         contentPadding:
                             const EdgeInsets.fromLTRB(20, 20, 0, 10)),
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.name,
                   ),
                 ),
                 //Phone Number Text Field.
